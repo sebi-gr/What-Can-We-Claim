@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Claim decomposition response",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "claims"],
+  "properties": {
+    "schema_version": {"const": "1"},
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["claim_id", "proposition", "family", "subtype", "family_reason", "source_quotes", "qualifiers", "context_claim_ids"],
+        "properties": {
+          "claim_id": {"type": "string", "pattern": "^C[0-9]{2,}[a-z]?$"},
+          "proposition": {"type": "string", "pattern": "\\S"},
+          "family": {"enum": ["location", "data_flow", "protection_precondition", "exploitability_impact", "other", "unclear"]},
+          "subtype": {"enum": [null, "exploitability", "impact", "unclear"]},
+          "family_reason": {"type": "string", "pattern": "\\S"},
+          "qualifiers": {"type": "string", "pattern": "\\S"},
+          "source_quotes": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["field", "quote", "occurrence"],
+              "properties": {
+                "field": {"enum": ["title", "report"]},
+                "quote": {"type": "string", "pattern": "\\S"},
+                "occurrence": {"type": "integer", "minimum": 1}
+              }
+            }
+          },
+          "context_claim_ids": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {"type": "string", "pattern": "^C[0-9]{2,}[a-z]?$"}
+          }
+        },
+        "allOf": [{
+          "if": {"properties": {"family": {"const": "exploitability_impact"}}},
+          "then": {"properties": {"subtype": {"enum": ["exploitability", "impact", "unclear"]}}},
+          "else": {"properties": {"subtype": {"type": "null"}}}
+        }]
+      }
+    }
+  }
+}

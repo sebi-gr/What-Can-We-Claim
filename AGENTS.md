@@ -16,11 +16,12 @@
 
 ## Verzeichnis- und Namenskonvention
 
-- Ausführbare Pipeline-Schritte liegen in `src/`, nummeriert nach Reihenfolge als `NN_verb_object.py` (zweistellig, englisch, snake_case): aktuell `01_prepare_case.py` und `02_generate_findings.py`.
+- Ausführbare Pipeline-Schritte liegen in `src/`, nummeriert nach Reihenfolge als `NN_verb_object.py` (zweistellig, englisch, snake_case): aktuell `01_prepare_case.py`, `02_generate_findings.py` und `03_decompose_findings.py`. Der manuelle Arbeitsschritt hat kein eigenes Skript.
 - Tests liegen in `tests/` und heißen passend zum Schritt `test_NN_verb_object.py`. `tests/__init__.py` ermöglicht die Testsuche vom Repo-Wurzelverzeichnis.
-- Versionierte Prompts und andere statische Hilfsdateien liegen in `resources/`. Ressourcenpfade relativ zur Skriptdatei auflösen, nicht zum Arbeitsverzeichnis.
+- Prompts, Codebook, Schema und andere statische Hilfsdateien liegen in `resources/`. Pro Zweck genau eine aktuelle Datei ohne Versionssuffix; Ressourcenpfade relativ zur Skriptdatei auflösen.
+- Keine parallelen Dokumentversionen oder fortlaufenden Änderungsjournale anlegen. README/WORKPLAN/HANDOFF halten Bedienung, Plan und aktuellen Stand knapp; Versionshistorie über Git. Unveränderte Ressourcen-Snapshots in Laufverzeichnissen sind Versuchsevidenz und bleiben erhalten.
 - README, AGENTS, HANDOFF, WORKPLAN und LICENSE bleiben im Repo-Wurzelverzeichnis. Generierte Falldaten und Laufartefakte bleiben unter dem ignorierten `data/`.
-- Lokale Zugangsdaten liegen in der ignorierten `.env` im Repo-Wurzelverzeichnis; nur die leere `.env.example` wird versioniert. Keine Zugangsdaten in Modellkontext oder Laufartefakte übernehmen.
+- Lokale Zugangsdaten liegen in der ignorierten `.env` im Repo-Wurzelverzeichnis; nur die leere `.env.example` wird versioniert. Beide LLM-Schritte lesen `OPENAI_API_KEY` für die direkte OpenAI-API; die Prozessumgebung hat Vorrang. Keine Zugangsdaten in Modellkontext oder Laufartefakte übernehmen.
 - CLI-Aufrufe erfolgen vom Repo-Wurzelverzeichnis: `python3 src/NN_verb_object.py`. Nummerierte Python-Module bei Bedarf mit `importlib.import_module` laden; keine zusätzlichen Wrapper oder Pipeline-Frameworks einführen.
 
 ## Prüfungen
@@ -32,7 +33,15 @@ python3 -m unittest -v
 git diff --check
 ```
 
-Die fünfzehn Offline-Tests prüfen Fallvorbereitung und Generator: Referenztrennung/Byteerhalt/Hashes, Schutz bestehender Ausgaben, Downloadfehler ohne Teilausgabe sowie leere/ungültige Modellantworten, HTTP-/Netzfehler, fehlenden API-Key, die Beschränkung auf explizite kostenlose Modell-IDs, Symlink-Ausschluss sowie `.env`-Laden ohne Zugangsdaten in Laufartefakten und explizite Reasoning-Steuerung. Der Symlink-Test wird unter Windows bei fehlendem Symlink-Privileg ausdrücklich übersprungen; dies bestätigt den Schutz dort nicht. Generatorantworten sind synthetische Fixtures, keine empirischen Findings. Bei Codeänderungen ausführen; weitere Tests nur für konkrete Risiken ergänzen.
+Die Offline-Tests prüfen Fallvorbereitung, direkten OpenAI-Request, Kontexttrennung,
+Byteerhalt/Hashes, Überschreibschutz, Fehler/Null-Ergebnisse ohne Retry, fehlenden
+API-Key und `.env`-Laden ohne Zugangsdaten in Artefakten. Alte OpenRouter-Keys
+werden nicht für OpenAI verwendet. Decomposer-Tests prüfen Felder, Unicode-/CRLF-
+Zitate mit Vorkommen/Offsets, gemeinsame Zitate für unterschiedliche Claims/Familien
+und Kontextreferenzen; keine Teilclaims bei ungültigen Ausgaben. Antworten sind
+synthetische Fixtures, keine empirischen Ergebnisse. Der Windows-Symlink-Test wird
+bei fehlendem Privileg ausdrücklich übersprungen; dort ist der Schutz ungeprüft.
+Bei Codeänderungen ausführen; zusätzliche Tests nur für konkrete Risiken ergänzen.
 
 Optionaler echter Vorbereitungslauf bei Änderungen am Download/Export (Netzzugriff auf `raw.githubusercontent.com`, Ziel muss neu sein):
 
@@ -40,4 +49,4 @@ Optionaler echter Vorbereitungslauf bei Änderungen am Download/Export (Netzzugr
 python3 src/01_prepare_case.py --output data/VUL4J-18-check
 ```
 
-Bestehende Versuchsdaten nicht löschen oder überschreiben; bei belegtem Ziel einen neuen Pfad wählen. Dieser Befehl führt **keinen Java-PoV** aus. Es gibt bisher keinen verifizierten lokalen Build-/PoV-Testbefehl für den vollständigen Benchmark.
+Bestehende Versuchsdaten nicht löschen oder überschreiben; bei belegtem Ziel einen neuen Pfad wählen. Dieser Befehl führt **keinen Java-PoV** aus. Die separat ausgeführte Reproduktion mit dem vollständigen Benchmark und die verifizierten lokalen Build-/PoV-Befehle stehen in `resources/reproduce_vul4j18.md`; ihr Ergebnis belegt das getestete Mock-Forwarding-Verhalten, keinen End-to-End-Dateizugriff.

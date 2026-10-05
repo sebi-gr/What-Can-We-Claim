@@ -1,4 +1,4 @@
-"""Save one tool-free review through an explicitly selected free OpenRouter model."""
+"""Save one tool-free review through an explicitly selected OpenAI model."""
 
 import argparse
 from datetime import datetime, timezone
@@ -21,9 +21,9 @@ MODEL_FILES = prepare_case.MODEL_FILES
 json_bytes = prepare_case.json_bytes
 
 
-ENDPOINT = "https://openrouter.ai/api/v1/chat/completions"
+ENDPOINT = "https://api.openai.com/v1/chat/completions"
 DOTENV = Path(__file__).resolve().parents[1] / ".env"
-PROMPT = Path(__file__).resolve().parents[1] / "resources" / "review_prompt_v1.txt"
+PROMPT = Path(__file__).resolve().parents[1] / "resources" / "review_prompt.txt"
 TIMEOUT_SECONDS = 180
 
 
@@ -38,7 +38,7 @@ def sha256(content: bytes) -> str:
 # Verändert die Umgebung nicht und nimmt den Schlüssel nicht in Fehlermeldungen auf.
 def load_api_key() -> str:
     """Read the environment first, then the project's simple .env key entry."""
-    api_key = os.environ.get("OPENROUTER_API_KEY")
+    api_key = os.environ.get("OPENAI_API_KEY")
     if api_key:
         return api_key
     try:
@@ -49,12 +49,12 @@ def load_api_key() -> str:
         raise ValueError("The project .env must be UTF-8 encoded.") from None
     for line in lines:
         name, separator, value = line.partition("=")
-        if name.strip() != "OPENROUTER_API_KEY" or not separator:
+        if name.strip() != "OPENAI_API_KEY" or not separator:
             continue
         value = value.strip()
         if value.startswith(("'", '"')):
             if len(value) < 2 or value[-1] != value[0]:
-                raise ValueError("OPENROUTER_API_KEY in .env has unmatched quotes.")
+                raise ValueError("OPENAI_API_KEY in .env has unmatched quotes.")
             value = value[1:-1]
         return value
     return ""
@@ -77,7 +77,7 @@ def load_sources(model_input: Path) -> dict:
     return files
 
 
-# Sendet den vorbereiteten Request einmal an OpenRouter; der Key steht nur im HTTP-Header.
+# Sendet den vorbereiteten Request einmal an OpenAI; der Key steht nur im HTTP-Header.
 # Gibt HTTP-Status, Request-ID und rohe Antwortbytes zurück, auch bei HTTP-Fehlern.
 # Wiederholt den Aufruf nicht; Netzwerkfehler werden an den Aufrufer weitergegeben.
 def request_review(body: bytes, api_key: str) -> tuple:
@@ -124,16 +124,16 @@ def parse_findings(response: dict) -> list:
     return findings
 
 
-# Erstellt aus dem erlaubten Quellkontext einen einzelnen Review-Lauf für ein explizit gewähltes kostenloses Modell.
+# Erstellt aus dem erlaubten Quellkontext einen einzelnen Review-Lauf für ein explizit gewähltes OpenAI-Modell.
 # Speichert Eingaben, Request, erhaltene Rohantwort und gültige Findings in einem neuen Laufverzeichnis.
 # Hält auch leere Ergebnisse und Fehler im Manifest fest und gibt den Laufstatus zurück.
-# Optional lässt sich Reasoning explizit deaktivieren; ohne Option gilt der Provider-Default.
+# Optional setzt --no-reasoning reasoning_effort=none; das Modell muss diesen Wert unterstützen.
 def generate_findings(model_input: Path, output: Path, model: str,
                       max_output_tokens: int, disable_reasoning: bool = False) -> str:
     if output.exists() or output.is_symlink():
         raise FileExistsError(f"Output already exists: {output}. Choose a new --output path.")
-    if not model.endswith(":free") or "/" not in model or any(char.isspace() for char in model):
-        raise ValueError("Select an explicit OpenRouter model ID ending in :free; paid models and automatic routers are not permitted.")
+    if not model or "/" in model or model.endswith(":free") or any(char.isspace() for char in model):
+        raise ValueError("Select an explicit OpenAI model ID (without an OpenRouter prefix or :free suffix).")
     if max_output_tokens < 1:
         raise ValueError("A positive max-output-tokens value is required.")
 
@@ -150,31 +150,25 @@ def generate_findings(model_input: Path, output: Path, model: str,
             {"role": "system", "content": prompt.decode("utf-8")},
             {"role": "user", "content": "\n".join(sections)},
         ],
-        "max_tokens": max_output_tokens,
+        "max_completion_tokens": max_output_tokens,
         "stream": False,
-        "tools": [],
-        "plugins": [{"id": "context-compression", "enabled": False}],
+        "store": False,
         "response_format": {"type": "json_object"},
-        "provider": {
-            "allow_fallbacks": False,
-            "require_parameters": True,
-            "max_price": {"prompt": 0, "completion": 0, "request": 0},
-        },
     }
     if disable_reasoning:
-        payload["reasoning"] = {"enabled": False}
+        payload["reasoning_effort"] = "none"
     body = json_bytes(payload)
     run_id = str(uuid4())
     manifest = {
         "case_id": CASE_ID,
         "run_id": run_id,
         "started_at": datetime.now(timezone.utc).isoformat(),
-        "provider": "openrouter",
+        "provider": "openai",
         "endpoint": ENDPOINT,
         "model_requested": model,
         "parameters": {key: value for key, value in payload.items()
                        if key != "messages"},
-        "prompt_version": PROMPT.name,
+        "prompt_file": PROMPT.name,
         "prompt_sha256": sha256(prompt),
         "request_sha256": sha256(body),
         "source_sha256": {name: sha256(content) for name, content in files.items()},
@@ -200,7 +194,7 @@ def generate_findings(model_input: Path, output: Path, model: str,
     try:
         api_key = load_api_key()
         if not api_key:
-            raise ValueError("OPENROUTER_API_KEY is missing from the environment and project .env; no request was sent.")
+            raise ValueError("OPENAI_API_KEY is missing from the environment and project .env; no request was sent.")
         manifest["request_attempts"] = 1
         (output / "run_manifest.json").write_bytes(json_bytes(manifest))
         status, request_id, raw = request_review(body, api_key)
@@ -216,7 +210,6 @@ def generate_findings(model_input: Path, output: Path, model: str,
             response = json.loads(raw)
             manifest.update(model_returned=response.get("model"),
                             usage=response.get("usage"),
-                            upstream_provider=response.get("provider"),
                             response_id=response.get("id"),
                             system_fingerprint=response.get("system_fingerprint"))
             if response.get("error"):
@@ -251,11 +244,11 @@ def main() -> None:
     parser.add_argument("--model-input", type=Path, default=Path("data") / CASE_ID / "model_input")
     parser.add_argument("--output", type=Path, required=True, help="New run directory under data/.")
     parser.add_argument("--model", required=True,
-                        help="Explicit model ID ending in :free; no default or automatic model selection.")
+                        help="Explicit OpenAI model ID; no default or automatic model selection.")
     parser.add_argument("--max-output-tokens", type=int, required=True,
                         help="Output limit including reasoning; not a monetary budget.")
     parser.add_argument("--no-reasoning", action="store_true",
-                        help="Explicitly disable reasoning on models that support it; otherwise keep provider defaults.")
+                        help="Send reasoning_effort=none; requires a model supporting none. Omit for model defaults.")
     args = parser.parse_args()
     try:
         status = generate_findings(args.model_input, args.output, args.model,

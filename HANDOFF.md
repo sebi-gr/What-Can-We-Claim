@@ -1,89 +1,48 @@
-# Handoff: What Can We Verify?
+# HANDOFF — aktueller Stand
 
-Stand: 2026-09-23. Grundlage: zugänglicher Projektkontext, Research Map/Arbeitsentwurf, bisheriger GitHub-Abgleich und aktueller lokaler Git-/Code-/Datenstand. Keine endgültige RQ-Fassung oder vollständige Paper-Spezifikation im Repo vorhanden.
+Stand: 2026-10-05. WIP-Übergabe der Implementierung und bereinigten Dokumentation
+auf Branch main, aufbauend auf 8f9b25e. Commit-Nachricht:
+`wip: handoff for prose or structure repo`. Der verbindliche nächste Schritt
+steht in WORKPLAN.md; Commit-/Remote-Stand über Git prüfen.
 
-**Schritt 1b abgeschlossen (23.09.2026):** Reproduktionsdokumentation über [PR #3](https://github.com/sebi-gr/What-Can-We-Verify/pull/3) in `main` integriert. Vollständiger Benchmark-Snapshot `07ad7850...`, portable Eclipse Temurin `8u504-b01` und Maven `3.9.16`. Beide Builds erfolgreich. Die unveränderten Tests `WikiServletTest#testNastyDoPost` und `#testDoGet` liefen in beiden Varianten ohne Errors oder Skips: verwundbar 2/2 erwartete Assertion-Fehler (`/?page=Main&` statt `/Wiki.jsp?page=Main&`), gefixt 2/2 bestanden. Originalfix und Review-Quellhashes geprüft. Versionierte Reproduktionsdokumentation: `resources/reproduce_vul4j18.md`; vollständige Logs, Befehlsmetadaten, Prüfsummen und Snapshots: `data/pov/VUL4J-18-001/` (ignoriert). Aussagegrenze: reproduziertes Mock-Forwarding-Verhalten, kein End-to-End-Nachweis für Dateizugriff oder unauthentifizierte Remote-Ausnutzung.
+## Implementierung
 
-**Erfolgreicher Review / nächster Auftrag (23.09.2026):** Run-ID `0721c0a0-bba7-48c1-a63c-da196a69d97c`, Start 14:31:07 UTC, unter `data/runs/VUL4J-18-review-001`: `completed`, `finish_reason=stop`, ein Finding. Nemotron 3 Super `:free`, Provider Nvidia, 8.192 Tokenlimit, `reasoning.enabled=false`; 7,656 Sekunden, 25.832 Prompt- und 216 Completion-Tokens, gemeldete Reasoning-Tokens 0 und Kosten 0. Request-, Prompt-, Antwort-, Quell- und Generator-Hashes geprüft; geparstes Finding inklusive ID/Text entspricht exakt der Rohantwort. Inhaltliche Richtigkeit noch ungeprüft. Frühere Laufartefakte am wiederverwendeten Pfad sind nicht mehr vorhanden; historische Notizen ersetzen diese nicht. Schritt 2 technisch abgeschlossen. Nutzer beauftragt Commit, Push, Merge und anschließend Schritt 1b (Java-PoV verwundbar/gefixt). Kein weiterer LLM-Aufruf nötig. Prüfung vor Commit: 14 Offline-Tests bestanden, ein Windows-Symlink-Skip. Aktuell noch uncommitted; Merge-Ergebnis nach Durchführung ergänzen.
+- src/01_prepare_case.py: fixierter VUL4J-18-Export, Modellkontext/Referenzen getrennt.
+- src/02_generate_findings.py und src/03_decompose_findings.py: direkt OpenAI Chat
+  Completions über Standardbibliothek, OPENAI_API_KEY aus Umgebung/.env.
+  Vorhandener .env-Eintrag geprüft, Wert nicht ausgegeben und Datei nicht geändert.
+- OpenRouter-spezifische Preis-/Routing-/Pluginparameter entfernt; explizites Modell,
+  max_completion_tokens, JSON-Modus und store=false. --no-reasoning setzt
+  reasoning_effort=none; ohne Flag Modellstandard. Keine automatischen Wiederholungen.
+- Ressourcen auf einen aktuellen Namen je Zweck reduziert: review_prompt.txt,
+  decomposition_prompt.txt, claim_codebook.md, claim_response_schema.json.
+  Codebook historienfrei konsolidiert, Regeln für feine Propositionen erhalten.
+  README/WORKPLAN/HANDOFF gekürzt, AGENTS legt stabile Dateinamen fest.
+- Schema-Version 1 bleibt Datenformatkennung. Historische Modellläufe behalten
+  ihre ursprünglichen Dateinamen, Ressourcenbytes und Hashes. Bestehende manuelle
+  Annotationen/Reviews und Java-PoV-Artefakte bleiben Versuchsdaten unter data/.
 
-Der aktuelle Arbeitsplan steht verbindlich in [WORKPLAN.md](WORKPLAN.md). Zu Sessionbeginn mitlesen und nach Fortschritt oder Planänderungen laufend aktuell halten, auch bei einem spontanen Handoff. Diese Datei dokumentiert den überprüften Übergabestand.
+## Überprüfter Forschungsstand
 
-**Beauftragter Anbieterwechsel (23.09.2026, implementiert und offline geprüft):** Auf ausdrücklichen Umsetzungsauftrag ist der bestehende Generator auf OpenRouter Chat Completions mit `qwen/qwen3-coder:free` umgestellt. `OPENROUTER_API_KEY` wird vom Nutzer bereitgestellt. Nur dieses Modell, Preisgrenzen null und keine Provider-/Modell-Fallbacks; keine neue Abhängigkeit oder Provider-Abstraktion. Elf Offline-Tests: zehn bestanden, ein Windows-Symlink-Skip. CLI-Hilfe geprüft; Dokumentation angepasst. Zu diesem früheren Prüfzeitpunkt noch kein Live-Lauf; inzwischen liegt der unten dokumentierte HTTP-404-Befund vor. Änderungen uncommitted.
+- Java-PoV: zwei erwartete Assertion-Fehler verwundbar, zwei bestandene Tests gefixt.
+  Nur Mock-Forwarding belegt; Reproduktionsbefehle in resources/reproduce_vul4j18.md.
+- Review 0721c0a0-bba7-48c1-a63c-da196a69d97c unter data/runs/VUL4J-18-review-001:
+  ein Finding, damals Nemotron/OpenRouter ohne Reasoning; Aussagen ungeprüft.
+- Manuelle Annotation: 13 abgestimmte Entwicklungsclaims, Codex-Unterstützung und
+  Vorwissen über Code/Fix/PoV dokumentiert. Keine unabhängige Wahrheitsreferenz.
+- Decomposition 001 ungültig; 002 und 003 formal gültig mit vier wortgleichen
+  Satz-Propositionen. Feinere Granularität nicht erreicht, in 003 alle Kontext-IDs leer.
+  Letzter Lauf: c939bbd8-090a-4c51-b14d-998d1fc8653c. Formatgültigkeit ist kein Qualitätsurteil.
 
-**Beauftragte `.env`-Unterstützung (23.09.2026, abgeschlossen):** Generator liest `OPENROUTER_API_KEY` automatisch aus der `.env` im Repo-Wurzelverzeichnis; eine nichtleere Prozessvariable hat Vorrang. `.env` ist ignoriert, `.env.example` enthält nur einen leeren Eintrag. Bestehende lokale `.env` bleibt erhalten. Keine neue Abhängigkeit. 14 Offline-Tests: 13 bestanden, ein Windows-Symlink-Skip. Laden, Vorrang der Prozessvariable, fehlende/ungültige Konfiguration und Ausschluss des Schlüssels aus Laufartefakten mit synthetischen Keys geprüft. Git ignoriert `.env`, aber nicht `.env.example`; `git diff --check` ohne Befund. Zu diesem früheren Prüfzeitpunkt noch kein Live-Aufruf; aktueller Laufbefund siehe unten.
+## Prüfungen und offene Punkte
 
-**Funktionskommentare (23.09.2026):** Alle elf Funktionen in den beiden `src/`-Skripten haben kurze deutsche `#`-Blockkommentare direkt vor der Definition. Die verbindliche Konvention steht in AGENTS. Nur Kommentare geändert; unveränderte Python-Syntaxbäume vor/nach der Ergänzung geprüft. Abschließende Prüfung: 13 Offline-Tests bestanden, ein Windows-Symlink-Skip; `git diff --check` ohne Befund. Forschungsplan unverändert.
-
-**Früherer Laufbefund und Korrektur (23.09.2026):** `data/runs/VUL4J-18-review-001` enthält einen echten Request-Versuch vom Nutzer (HTTP 404, `run_error`). OpenRouter meldet `qwen/qwen3-coder:free` als nicht mehr kostenlos verfügbar. Kein Finding erzeugt, Lauf unverändert erhalten. Die frühere Modellseiten-Recherche war kein Verfügbarkeitsnachweis. Der öffentliche Live-Katalog wurde ohne Key/Inference abgerufen: `nvidia/nemotron-3-super-120b-a12b:free` ist mit Preis null und `response_format` gelistet (Vorschlag, noch kein Review damit). Der Generator verlangt jetzt explizit `--model` mit einer `:free`-ID statt der Qwen-Festlegung; Preisgrenzen null und deaktivierte Fallbacks bleiben. Keine automatische Wiederholung und kein Modellwechsel durch den Agenten ausgeführt. Anpassung geprüft: 13 Offline-Tests bestanden, ein Windows-Symlink-Skip; CLI-Hilfe und `git diff --check` erfolgreich. Katalogquelle: https://openrouter.ai/api/v1/models. Keine erfolgreiche Inferenz mit dem Ersatzmodell nachgewiesen.
-
-**Vorheriger überprüfter Lauf (23.09.2026, 13:48:39 UTC):** Der aktuell vorhandene `VUL4J-18-review-001` hat Run-ID `33c4fd62-dad1-45ea-bcc1-6f199d4edf06`, Modell Nemotron 3 Super `:free`, Provider Nvidia, HTTP 200 und `invalid_output` wegen `finish_reason: length`. Usage: 25.832 Prompt-Tokens, 4.096 Completion-Tokens, Kosten laut Provider 0. Kein vollständiges JSON und keine Findings-Datei. Die Antwort enthält Reasoning; dessen gemeldete 4.418 Tokens übersteigen die 4.096 Completion-Tokens, daher diese Rohmetrik nicht rechnerisch bereinigen oder als konsistente Aufteilung auswerten. Der zuvor an demselben Pfad gelesene Qwen-Lauf hat eine andere Run-ID und ist dort nicht mehr vorhanden; Ursache der Wiederverwendung unbekannt, kein Überschreiben durch den Agenten. Aktuelle Artefakte unverändert erhalten.
-
-**Technische Folgekorrektur:** CLI zeigt jetzt die gespeicherte Fehlerursache direkt an; `length` wird ausdrücklich als Tokenlimit-Abbruch erklärt. Keine Lockerung der Ergebnisvalidierung und kein neuer Modellaufruf. Vorschlag für genau einen getrennten technischen Folgelauf: dasselbe Modell mit 8.192 Ausgabetokens, neues Verzeichnis; vor Ausführung festgelegt, kein Retry bis zu einem gewünschten Finding. Reasoning-/Prompt-Einstellungen bleiben unverändert. Prüfung: Generator-Tests und zusätzlicher CLI-Test der gespeicherten Fehlerausgabe bestanden; Gesamtlauf mit 12 bestandenen Tests, einem Symlink-Skip und einem temporären Windows-Zugriffsfehler beim Umbenennen des Vorbereitungstest-Exports. Gezielte einmalige Wiederholung dieses Offline-Tests ohne Codeänderung bestanden; Ursache des sporadischen WinError 5 nicht geklärt. `git diff --check` ohne Befund. Kein echter Request wiederholt.
-
-**Früherer Lauf / Reasoning-Kontrolle (23.09.2026, 13:54:12 UTC):** Aktuell liegt unter `VUL4J-18-review-001` Run-ID `e10753c7-d1cf-4725-a7df-3369ae6bb15b`: Nemotron 3 Super `:free`, HTTP 200, `invalid_output`, `finish_reason: length` bei 8.192 Completion-Tokens; Kosten laut Provider 0. `content` und `reasoning` sind identisch (34.866 Zeichen), kein JSON-Objekt. Die rohe Usage nennt 8.882 Reasoning-Tokens, also erneut keine konsistente Tokenaufteilung. Frühere Run-IDs unter demselben Pfad sind dort nicht mehr vorhanden; aktuelle Daten nicht verändert.
-
-**Gezielte Korrektur:** Optionales `--no-reasoning` ergänzt (`reasoning.enabled=false`), explizit in Request/Manifest gespeichert. Ohne Flag bleibt der Provider-Default. Öffentlicher Live-Katalog für Nemotron: `mandatory=false`, `default_enabled=true`; Abruf ohne API-Key und ohne Inferenz. Vorschlag für einen neuen technischen Lauf: gleiches Modell und 8.192 Token, nur Reasoning ausschalten, neues Verzeichnis. Kein Promptwechsel, keine automatische Wiederholung, keine Reparatur oder Übernahme abgebrochener Antworten. Wirksamkeit beim Provider noch nicht live getestet. Offline geprüft: 14 Tests bestanden, ein Windows-Symlink-Skip; CLI-Hilfe und `git diff --check` erfolgreich. Der neue Test prüft explizites Abschalten und Speicherung der Einstellung; ohne Flag wird kein Reasoning-Parameter ergänzt.
-
-**Dokumentierte Abwägung / README-Pflege (23.09.2026):** Auf Nutzerauftrag die Diskussion zu `--no-reasoning` in WORKPLAN und README festgehalten: für einen technischen Pipeline-PoC vertretbar, aber eine veränderte Generierungsbedingung mit ungeprüften Auswirkungen auf Findings, Qualität und Claim-Verteilung. Ein einzelner Fall ist kein repräsentativer Leistungsnachweis. Vor Evaluation die Generierungsbedingungen festlegen; ein vorab geplanter Vergleich beider Modi bleibt optional. Der technische Folgelauf und die endgültige Evaluationseinstellung bleiben Vorschläge/offen. Kein neuer API-Aufruf. AGENTS verlangt nun ausdrücklich die laufende README-Pflege im selben Arbeitsschritt wie relevante Änderungen. README um aktuellen Projektstand und methodische Grenzen ergänzt; veraltete Angaben zu „echter Lauf offen“ bzw. unbenutztem Prompt in WORKPLAN korrigiert. Nur Dokumentation geändert; Code und Git-Status gelesen. Bisheriger Offline-Prüfstand bleibt unverändert, keine erneute Testausführung für diese Textänderung. Dokumentationsprüfung: Ergänzungen gegen den Code gelesen, `git diff --check` ohne Whitespace-Fehler.
-
-**Früherer überprüfter Lauf: Provider-Überlastung (23.09.2026, 14:15:56 UTC):** Unter `data/runs/VUL4J-18-review-001` liegt jetzt Run-ID `e7275984-8332-45a7-9a80-5cc5b0ed115d`. Nemotron `:free`, 8.192 Ausgabetokens und `reasoning.enabled=false` wurden gesendet. Nach 2,462 Sekunden: HTTP 200, aber JSON-Fehlercode 503 mit `Upstream error from Nvidia: Service temporarily overloaded`; Status `run_error`, keine Findings-Datei, keine Usage. Das ist der gemeldete Providerfehler; keine Evidenz für ein Tokenlimit- oder API-Key-Problem. Die Wirkung von `--no-reasoning` auf vollständige Reports bleibt ungeprüft. Der zuvor gelesene 8.192-Token-Lauf ist am wiederverwendeten Pfad nicht mehr vorhanden; Ursache unbekannt. Aktuelle Artefakte unverändert erhalten. Keine Codeänderung und kein Modellaufruf durch den Agenten. README auf den neuen Befund aktualisiert. Vorschlag: später bewusst genau einen neuen technischen Versuch mit unveränderten Einstellungen und frischem Zielverzeichnis planen; keine automatische Wiederholung oder Garantie der Verfügbarkeit.
-
-## Ziel und Arbeitsfragen
-
-LLM-Security-Findings in einzelne prüfbare Aussagen zerlegen und untersuchen, welche unabhängige Evidenz diese Aussagen trägt. Arbeitsfragen aus dem Forschungsentwurf, noch keine final verabschiedeten Paper-RQs:
-
-- **RQ-A:** Welche wiederkehrenden Claim-Typen enthalten LLM-generierte Security-Findings?
-- **RQ-B:** Welche unabhängigen Evidenzformen eignen sich je Claim-Typ?
-- **RQ-C:** Wie unterscheiden sich ausgewählte Verifikationsverfahren hinsichtlich Korrektheit, Abdeckung, unentscheidbarer Fälle und Prüfaufwand?
-
-Zielpipeline: bekannter verwundbarer Code → LLM/Security-Report → Claim-Zerlegung → claimbezogene Prüfung durch Codeanalyse, Konfiguration oder Ausführung.
-
-## Festgelegte Leitlinien und umgesetzte Entscheidungen
-
-- **KISS** gemäß `AGENTS.md`: Forschungsprototyp für die RQs, kleine nachvollziehbare Schritte.
-- Einstieg **VUL4J-18 / Apache JSPWiki / CVE-2019-0225 / CWE-22 (Path Traversal)**.
-- Zunächst `localized_review` mit fünf vollständigen Originaldateien: überschaubarer, fixierter Kontext. Daraus keine Erkennungsleistung für ganze Repositories ableiten.
-- Modellkontext und Referenzmaterial getrennt halten, damit Fix/PoV/Benchmarkantworten das Review nicht vorgeben.
-- Claim-Extraktion erfasst, was der Report behauptet; sie bestätigt keine Wahrheit. Ein zweiter LLM-Aufruf ist dafür sinnvoll, aber keine unabhängige Verifikation. Auch dasselbe Modell in frischem Kontext ist möglich.
-- Arbeitskategorien: Location, Data-flow, Protection/precondition, Exploitability/impact. Ausnutzbarkeit und Wirkung bei getrennten Behauptungen einzeln extrahieren. Das Schema ist noch keine validierte Taxonomie.
-
-**Beauftragte Umstrukturierung (23.09.2026, abgeschlossen):** Pipeline nach `src/` mit zweistelligen Schrittnummern, Tests nach `tests/`, Prompt nach `resources/` verschoben. Imports, Ressourcenpfad, CLI-Dokumentation und AGENTS-Konvention angepasst. Windows-Pfadvergleich auf POSIX-Darstellung vereinheitlicht; fehlendes Symlink-Privileg wird ausdrücklich als Skip ausgewiesen. Neues Layout geprüft: zehn Offline-Tests entdeckt, neun bestanden, Symlink-Test mangels Windows-Privileg übersprungen; beide CLI-Hilfen und `git diff --check` erfolgreich. Änderungen noch uncommitted. Keine neue Pipeline-Stufe oder Abhängigkeit.
-
-## Tatsächlicher Repo-Stand
-
-- **Korrigierte Dokumentationsabweichung (23.09.2026):** Beim Sessionstart war `main` auf `3a4eb9e` mit sauberem Arbeitsbaum ausgecheckt. Der lokale Merge-Commit belegt die Integration von [PR #1](https://github.com/sebi-gr/What-Can-We-Verify/pull/1); die bisherigen Angaben „PR offen“ und „Implementierung nicht auf main“ waren veraltet. `origin/main` zeigte lokal denselben Stand; kein erneuter Remote-Abgleich.
-- Implementierung der Vorbereitung: `224f248`; letzte bisherige Plan-/Übergabedokumentation: `0d9d93f`.
-- **Aktueller lokaler Abgleich (23.09.2026, Windows):** PR #2 und PR #3 sind gemergt; lokales `main` und `origin/main` standen nach dem letzten Fetch auf `737b08e`. Generierte Review-/PoV-Artefakte bleiben unter `data/` ignoriert.
-- `src/02_generate_findings.py` und `resources/review_prompt_v1.txt` sind implementiert. Aktueller Aufrufweg: OpenRouter Chat Completions mit expliziter `:free`-Modellwahl; die ursprüngliche Qwen-Festlegung ist wegen HTTP 404 aufgehoben. Die frühere vorläufige OpenAI-Implementierung ist ersetzt. Der Qwen-Versuch scheiterte mit HTTP 404; spätere Nemotron-Versuche lieferten HTTP 200, aber abgeschnittene Antworten. Zuletzt überprüft ist der oben dokumentierte erfolgreiche No-Reasoning-Lauf; ein Finding ist strukturell gültig gespeichert.
-
-| Vorhanden | Verhalten |
-|---|---|
-| `src/01_prepare_case.py` | Python-CLI, Standardbibliothek; lädt fixierte Quellen, prüft die Dataset-Zeile, verweigert vorhandene Ziele und veröffentlicht erst die vollständige Ausgabe. |
-| `model_input/` (generiert) | WikiServlet, DefaultURLConstructor, URLConstructor, jspwiki.properties und web.xml, unveränderte Bytes/Pfade/Zeilennummern. |
-| `reference/` (generiert) | Dataset-Zeile, gefixter Constructor, WikiServletTest-PoV, LICENSE und NOTICE. |
-| `manifest.json` (generiert) | Quellrevisionen, URLs, SHA-256-Hashes und `pov_status: not_run`. |
-| `tests/test_01_prepare_case.py`, `README.md` | Drei Offline-Tests; Bedienung, Provenienz und Grenzen. |
-| `src/02_generate_findings.py`, `resources/review_prompt_v1.txt` | Ein OpenRouter-Chat-Completions-Aufruf ohne Tools/Retry; fünf erlaubte Dateien, gespeicherte Originalbytes, Request, Rohantwort, Findings und Laufmanifest. Explizite kostenlose Modell-ID und Ausgabetokenlimit als Pflichtargumente. |
-| `tests/test_02_generate_findings.py` | Zwölf synthetische Offline-Tests zu Kontexttrennung, Byte-/Texterhalt, leeren/ungültigen Ausgaben, Fehlern, Überschreibschutz, Modellbeschränkung, Symlinks, `.env`-Laden und expliziter Reasoning-Steuerung. |
-| `resources/reproduce_vul4j18.md` | Reproduktionsprotokoll für den vollständigen verwundbaren/gefixten Benchmark; Umgebung, Befehle, Ergebnis und Aussagegrenzen. |
-
-Standardausgabe: `data/VUL4J-18/`, durch Git ignoriert. Fixierte Dataset-/Fall-/Fix-Revisionen stehen in `src/01_prepare_case.py` und `README.md`. Ein frischer Clone enthält keine generierten Falldaten. **Aktuell sind `data/VUL4J-18/`, der erfolgreiche Review-Lauf und die PoV-Artefakte vorhanden.** Review-Quellhashes wurden gegen den vollständigen verwundbaren Benchmark geprüft; sie stimmen überein.
-**Noch nicht implementiert:** Claim-Decomposer, Claim-Validierung, Annotation und Verifikatoren. Schritt 2 ist technisch abgeschlossen; die inhaltliche Prüfung des Findings bleibt offen.
-
-## Prüfstand und Grenzen
-
-- **Beim ersten Handoff (23.09.2026) geprüft:** Python-Dateien stimmen bytegenau mit GitHub-Stand `c0e5eb2` überein; `python3 -m unittest -v`: 3/3 bestanden. Dokumentationsdiff ohne Whitespace-Fehler. Bei der anschließenden WORKPLAN-Ergänzung nur Dokumentation geprüft; Python-Tests nicht erneut ausgeführt.
-- **Frühere Implementierungssession (23.09.2026):** Vorbereitungsimplementierung und Tests vollständig gelesen; 3/3 Offline-Tests und `git diff --check` bestanden. Die damals neun vorhandenen Quelldateien stimmten mit ihren lokalen Manifest-Hashes überein; kein neuer Download-/Upstream-Abgleich. Fünf Modelldateien vorhanden, keine Treffer für `CVE-` oder `VUL4J` darin. Die üblichen API-Key-Umgebungsvariablen waren nicht gesetzt (nur Vorhandensein geprüft, keine Zugangsdaten gelesen).
-- **Nach Generatorimplementierung:** `python3 -m unittest -v`: 10/10 bestanden; `git diff --check` ohne Befund. CLI-Hilfe und UTF-8-Lesbarkeit der fünf echten Modelldateien geprüft (71.907 Originalbytes). Rohantworten bleiben bytegleich, Titel/Reports unverändert; Refusal, unvollständige Antworten und Formatfehler werden nicht als Null-Ergebnis behandelt. Vorhandene Laufverzeichnisse bleiben erhalten. Kein Netzzugriff in den Tests, keine Live-API-Kompatibilität nachgewiesen. Das Ausgabetokenlimit ist kein Geldbudget; Tokenusage wird übernommen, Kosten bleiben unbekannt (`null`).
-- **Bestandsprüfung vor Umstrukturierung (23.09.2026, Windows/Python 3.12.14):** Beide Skripte, Prompt und beide Testdateien vollständig gelesen. Zehn Offline-Tests ausgeführt: **8 bestanden, 1 fehlgeschlagen, 1 Fehler**. `tests/test_01_prepare_case.py` vergleicht `str(relative_path)` mit POSIX-Pfaden; unter Windows scheitert der Vergleich an Backslashes. Der Symlink-Test scheitert bereits beim Anlegen des Testlinks mit `WinError 1314` (fehlendes Privileg), bevor der Generator geprüft wird. Die historische Angabe „10/10 bestanden“ gilt daher nicht für diese Umgebung. `git diff --check` ohne Befund. Keine Codeänderung, kein Download, Modellaufruf oder PoV; API-Key-Verfügbarkeit nicht erneut geprüft.
-- **Zuvor ausgeführt, in PR #1 dokumentiert:** echter Vorbereitungslauf; alle neun heruntergeladenen Datei-Hashes geprüft; verwundbarer Constructor bytegleich mit Upstream-Fix-Parent; Fix/PoV-Testmethoden inspiziert; `git diff --check` bestanden. Downloadlauf bei dieser Übergabe nicht wiederholt.
-- **Java-PoV ausgeführt:** Beide vollständigen Vergleichsstände gebaut; verwundbar 2/2 erwartete Assertion-Fehler, gefixt 2/2 bestanden. Details und exakte Befehle in `resources/reproduce_vul4j18.md`; Rohlogs unter `data/pov/VUL4J-18-001/`.
-- Der PoV prüft Forwarding-URLs mit Servlet-Mocks. Daraus folgt allein kein Nachweis beliebiger Dateizugriffe oder unauthentifizierter Ausnutzbarkeit.
-- Fehlende Filter, andere URL-Constructor, WikiEngine und reale Deployment-Konfiguration begrenzen Aussagen. Quellkonfiguration ist kein Beleg für ein laufendes Deployment.
-- Der Snapshot kann Benchmark-Anpassungen enthalten. Modellvorwissen über die CVE ist trotz getrennter Referenzen möglich. Ein echter Report liegt vor; noch keine extrahierten oder unabhängig geprüften Claim-Ergebnisse.
-
-## Nächster Schritt und offene Planung
-
-Weiter mit **Schritt 3 in [WORKPLAN.md](WORKPLAN.md)**: das unveränderte gespeicherte Finding manuell in atomare Claims zerlegen und das vorläufige Codebook daran prüfen. Erfolgreichen Review und PoV-Evidenz unverändert behalten.
-
-WORKPLAN.md enthält den aus dem Arbeitsentwurf übernommenen Ablauf, Abschlusskriterien, Prompt-/Schemaentwürfe und die ausdrücklich als Vorschläge markierten Pilot- und Verifikationsoptionen. Die endgültige RQ-Fassung, Taxonomie und Evaluationsplanung sind noch nicht beschlossen.
+Für die WIP-Übergabe am 05.10.2026 erneut geprüft: 29 Offline-Tests, davon
+28 bestanden und ein bestehender Windows-
+Symlink-Skip. Beide CLI-Hilfen und git diff --check erfolgreich. Kein echter
+API-Aufruf oder Java-Neulauf. .env und gespeicherte Versuchsartefakte per Hash
+unverändert; Fallvorbereitung und PoV-Dokumentation unverändert.
+API-Vertrag anhand offizieller OpenAI-Dokumentation geprüft. Verfügbarkeit/Zugriff
+für den lokalen Key und Extraktionsqualität bleiben ungeprüft. Beispiele verwenden
+explizit gpt-6-luna; kein Modell im Code fest voreingestellt.
+Nächster Vorschlag: ein neuer OpenAI-Decomposer-Lauf mit vorhandenem Finding und
+frischem Ziel; anschließend Inhaltsvergleich, keine automatische Wiederholung.

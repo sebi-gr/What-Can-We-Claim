@@ -20,9 +20,8 @@ MODEL_FILES = generator.MODEL_FILES
 def response_bytes(findings):
     return json.dumps({
         "id": "synthetic-generation",
-        "model": "synthetic/model",
-        "provider": "synthetic-provider",
-        "usage": {"prompt_tokens": 10, "completion_tokens": 20, "total_tokens": 30, "cost": 0},
+        "model": "synthetic-model",
+        "usage": {"prompt_tokens": 10, "completion_tokens": 20, "total_tokens": 30},
         "choices": [{
             "finish_reason": "stop",
             "message": {"role": "assistant", "content": json.dumps({"findings": findings})},
@@ -48,12 +47,12 @@ class GenerateFindingsTests(unittest.TestCase):
             path.write_bytes(self.source)
 
     def run_review(self):
-        return generator.generate_findings(self.model_input, self.output, "synthetic/model:free", 100)
+        return generator.generate_findings(self.model_input, self.output, "synthetic-model", 100)
 
     def manifest(self):
         return json.loads((self.output / "run_manifest.json").read_bytes())
 
-    @patch.dict("os.environ", {"OPENROUTER_API_KEY": "synthetic-test-key"})
+    @patch.dict("os.environ", {"OPENAI_API_KEY": "synthetic-test-key"})
     def test_only_allowlisted_sources_sent_and_artifacts_preserved(self):
         marker = "REFERENCE_MUST_NOT_LEAK"
         (self.root / "reference").mkdir()
@@ -71,16 +70,17 @@ class GenerateFindingsTests(unittest.TestCase):
         self.assertNotIn("VUL4J-18", sent.decode())
         self.assertNotIn("synthetic-test-key", sent.decode())
         payload = json.loads(sent)
-        self.assertEqual(payload["tools"], [])
-        self.assertEqual(payload["model"], "synthetic/model:free")
-        self.assertEqual(payload["provider"]["max_price"], {"prompt": 0, "completion": 0, "request": 0})
-        self.assertFalse(payload["provider"]["allow_fallbacks"])
-        self.assertTrue(payload["provider"]["require_parameters"])
-        self.assertEqual(payload["plugins"], [{"id": "context-compression", "enabled": False}])
+        self.assertNotIn("tools", payload)
+        self.assertEqual(payload["model"], "synthetic-model")
+        self.assertNotIn("provider", payload)
+        self.assertNotIn("plugins", payload)
+        self.assertFalse(payload["store"])
         self.assertEqual(payload["response_format"], {"type": "json_object"})
-        self.assertEqual(payload["max_tokens"], 100)
+        self.assertEqual(payload["max_completion_tokens"], 100)
         self.assertNotIn("models", payload)
+        self.assertNotIn("reasoning_effort", payload)
         self.assertNotIn("reasoning", payload)
+        self.assertNotIn("max_tokens", payload)
         self.assertEqual(len(payload["messages"]), 2)
         self.assertEqual(payload["messages"][0], {
             "role": "system", "content": generator.PROMPT.read_bytes().decode("utf-8"),
@@ -92,10 +92,10 @@ class GenerateFindingsTests(unittest.TestCase):
         self.assertEqual(manifest["request_sha256"], hashlib.sha256(sent).hexdigest())
         self.assertEqual(manifest["response_sha256"], hashlib.sha256(raw).hexdigest())
         self.assertEqual(manifest["usage"]["total_tokens"], 30)
-        self.assertEqual(manifest["provider"], "openrouter")
-        self.assertEqual(manifest["upstream_provider"], "synthetic-provider")
+        self.assertEqual(manifest["provider"], "openai")
+        self.assertEqual(manifest["endpoint"], "https://api.openai.com/v1/chat/completions")
         self.assertEqual(manifest["response_id"], "synthetic-generation")
-        self.assertEqual(manifest["model_returned"], "synthetic/model")
+        self.assertEqual(manifest["model_returned"], "synthetic-model")
         self.assertEqual(manifest["finish_reason"], "stop")
         self.assertIsNone(manifest["cost_usd"])
         for name in MODEL_FILES:
@@ -104,7 +104,7 @@ class GenerateFindingsTests(unittest.TestCase):
         saved = json.loads((self.output / "findings.jsonl").read_text())
         self.assertEqual(saved, {"finding_id": f"{manifest['run_id']}:F001", **finding})
 
-    @patch.dict("os.environ", {"OPENROUTER_API_KEY": "synthetic-test-key"})
+    @patch.dict("os.environ", {"OPENAI_API_KEY": "synthetic-test-key"})
     def test_empty_result_is_saved_without_retry(self):
         with patch.object(generator, "request_review", return_value=(200, None, response_bytes([]))) as request:
             self.assertEqual(self.run_review(), "no_findings")
@@ -112,7 +112,7 @@ class GenerateFindingsTests(unittest.TestCase):
         self.assertEqual((self.output / "findings.jsonl").read_bytes(), b"")
         self.assertEqual(self.manifest()["finding_count"], 0)
 
-    @patch.dict("os.environ", {"OPENROUTER_API_KEY": "synthetic-test-key"})
+    @patch.dict("os.environ", {"OPENAI_API_KEY": "synthetic-test-key"})
     def test_invalid_and_incomplete_outputs_are_kept_without_findings(self):
         examples = [b"not JSON", b"[]", b'{"choices": []}', b'{"choices": null}',
                     response_bytes([{"title": "missing report"}])]
@@ -138,7 +138,7 @@ class GenerateFindingsTests(unittest.TestCase):
                 self.assertFalse((self.output / "findings.jsonl").exists())
                 self.assertEqual(self.manifest()["status"], "invalid_output")
 
-    @patch.dict("os.environ", {"OPENROUTER_API_KEY": "synthetic-test-key"})
+    @patch.dict("os.environ", {"OPENAI_API_KEY": "synthetic-test-key"})
     def test_http_error_and_network_failure_are_saved_without_retry(self):
         raw = b'{"error": "synthetic rate limit"}'
         error = HTTPError(generator.ENDPOINT, 429, "rate limit", {"x-request-id": "err-1"}, io.BytesIO(raw))
@@ -146,7 +146,7 @@ class GenerateFindingsTests(unittest.TestCase):
             self.assertEqual(self.run_review(), "run_error")
         request.assert_called_once()
         http_request = request.call_args.args[0]
-        self.assertEqual(http_request.full_url, "https://openrouter.ai/api/v1/chat/completions")
+        self.assertEqual(http_request.full_url, "https://api.openai.com/v1/chat/completions")
         self.assertEqual(http_request.get_header("Authorization"), "Bearer synthetic-test-key")
         self.assertEqual(http_request.data, (self.output / "request.json").read_bytes())
         self.assertEqual(self.manifest()["http_status"], 429)
@@ -181,29 +181,29 @@ class GenerateFindingsTests(unittest.TestCase):
             with self.subTest(value_format=index):
                 self.output = self.root / f"dotenv-{index}"
                 self.dotenv.write_text(
-                    "# local credentials\n\nUNRELATED=ignored\nOPENROUTER_API_KEY = " + value + "\n",
+                    "# local credentials\n\nUNRELATED=ignored\nOPENAI_API_KEY = " + value + "\n",
                     encoding="utf-8-sig",
                 )
                 with patch.object(generator, "request_review", return_value=(200, None, response_bytes([]))) as request:
                     self.assertEqual(self.run_review(), "no_findings")
                 request.assert_called_once()
                 self.assertEqual(request.call_args.args[1], key)
-                self.assertNotIn("OPENROUTER_API_KEY", os.environ)
+                self.assertNotIn("OPENAI_API_KEY", os.environ)
                 for artifact in self.output.rglob("*"):
                     if artifact.is_file():
                         self.assertNotIn(key.encode(), artifact.read_bytes())
 
-    @patch.dict("os.environ", {"OPENROUTER_API_KEY": "synthetic-environment-key"}, clear=True)
+    @patch.dict("os.environ", {"OPENAI_API_KEY": "synthetic-environment-key"}, clear=True)
     def test_environment_key_takes_precedence_over_dotenv(self):
-        self.dotenv.write_text('OPENROUTER_API_KEY="unclosed', encoding="utf-8")
+        self.dotenv.write_text('OPENAI_API_KEY="unclosed', encoding="utf-8")
         with patch.object(generator, "request_review", return_value=(200, None, response_bytes([]))) as request:
             self.assertEqual(self.run_review(), "no_findings")
         self.assertEqual(request.call_args.args[1], "synthetic-environment-key")
 
     @patch.dict("os.environ", {}, clear=True)
     def test_empty_or_invalid_dotenv_is_saved_as_error_without_leaking_key(self):
-        examples = [b"OPENROUTER_API_KEY=\n", b"# no key\n",
-                    b'OPENROUTER_API_KEY="synthetic-private-value\n', b"\xff"]
+        examples = [b"OPENAI_API_KEY=\n", b"# no key\n",
+                    b'OPENAI_API_KEY="synthetic-private-value\n', b"\xff"]
         for index, content in enumerate(examples):
             with self.subTest(index=index):
                 self.output = self.root / f"dotenv-error-{index}"
@@ -215,22 +215,35 @@ class GenerateFindingsTests(unittest.TestCase):
                 self.assertNotIn("synthetic-private-value", self.manifest()["error"])
                 self.assertFalse((self.output / "findings.jsonl").exists())
 
-    @patch.dict("os.environ", {"OPENROUTER_API_KEY": "synthetic-test-key"})
+    @patch.dict("os.environ", {"OPENAI_API_KEY": "synthetic-test-key"})
     def test_disabling_reasoning_is_explicit_and_recorded(self):
         with patch.object(generator, "request_review", return_value=(200, None, response_bytes([]))) as request:
             status = generator.generate_findings(
-                self.model_input, self.output, "synthetic/model:free", 8192, disable_reasoning=True,
+                self.model_input, self.output, "synthetic-model", 8192, disable_reasoning=True,
             )
         self.assertEqual(status, "no_findings")
         request.assert_called_once()
         payload = json.loads(request.call_args.args[0])
-        self.assertEqual(payload["reasoning"], {"enabled": False})
-        self.assertEqual(payload["max_tokens"], 8192)
-        self.assertEqual(self.manifest()["parameters"]["reasoning"], {"enabled": False})
+        self.assertEqual(payload["reasoning_effort"], "none")
+        self.assertEqual(payload["max_completion_tokens"], 8192)
+        self.assertEqual(self.manifest()["parameters"]["reasoning_effort"], "none")
         self.assertEqual(request.call_args.args[0], (self.output / "request.json").read_bytes())
 
-    def test_paid_or_automatic_models_are_rejected_before_creating_run(self):
-        for model in ["qwen/qwen3-coder", "openrouter/free", "", "model:free", "synthetic/model:free "]:
+    @patch.dict("os.environ", {"OPENROUTER_API_KEY": "old-provider-key"}, clear=True)
+    def test_old_provider_key_is_not_used_for_openai(self):
+        self.dotenv.write_text("OPENROUTER_API_KEY=old-dotenv-key\n", encoding="utf-8")
+        with patch.object(generator, "request_review") as request:
+            self.assertEqual(self.run_review(), "run_error")
+        request.assert_not_called()
+        self.assertEqual(self.manifest()["request_attempts"], 0)
+        self.assertIn("OPENAI_API_KEY", self.manifest()["error"])
+        for path in self.output.rglob("*"):
+            if path.is_file():
+                self.assertNotIn(b"old-provider-key", path.read_bytes())
+                self.assertNotIn(b"old-dotenv-key", path.read_bytes())
+
+    def test_invalid_or_openrouter_models_are_rejected_before_creating_run(self):
+        for model in ["nvidia/model:free", "openrouter/free", "", "model:free", "synthetic-model "]:
             with self.subTest(model=model):
                 with patch.object(generator, "request_review") as request:
                     with self.assertRaises(ValueError):

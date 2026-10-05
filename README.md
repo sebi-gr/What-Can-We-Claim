@@ -1,270 +1,184 @@
 # What Can We Verify?
 
-Research repository for evaluating claims in LLM-generated security findings.
+Kleiner Forschungsprototyp: Security-Findings eines LLM in einzeln prüfbare
+Behauptungen zerlegen und später mit unabhängiger Evidenz prüfen.
 
-Repository layout:
+## Stand
+
+- VUL4J-18 / Apache JSPWiki vorbereitet; Java-PoV auf verwundbarer/gefixter Version
+  reproduziert: zwei erwartete Assertion-Fehler gegenüber zwei bestandenen Tests.
+  Das belegt das getestete Mock-Forwarding, keinen End-to-End-Dateizugriff.
+- Ein Security-Finding erzeugt und manuell in 13 Claims zerlegt.
+- Automatische Zerlegung technisch vorhanden. Die bisherigen Nemotron-Läufe 002/003
+  lieferten je vier identische, zu grobe Propositionen. Formatgültigkeit belegt keine
+  gute Zerlegung und keine Wahrheit der Claims.
+- Generator und Decomposer verwenden jetzt direkt OpenAI. Ein echter OpenAI-Lauf
+  und dessen Qualitätsvergleich stehen noch aus.
+
+Arbeitsplan: [WORKPLAN.md](WORKPLAN.md). Übergabestand: [HANDOFF.md](HANDOFF.md).
+
+## Dateien
 
 ```text
 src/
   01_prepare_case.py
   02_generate_findings.py
+  03_decompose_findings.py
 tests/
-  __init__.py
   test_01_prepare_case.py
   test_02_generate_findings.py
+  test_03_decompose_findings.py
 resources/
-  review_prompt_v1.txt
+  review_prompt.txt
+  decomposition_prompt.txt
+  claim_codebook.md
+  claim_response_schema.json
+  manual_annotation_template.md
   reproduce_vul4j18.md
-data/                       # generated, ignored by Git
+data/                         # lokale Versuchsdaten, von Git ignoriert
 ```
 
-Project documentation and the license remain at the repository root.
-Run the commands below from that root.
+Pro Dokument/Prompt eine aktuelle Datei ohne Versionssuffix; die Historie liegt
+in Git. Gestartete Modellläufe speichern ihre tatsächlich verwendeten Eingaben,
+Ressourcen und Rohantworten separat unter `data/`. Diese Laufkopien bleiben erhalten.
 
-Current stage: case preparation, one complete review and the Java-PoV reproduction
-are complete. The review artifact integrity has been checked, but its security
-claims remain unverified. Claim extraction and independent claim verification
-remain pending. See
-[WORKPLAN.md](WORKPLAN.md) for the current plan and [HANDOFF.md](HANDOFF.md) for
-the checked state; keep this README synchronized with user-facing changes.
+## Einrichtung
 
-The first step prepares **VUL4J-18**, the JSPWiki path-traversal case
-**CVE-2019-0225 / CWE-22**, for a localized code review.
+Python 3.9+, nur Standardbibliothek. Alle Befehle vom Repo-Wurzelverzeichnis ausführen.
+Unter Windows kann statt `python3` beispielsweise `python3.14.exe` verwendet werden.
 
-Run from this repository with **Python 3.9+** and internet access to
-`raw.githubusercontent.com`. No Python packages, Java or Docker are needed for
-this preparation step:
+In der lokalen, ignorierten `.env`:
+
+```dotenv
+OPENAI_API_KEY=dein_api_key
+```
+
+`.env.example` enthält nur den leeren Eintrag. Ein nichtleerer `OPENAI_API_KEY`
+aus der Prozessumgebung hat Vorrang. Keine Übergabe des Keys als CLI-Argument nötig.
+Der einfache Loader akzeptiert unzitierte oder vollständig einfach/doppelt zitierte
+Werte; keine Variablenexpansion oder Inline-Kommentare hinter dem Wert.
+
+Beide LLM-Schritte senden genau einen Request an
+`https://api.openai.com/v1/chat/completions`. Modell und Tokenlimit sind explizite
+CLI-Argumente. Es gibt keine automatische Modellwahl, Fallbacks, Tools oder Retries.
+OpenAI-Aufrufe können Kosten verursachen; die frühere Beschränkung auf kostenlose
+OpenRouter-Modelle entfällt. Das Tokenlimit ist kein Geldbudget.
+
+`--max-output-tokens` setzt `max_completion_tokens` einschließlich Reasoning.
+Ohne `--no-reasoning` bleibt die Reasoning-Einstellung beim Modellstandard;
+mit dem Flag wird `reasoning_effort=none` gesendet. Das ausgewählte Modell muss
+`none` unterstützen. Requests nutzen JSON-Modus und `store=false`; die Prüfung
+des konkreten Claim-Formats erfolgt lokal.
+[OpenAI API-Vertrag](https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create).
+
+Die Beispiele verwenden `gpt-6-luna`, dessen Dokumentation Chat Completions und
+Reasoning `none` ausweist. Das ist eine Beispielwahl, keine geprüfte Qualitäts-
+oder Zugriffsbestätigung für diesen Key. Ein anderes kompatibles OpenAI-Modell
+kann explizit angegeben werden; OpenRouter-IDs wie `anbieter/modell:free` werden
+abgelehnt. Modell-Snapshots nutzen, soweit verfügbar; angeforderte und zurückgegebene
+Modellkennung werden gespeichert.
+[Modelldokumentation](https://developers.openai.com/api/docs/models/gpt-6-luna).
+
+## 1. Fall vorbereiten
 
 ```bash
-python3 src/01_prepare_case.py
+python3 src/01_prepare_case.py --output data/VUL4J-18
 ```
 
-The script writes `data/VUL4J-18/`. It refuses to overwrite an existing output.
-For another copy, choose a new directory:
+Lädt fixierte Revisionen von `raw.githubusercontent.com`. Unter `model_input/`
+liegen fünf unveränderte Quell-/Konfigurationsdateien: WikiServlet,
+DefaultURLConstructor, URLConstructor, jspwiki.properties und web.xml.
+`reference/` enthält Dataset-Zeile, Fix, PoV und Lizenzhinweise. `manifest.json`
+speichert Revisionen und Hashes. Ein belegtes Ziel wird nicht überschrieben.
+
+Nur `model_input/` darf an den Finding-Generator gehen. Fix, PoV, Manifest,
+Annotationen und Projektdokumentation bleiben außerhalb seines Kontexts.
+Der Ausschnitt ist kein vollständiger Build und erlaubt keine Aussagen über
+fehlende Filter, Aufrufer oder ein tatsächliches Deployment. Agenten mit Tools
+benötigten zusätzlich eine technische Beschränkung des Dateizugriffs.
+
+Dieser Vorbereitungsschritt führt keinen Java-Test aus. Die bereits geprüften
+Build-/PoV-Befehle und ihre Grenzen stehen in
+[reproduce_vul4j18.md](resources/reproduce_vul4j18.md).
+
+## 2. Finding erzeugen
 
 ```bash
-python3 src/01_prepare_case.py --output data/VUL4J-18-copy
+python3 src/02_generate_findings.py --model gpt-6-luna --max-output-tokens 8192 --no-reasoning --output data/runs/VUL4J-18-openai-001
 ```
 
-| Output | Purpose |
+Standardkontext: `data/VUL4J-18/model_input/`, alternativ `--model-input PFAD`.
+Gesendet werden ausschließlich die fünf erlaubten Dateien mit Pfaden und
+Originalzeilennummern sowie [review_prompt.txt](resources/review_prompt.txt).
+Symlink-Pfade werden abgelehnt. Keine externe Recherche oder Toolausführung.
+
+## 3. Manuell zerlegen
+
+Regeln: [claim_codebook.md](resources/claim_codebook.md). Die
+[Vorlage](resources/manual_annotation_template.md) für neue Annotationen nach
+`data/annotations/` kopieren. Das bestehende Entwicklungsbeispiel liegt unter
+`data/annotations/VUL4J-18-review-001/manual_annotation_001.md`.
+
+Ein Satz kann mehrere unabhängig prüfbare Propositionen mit verschiedenen Familien
+enthalten. Dasselbe Zitat darf mehrfach verwendet werden. Keine Duplikate allein
+zum Wechseln der Familie und keine feste Zielanzahl. Bedingungen, Unsicherheit,
+Negation, Alternativen und Zusammenhänge erhalten. Ein redundanter Titel braucht
+keinen zusätzlichen Claim. Die manuelle Annotation entstand mit Vorwissen über
+Code/Fix/PoV und Codex-Unterstützung; sie ist keine unabhängige Wahrheitsreferenz.
+
+## 4. Gespeichertes Finding automatisch zerlegen
+
+Das vorhandene Finding kann direkt weiterverwendet werden; kein neuer Review nötig:
+
+```bash
+python3 src/03_decompose_findings.py --findings data/runs/VUL4J-18-review-001/findings.jsonl --finding-id 0721c0a0-bba7-48c1-a63c-da196a69d97c:F001 --model gpt-6-luna --max-output-tokens 8192 --no-reasoning --output data/decompositions/VUL4J-18-openai-001
+```
+
+Frischer Kontext nur aus ausgewähltem Titel/Report,
+[decomposition_prompt.txt](resources/decomposition_prompt.txt), Codebook und
+[claim_response_schema.json](resources/claim_response_schema.json).
+Keine manuelle Annotation, Quell-/Referenzdateien oder Nachbarfindings im Request.
+Das Schema enthält weiterhin `schema_version: "1"` als Datenformatkennung;
+das ist keine zusätzliche Dokumentversion.
+
+Claims enthalten Proposition, Familie/Untertyp/Begründung, Qualifiers, exakte Zitate
+mit einsbasierter Vorkommensnummer und lokale Kontext-IDs. Der Wrapper ergänzt
+nullbasierte Unicode-Codepoint-Offsets (Ende exklusiv), Run-/Finding-ID und
+`verification_status: not_evaluated`. Er prüft Felder, Kategorien, Zitate und
+Referenzen, aber keine Granularität, Vollständigkeit oder Wahrheit.
+
+## Laufartefakte und Fehler
+
+| Datei | Zweck |
 |---|---|
-| `model_input/` | Five original source/configuration files for the review model |
-| `reference/vul4j_row.json` | Benchmark metadata, CVE, test names and build commands |
-| `reference/fixed/` | The upstream fixed `DefaultURLConstructor.java` |
-| `reference/pov/` | The benchmark's `WikiServletTest.java` |
-| `reference/LICENSE`, `reference/NOTICE` | JSPWiki's upstream licensing and attribution |
-| `manifest.json` | Pinned sources, file hashes and `pov_status: not_run` |
+| `request.json` | Tatsächlich gesendeter Body, ohne Authorization-Header |
+| `generation_raw.json` / `decomposition_raw.json` | Unveränderte empfangene Antwort |
+| `run_manifest.json` | Modell, Parameter, Status, Zeit, Usage, Eingabe-/Ressourcen-/Codehashes |
+| `findings.jsonl` / `claims.jsonl` | Nur vollständig gültige Ausgaben |
+| `validation.json` | Beim Decomposer: Format-/Zitat-/Referenzprüfung und erster Fehler |
+| Eingaben und Ressourcen | Exakte Quell-, Finding-, Prompt-, Codebook- und Schemakopien je Schritt |
 
-Pass **only `model_input/`** to the finding generator. Reference material and
-the manifest contain the answer and must stay outside its accessible context.
-Separate directories alone do not restrict a tool-enabled agent: its file tools
-must be scoped to `model_input/`.
+`completed` bedeutet formal gültig. Gültige leere Listen werden als `no_findings`
+bzw. `no_claims` gespeichert. Ungültige oder abgeschnittene Antworten ergeben
+`invalid_output`, technische/API-/Konfigurationsfehler `run_error`. Fehler und leere
+Ergebnisse erhalten; keine Teilclaims, automatische Reparatur oder Wiederholung.
+Bei Fehlern zeigen CLI und Manifest die Ursache; Exit-Code 1. Vorzeitig beendete
+Prozesse können unvollständige Artefakte hinterlassen. Bestehende Ziele bleiben erhalten.
 
-The model input contains the full, unchanged files:
+Usage wird unverändert gespeichert; `cost_usd` wird nicht berechnet und bleibt
+`null`. Niemals `.env` oder Authorization-Header weitergeben oder versionieren.
+Der Anbieterwechsel allein beweist keine bessere Zerlegung; das nächste Ergebnis
+mit den bisherigen Propositionen und der manuellen Annotation vergleichen.
 
-- `jspwiki-main/src/main/java/org/apache/wiki/WikiServlet.java`
-- `jspwiki-main/src/main/java/org/apache/wiki/url/DefaultURLConstructor.java`
-- `jspwiki-main/src/main/java/org/apache/wiki/url/URLConstructor.java`
-- `jspwiki-main/src/main/resources/ini/jspwiki.properties`
-- `jspwiki-war/src/main/webapp/WEB-INF/web.xml`
-
-This selection preserves the request-forwarding code, interface and configuration
-context, with original paths and line numbers. It excludes tests, patches,
-advisories and Git history. It is a **selected source subset**, not a runnable
-checkout or a scan of the whole application. Other URL constructors, filters,
-`WikiEngine` and deployment-specific settings are outside this first context;
-claims needing them must retain that uncertainty. The supplied configuration is
-a source template, not evidence of a particular running deployment.
-
-All downloads use immutable commit hashes:
-
-| Source | Commit |
-|---|---|
-| [Vul4J dataset](https://github.com/tuhh-softsec/Vul4J/blob/376411da11fa705019f731404de1d0679fe73537/dataset/vul4j_dataset.csv) | `376411da11fa705019f731404de1d0679fe73537` |
-| [VUL4J-18 benchmark snapshot](https://github.com/tuhh-softsec/Vul4J/tree/07ad7850a041876befb99847053e4b5e181597a5) | `07ad7850a041876befb99847053e4b5e181597a5` |
-| [Upstream JSPWiki fix](https://github.com/apache/jspwiki/commit/88d89d6523802c044cfcb7930cba40d8eeb21da2) | `88d89d6523802c044cfcb7930cba40d8eeb21da2` |
-
-The source context comes from Vul4J's prepared case snapshot, which can include
-benchmark adjustments; it is not presented as a pristine upstream checkout.
-The vulnerable `DefaultURLConstructor.java` was checked against the upstream
-fix's parent, `f140a2a4371735ad24d04a1d78c6e1d9ceaed76f`: its bytes match.
-
-The fix changes the forwarding destination returned by `getForwardPage()`.
-The PoV checks forwarding URLs using mocked servlet requests. It is not, by
-itself, an end-to-end proof of arbitrary file reads or unauthenticated access.
-This preparation script **does not run the PoV**. Step 1b was executed separately
-with the complete benchmark, Eclipse Temurin 8 and Maven 3.9.16. Both unchanged
-PoV tests failed on the vulnerable version because the actual forward URL was
-`/?page=Main&` instead of `/Wiki.jsp?page=Main&`; both passed after applying the
-original upstream fix. Builds succeeded and neither test run contained errors or
-skips. Exact commands, provenance, environment and limits are documented in
-[resources/reproduce_vul4j18.md](resources/reproduce_vul4j18.md); full logs remain
-under the ignored `data/pov/VUL4J-18-001/`.
-
-This differential result reproduces the forwarding behavior covered by the mock
-servlet tests. It does not by itself prove arbitrary file reads, unauthenticated
-remote exploitation or behavior in a deployed JSPWiki instance. See the pinned
-[Vul4J instructions](https://github.com/tuhh-softsec/Vul4J/blob/376411da11fa705019f731404de1d0679fe73537/README.md).
-
-Generated data stays untracked. Our code uses this repository's MIT license;
-downloaded JSPWiki files keep their upstream licenses and notices. The Vul4J
-dataset is [CC BY 4.0](https://github.com/tuhh-softsec/Vul4J/blob/376411da11fa705019f731404de1d0679fe73537/DATA_LICENSE).
-
-Run the small offline checks with:
+## Prüfungen
 
 ```bash
 python3 -m unittest -v
+git diff --check
 ```
 
-## Generate one localized review
-
-`src/02_generate_findings.py` uses the standard library and a single OpenRouter
-Chat Completions request with an explicitly selected **`:free` model**.
-Paid model IDs and automatic routers are rejected before a run is created.
-No model download, local training or additional Python package is needed.
-The latest inspected `VUL4J-18-review-001` completed on 2026-09-23 at 14:31 UTC:
-one finding, `finish_reason: stop`, 7.656 seconds, 25,832 prompt tokens and 216
-completion tokens. It used Nemotron with an 8192-token limit and `--no-reasoning`;
-the provider reported zero reasoning tokens and zero cost. Saved hashes and the
-finding text match the request/source artifacts and raw response. This confirms
-technical completion, not the truth of the finding. Earlier attempts encountered
-an unavailable Qwen endpoint, token limits and Nvidia overload. Those earlier
-artifacts are no longer at the reused path; HANDOFF records their inspections.
-
-Create an [OpenRouter API key](https://openrouter.ai/settings/keys) and put it in
-`.env` at the repository root. Use `.env.example` as a template if the file does
-not exist:
-
-```dotenv
-OPENROUTER_API_KEY=your-key-here
-```
-
-The generator automatically reads this file relative to its script location;
-no console key entry is needed on subsequent runs. `.env` is ignored by Git and
-is never copied into model inputs or run artifacts. Only the blank `.env.example`
-is versioned. An existing nonempty `OPENROUTER_API_KEY` environment variable takes
-precedence; `OPENAI_API_KEY` is not used.
-
-The small loader supports UTF-8 (including BOM), blank lines, whole-line comments
-and an optionally single- or double-quoted key value. Use one key entry, with no
-inline comments, `export`, variable expansion or multiline values. No additional
-Python package is needed.
-
-Prepare the case with `python3 src/01_prepare_case.py` if it is not already present.
-For any separately planned new review, choose an explicit token limit and a fresh
-run directory. The following settings produced the completed technical PoC;
-another run is not needed for the next Java-PoV step:
-
-```bash
-python3 src/02_generate_findings.py --model nvidia/nemotron-3-super-120b-a12b:free --max-output-tokens 8192 --no-reasoning --output data/runs/VUL4J-18-review-002
-```
-
-Both `--model` and the output-token limit are required; there is no default model.
-`--no-reasoning` sends `reasoning: {"enabled": false}` and records it in the request
-and manifest. Without the flag, provider defaults remain unchanged. Only use the
-flag on models supporting disabled reasoning; unsupported settings should fail
-under `require_parameters: true`, rather than be silently removed. The public
-Nemotron catalog checked on 2026-09-23 reports `mandatory: false` and reasoning
-enabled by default. The completed live attempt sent this flag and returned zero
-reported reasoning tokens; effects on review quality have not been evaluated.
-The example uses Nemotron 3 Super, listed with zero prompt/completion prices and
-JSON-format support in the live public catalog checked on 2026-09-23. This is a
-model that has produced one complete findings report. Its
-[free endpoint](https://openrouter.ai/nvidia/nemotron-3-super-120b-a12b:free) discloses
-logging for security and service improvement; use only the public benchmark input.
-The output limit is saved as `max_tokens` and is not a monetary budget.
-
-For the initial pipeline proof of concept, disabling reasoning is a reasonable
-technical trial, but it changes the experimental condition. It requests a response
-without the model's additional reasoning phase; it does not establish equal review
-quality. Token use and latency may decrease, while findings, their detail,
-uncertainty and the distribution of claim types may change. The size and direction
-of these effects have not been measured here.
-
-The complete response establishes report storage and provides input for subsequent
-claim extraction. It characterizes only this model, context and generation setting.
-One selected case cannot establish representative LLM security-review performance,
-with or without reasoning. The completed no-reasoning trial is technical validation,
-not a finalized evaluation configuration.
-
-Before evaluation, fix and document the model, prompt, source context, token budget,
-reasoning setting and run count. Keep technical trials separate from evaluation
-and retain failures. A small, predefined comparison with reasoning enabled and
-disabled is an optional later check, not a prerequisite for this PoC. Do not select
-settings based on obtaining preferred findings. Methodological planning belongs in
-[WORKPLAN.md](WORKPLAN.md).
-
-Only explicit model IDs ending in `:free` are permitted. The request also sets provider price ceilings
-to zero for prompt tokens, completion tokens and requests, and disables provider
-fallbacks. No model fallback, paid plugin or automatic retry is requested. If no
-free provider supports the requested parameters, the run fails visibly instead
-of switching to a paid endpoint. Free availability and limits may change; see
-[the current model catalog](https://openrouter.ai/api/v1/models) and
-[OpenRouter limits](https://openrouter.ai/docs/api-reference/limits).
-
-Only the five allowlisted files under `--model-input` (default:
-`data/VUL4J-18/model_input`) enter the request. Root/file/directory symlinks within
-that input are rejected. Extra files are ignored. The versioned
-`resources/review_prompt_v1.txt` is the system message; paths and original one-based
-source line numbers form the user message. Source bytes are preserved separately.
-No reference, manifest, case ID, project instructions, chat history or agent tools
-are supplied. Context compression is explicitly disabled. JSON output is requested
-with only titles and reports, without claim categories. This generates reports;
-it does not independently verify their claims.
-
-The HTTP timeout is 180 seconds. There is no automatic retry, repair request or
-follow-up. An uncertain network outcome is retained as an error. OpenRouter chooses
-an eligible serving provider; its returned name, model and generation ID are saved
-when available. The model ID is not an immutable revision or a guarantee of identical
-future results. Data handling follows the account and serving-provider policies;
-the script makes no zero-retention promise.
-
-| Run output | Purpose |
-|---|---|
-| `model_input/`, `review_prompt_v1.txt` | Exact source and prompt bytes |
-| `request.json` | Exact HTTP request body, excluding the authorization header |
-| `generation_raw.json` | Unmodified response body, including HTTP errors; may not be valid JSON |
-| `findings.jsonl` | Validated titles/reports with stable run-scoped IDs; text is not corrected |
-| `run_manifest.json` | Case/run IDs, timestamps, duration, model, serving provider, response ID, sent parameters, hashes, status, usage and errors |
-
-`completed` means structurally valid findings were saved, not that their claims
-are true. An explicit empty list produces `no_findings` and an empty JSONL file.
-Only a single assistant completion with `finish_reason: stop` is accepted.
-Malformed output, refusals, tool calls and incomplete responses produce
-`invalid_output`; HTTP/network failures, top-level provider errors or a missing/invalid key configuration
-produce `run_error`. Neither error status produces a findings file. Raw response
-bytes are saved whenever received. Usage, including any reported cost, is preserved
-unchanged; `cost_usd` remains `null` because the script does not independently
-calculate billing. Provider defaults are visible only as returned in the response.
-
-Input/configuration errors before a run is created leave no run directory.
-Started runs remain on disk, and an existing output is always refused. A process
-killed before finalization can leave `running` in the manifest: that is an unfinished
-run, not evidence of no findings. Outputs belong under the ignored `data/` directory.
-
-The twelve generator tests use synthetic responses and no network. Together with
-three preparation tests they cover isolation, byte preservation, free-model
-restrictions, `.env` loading, credential exclusion, explicit reasoning control and failure handling. On Windows, the symlink test is explicitly
-skipped if the process lacks the required privilege; protection is not verified
-there. These tests do not establish live API/model compatibility.
-
-Protocol references: [Chat Completions](https://openrouter.ai/docs/api/reference/overview),
-[provider routing and price caps](https://openrouter.ai/docs/guides/routing/provider-selection),
-[context compression](https://openrouter.ai/docs/guides/features/message-transforms).
-
-The Java-PoV comparison in step 1b is complete. Keep the completed review and PoV
-evidence unchanged; no further generator request is needed. The next planned work
-is manual decomposition of the saved finding and refinement of the codebook.
-
-For `finish_reason: length`, the saved response is incomplete and must not be
-repaired or counted as findings. Reasoning can consume the same output budget;
-see [OpenRouter reasoning limits](https://openrouter.ai/docs/guides/best-practices/reasoning-tokens).
-The CLI now prints the saved failure reason. Keep each run directory, even on
-failure, and choose a fresh path for an explicitly changed technical trial.
-
-If the response reports `503` with `Service temporarily overloaded`, retain the
-failed run. The observed error does not justify changing the prompt, token budget
-or reasoning mode. An explicitly chosen later technical attempt can use the same
-settings and a new output directory; its timing and outcome must remain recorded.
-An HTTP 200 alone does not indicate a successful generation: check the response
-body and final run status. No automatic retry is performed.
+Offline-Tests mit synthetischen Antworten: API-Vertrag, Kontexttrennung,
+Key-Laden/Geheimnisschutz, Hashes, Überschreibschutz, Fehler ohne Retry sowie
+Claim-Format, Zitate/Offsets und Referenzen. Der Symlink-Test wird unter Windows
+bei fehlendem Privileg ausdrücklich übersprungen; der Schutz ist dort dann ungeprüft.
+Ein echter API-Aufruf oder Java-Build ist nicht Bestandteil der Python-Tests.
