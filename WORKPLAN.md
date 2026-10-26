@@ -16,7 +16,7 @@ nachgewiesene Verbesserung einer kompletten Security-Prüfung behaupten.
 
 | Schritt | Stand | Abschlusskriterium |
 |---|---|---|
-| 0. Rechnerübergabe | In Abschlussprüfung | Beide Git-Verläufe, Rohdaten und Transkript entfernt gesichert; frischer Clone und Hash-Wiederherstellung geprüft. |
+| 0. Rechnerübergabe | Datenwiederherstellung geprüft; Abschlussnachweis im privaten Archiv | Beide Git-Verläufe, Rohdaten und Transkript entfernt gesichert; alle 6.608 Archivdateien aus GitHub-Clone mit SHA-256 wiederhergestellt. |
 | 1. Nutzen begründen | Argumente vorhanden, auszuarbeiten | Kurze Begründung mit konkreten Verwendungen, Literaturbelegen und klaren Aussagegrenzen. |
 | 2. Zielbeispiele manuell ausarbeiten | JSPWiki-Reportzerlegung und POS-Entwürfe vorhanden | Drei unterschiedliche Entwicklungsbeispiele mit Codeankern, Zielclaims, Bedingungen, offenen Fragen und alternativen Zerlegungen. |
 | 3. Abstraktionsniveau festlegen | Offen | An Beispielen begründete Granularitätsregeln; höhere Aussagen nur mit notwendigen Zusatzbedingungen. Hierarchie nur bei konkretem Bedarf. |

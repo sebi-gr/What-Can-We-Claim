@@ -1,3 +1,6 @@
 docs/*.md text eol=lf
+resources/*.txt text eol=lf
+resources/*.md text eol=lf
+resources/*.json text eol=lf
 *.bundle binary
 *.zip binary

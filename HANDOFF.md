@@ -24,6 +24,8 @@ Ausführliche Einordnung: [Forschungsrichtung](docs/RESEARCH_DIRECTION.md).
 - Direkte OpenAI-Aufrufe über Standardbibliothek; Modell und Tokenlimit explizit,
   keine Retries. Standalone-Aufrufe haben keinen monetären Schutz.
 - WCWV-Antwortvertrag bleibt schema_version=1. POS-Profil 0.1 wurde nicht importiert.
+- Aktive Prompt-/Codebook-/Schema-Dateien behalten durch .gitattributes LF-Bytes
+  auch nach Windows-Clone; historische Datenarchive bleiben bytegetreu unverändert.
 - Vorhandenes JSPWiki-Finding: Run 0721c0a0-bba7-48c1-a63c-da196a69d97c.
 - 13 historische manuelle Claims: SG mit Codex-Unterstützung und Vorwissen über
   Code/Fix/PoV; Reportzerlegung, keine unabhängige Wahrheitsreferenz.
