@@ -1,0 +1,61 @@
+    public XmlFactory() { this(null, null, null); }
+
+    public XmlFactory(ObjectCodec oc) {
+        this(oc, null, null);
+    }
+
+    public XmlFactory(XMLInputFactory xmlIn) {
+        this(null, xmlIn, null);
+    }
+    
+    public XmlFactory(XMLInputFactory xmlIn, XMLOutputFactory xmlOut) {
+        this(null, xmlIn, xmlOut);
+    }
+    
+    public XmlFactory(ObjectCodec oc, XMLInputFactory xmlIn, XMLOutputFactory xmlOut)
+    {
+        this(oc, DEFAULT_XML_PARSER_FEATURE_FLAGS, DEFAULT_XML_GENERATOR_FEATURE_FLAGS,
+                xmlIn, xmlOut, null);
+    }
+
+    protected XmlFactory(ObjectCodec oc, int xpFeatures, int xgFeatures,
+            XMLInputFactory xmlIn, XMLOutputFactory xmlOut,
+            String nameForTextElem)
+    {
+        super(oc);
+        _xmlParserFeatures = xpFeatures;
+        _xmlGeneratorFeatures = xgFeatures;
+        _cfgNameForTextElement = nameForTextElem;
+        if (xmlIn == null) {
+            xmlIn = XMLInputFactory.newInstance();
+            // as per [dataformat-xml#190], disable external entity expansion by default
+            xmlIn.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);
+        }
+        if (xmlOut == null) {
+            xmlOut = XMLOutputFactory.newInstance();
+        }
+        _initFactories(xmlIn, xmlOut);
+        _xmlInputFactory = xmlIn;
+        _xmlOutputFactory = xmlOut;
+    }
+
+    /**
+     * @since 2.2.1
+     */
+    protected XmlFactory(XmlFactory src, ObjectCodec oc)
+    {
+        super(src, oc);
+        _xmlParserFeatures = src._xmlParserFeatures;
+        _xmlGeneratorFeatures = src._xmlGeneratorFeatures;
+        _cfgNameForTextElement = src._cfgNameForTextElement;
+        _xmlInputFactory = src._xmlInputFactory;
+        _xmlOutputFactory = src._xmlOutputFactory;
+    }
+    
+    protected void _initFactories(XMLInputFactory xmlIn, XMLOutputFactory xmlOut)
+    {
+        // Better ensure namespaces get built properly, so:
+        xmlOut.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.TRUE);
+        // and for parser, force coalescing as well (much simpler to use)
+        xmlIn.setProperty(XMLInputFactory.IS_COALESCING, Boolean.TRUE);
+    }

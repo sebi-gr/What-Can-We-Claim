@@ -1,0 +1,150 @@
+{
+  "prepared_on": "2026-10-26",
+  "reference_status": "KI-unterstützter Entwicklungsentwurf; fachliches Gegenlesen ausstehend; keine unabhängige Ground Truth.",
+  "prior_knowledge": "JSPWiki-Report und frühere assistierte Annotation sowie Code/Fix/PoV-Vorwissen und frühere XML-/YAML-Entwürfe sind bekannt. Keine verblindeten Evaluationsfälle.",
+  "files": [
+    {
+      "case": "JSPWiki",
+      "role": "allowed_code",
+      "sha256": "f01633722bc4d8cca0532525e0996995411fffebf902c4606b505427727fc105",
+      "bytes": 3521,
+      "original_lines": [
+        1,
+        103
+      ],
+      "revision": "07ad7850a041876befb99847053e4b5e181597a5",
+      "origin_url": "https://raw.githubusercontent.com/tuhh-softsec/Vul4J/07ad7850a041876befb99847053e4b5e181597a5/jspwiki-main/src/main/java/org/apache/wiki/WikiServlet.java",
+      "path": "jspwiki/code/WikiServlet.java"
+    },
+    {
+      "case": "JSPWiki",
+      "role": "allowed_code",
+      "sha256": "ef247510c6105cdca6270c482c6fcd33ef10e0faf25fb379281f62a1f4bf6183",
+      "bytes": 9134,
+      "original_lines": [
+        1,
+        282
+      ],
+      "revision": "07ad7850a041876befb99847053e4b5e181597a5",
+      "origin_url": "https://raw.githubusercontent.com/tuhh-softsec/Vul4J/07ad7850a041876befb99847053e4b5e181597a5/jspwiki-main/src/main/java/org/apache/wiki/url/DefaultURLConstructor.java",
+      "path": "jspwiki/code/DefaultURLConstructor.java"
+    },
+    {
+      "case": "JSPWiki",
+      "role": "allowed_code",
+      "sha256": "bacf496ca5016a32e0e02b976f863977221ea3f3852533506a648b10c25d6570",
+      "bytes": 3753,
+      "original_lines": [
+        1,
+        80
+      ],
+      "revision": "07ad7850a041876befb99847053e4b5e181597a5",
+      "origin_url": "https://raw.githubusercontent.com/tuhh-softsec/Vul4J/07ad7850a041876befb99847053e4b5e181597a5/jspwiki-main/src/main/java/org/apache/wiki/url/URLConstructor.java",
+      "path": "jspwiki/code/URLConstructor.java"
+    },
+    {
+      "case": "JSPWiki",
+      "role": "allowed_code",
+      "sha256": "e332feee489117df276df56c78198a60c5afbd4bb88d6685534b7da55ce1e5cb",
+      "bytes": 42821,
+      "original_lines": [
+        1,
+        1046
+      ],
+      "revision": "07ad7850a041876befb99847053e4b5e181597a5",
+      "origin_url": "https://raw.githubusercontent.com/tuhh-softsec/Vul4J/07ad7850a041876befb99847053e4b5e181597a5/jspwiki-main/src/main/resources/ini/jspwiki.properties",
+      "path": "jspwiki/code/jspwiki.properties"
+    },
+    {
+      "case": "JSPWiki",
+      "role": "allowed_code",
+      "sha256": "cded40ce6f38b1173d668d28ade46496ed574c7ce3ecfff43af4228a926f4a2e",
+      "bytes": 12678,
+      "original_lines": [
+        1,
+        359
+      ],
+      "revision": "07ad7850a041876befb99847053e4b5e181597a5",
+      "origin_url": "https://raw.githubusercontent.com/tuhh-softsec/Vul4J/07ad7850a041876befb99847053e4b5e181597a5/jspwiki-war/src/main/webapp/WEB-INF/web.xml",
+      "path": "jspwiki/code/web.xml"
+    },
+    {
+      "case": "VUL4J-47",
+      "role": "allowed_code",
+      "sha256": "57dd6e883b7e04df61fcaf68a03e111e0fb24b5a6352daadd4b12730fe366c8f",
+      "bytes": 2167,
+      "original_lines": [
+        84,
+        144
+      ],
+      "revision": "48759e9822db9d7cbdf69faf519836e4c92ab5b1",
+      "vul4j_revision": "e5d0a0e2054cb971e63edaaa6d63aad69dc9833f",
+      "origin_url": "https://raw.githubusercontent.com/FasterXML/jackson-dataformat-xml/48759e9822db9d7cbdf69faf519836e4c92ab5b1/src/main/java/com/fasterxml/jackson/dataformat/xml/XmlFactory.java",
+      "transformation": "Exact inclusive line slice; original whitespace preserved.",
+      "path": "jackson-xml/code/XmlFactory.java.txt"
+    },
+    {
+      "case": "VUL4J-9",
+      "role": "allowed_code",
+      "sha256": "b4142311457fedf5bf39a39e4d84d29b80203a89e0f8539c5b928d9ace67a499",
+      "bytes": 4147,
+      "original_lines": [
+        1,
+        145
+      ],
+      "revision": "342f3b3be52bbbb188ad2fe81bb19ad688012123",
+      "vul4j_revision": "4ef82c4405fd14e6c636b9e9eeb5284276efbb06",
+      "origin_url": "https://raw.githubusercontent.com/apache/commons-configuration/342f3b3be52bbbb188ad2fe81bb19ad688012123/src/main/java/org/apache/commons/configuration2/YAMLConfiguration.java",
+      "transformation": "None; entire source file retained.",
+      "path": "commons-yaml/code/YAMLConfiguration.java"
+    },
+    {
+      "role": "report_source",
+      "sha256": "ac2711de8101111aa23a0861553cfe60489fa40393dc4806fc5e2b0bd794308a",
+      "bytes": 1039,
+      "path": "jspwiki/report.jsonl"
+    },
+    {
+      "case": "jspwiki",
+      "role": "license_or_notice",
+      "path": "jspwiki/LICENSE",
+      "sha256": "96d968e38324356741b6c7fb7ba029232bf1b47fa1084feb84432d9a60caa0bd"
+    },
+    {
+      "case": "jspwiki",
+      "role": "license_or_notice",
+      "path": "jspwiki/NOTICE",
+      "sha256": "a345855912de7e31dffa704d03a17df853457d9a3e732854ea422d4f282d7f53"
+    },
+    {
+      "case": "jackson-xml",
+      "role": "license_or_notice",
+      "path": "jackson-xml/LICENSE",
+      "sha256": "d2706a35658d83c27d7d5f357f5ba63877fd8694a3f6aee48b87036a41118c8a"
+    },
+    {
+      "case": "jackson-xml",
+      "role": "license_or_notice",
+      "path": "jackson-xml/NOTICE",
+      "sha256": "41c338db0adac3ea540c53845bd4cec40d437e843b22c84ae08375a4d6442543"
+    },
+    {
+      "case": "jackson-xml",
+      "role": "license_or_notice",
+      "path": "jackson-xml/LICENSE-APACHE-2.0",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "case": "commons-yaml",
+      "role": "license_or_notice",
+      "path": "commons-yaml/LICENSE",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "case": "commons-yaml",
+      "role": "license_or_notice",
+      "path": "commons-yaml/NOTICE",
+      "sha256": "352161ff2be0cda7c174cdcff5eb7057cf3967154bbaeddd1918303d9a546066"
+    }
+  ]
+}
