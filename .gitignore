@@ -2,3 +2,9 @@
 __pycache__/
 *.pyc
 /.env
+/.env.*
+!/.env.example
+/archive/
+/tmp/
+.venv/
+venv/

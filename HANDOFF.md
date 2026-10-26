@@ -1,48 +1,67 @@
-# HANDOFF — aktueller Stand
+# Handoff: Weiterarbeit in What Can We Verify
 
-Stand: 2026-10-05. WIP-Übergabe der Implementierung und bereinigten Dokumentation
-auf Branch main, aufbauend auf 8f9b25e. Commit-Nachricht:
-`wip: handoff for prose or structure repo`. Der verbindliche nächste Schritt
-steht in WORKPLAN.md; Commit-/Remote-Stand über Git prüfen.
+Stand: 26.10.2026. **Dieses Repository ist wieder das aktive Forschungsprojekt.**
+Verbindliche Reihenfolge: [WORKPLAN.md](WORKPLAN.md). Rechnerwechsel:
+[docs/RESTART.md](docs/RESTART.md). Starttext: [docs/NEXT_SESSION_PROMPT.md](docs/NEXT_SESSION_PROMPT.md).
 
-## Implementierung
+## Entscheidung und nächster Schritt
 
-- src/01_prepare_case.py: fixierter VUL4J-18-Export, Modellkontext/Referenzen getrennt.
-- src/02_generate_findings.py und src/03_decompose_findings.py: direkt OpenAI Chat
-  Completions über Standardbibliothek, OPENAI_API_KEY aus Umgebung/.env.
-  Vorhandener .env-Eintrag geprüft, Wert nicht ausgegeben und Datei nicht geändert.
-- OpenRouter-spezifische Preis-/Routing-/Pluginparameter entfernt; explizites Modell,
-  max_completion_tokens, JSON-Modus und store=false. --no-reasoning setzt
-  reasoning_effort=none; ohne Flag Modellstandard. Keine automatischen Wiederholungen.
-- Ressourcen auf einen aktuellen Namen je Zweck reduziert: review_prompt.txt,
-  decomposition_prompt.txt, claim_codebook.md, claim_response_schema.json.
-  Codebook historienfrei konsolidiert, Regeln für feine Propositionen erhalten.
-  README/WORKPLAN/HANDOFF gekürzt, AGENTS legt stabile Dateinamen fest.
-- Schema-Version 1 bleibt Datenformatkennung. Historische Modellläufe behalten
-  ihre ursprünglichen Dateinamen, Ressourcenbytes und Hashes. Bestehende manuelle
-  Annotationen/Reviews und Java-PoV-Artefakte bleiben Versuchsdaten unter data/.
+Nach der Besprechung mit Andreas und der ausdrücklichen Entscheidung des Nutzers
+kehren wir zur beispielorientierten Claim-Erzeugung zurück. Zunächst den Nutzen
+begründet motivieren, Zielclaims für unterschiedliche Codebeispiele ausarbeiten,
+fachlich gegenlesen lassen und Abstraktionsniveau/semantische Zuordnung klären.
+P/D aus POS ist nützliches Material, aber kein Auftrag, sofort eine große Studie,
+CodeQL-Pipeline, Nutzerstudie oder ein allgemeines Verifikationssystem zu bauen.
 
-## Überprüfter Forschungsstand
+Als Nächstes das historische JSPWiki-Beispiel erneut bearbeiten: Reportreferenz
+und begründete Codereferenz nebeneinander. Danach zwei andere Entwicklungsbeispiele
+ergänzen. KI-Unterstützung und Vorwissen kenntlich machen. Noch kein neuer Modelllauf.
+Ausführliche Einordnung: [Forschungsrichtung](docs/RESEARCH_DIRECTION.md).
 
-- Java-PoV: zwei erwartete Assertion-Fehler verwundbar, zwei bestandene Tests gefixt.
-  Nur Mock-Forwarding belegt; Reproduktionsbefehle in resources/reproduce_vul4j18.md.
-- Review 0721c0a0-bba7-48c1-a63c-da196a69d97c unter data/runs/VUL4J-18-review-001:
-  ein Finding, damals Nemotron/OpenRouter ohne Reasoning; Aussagen ungeprüft.
-- Manuelle Annotation: 13 abgestimmte Entwicklungsclaims, Codex-Unterstützung und
-  Vorwissen über Code/Fix/PoV dokumentiert. Keine unabhängige Wahrheitsreferenz.
-- Decomposition 001 ungültig; 002 und 003 formal gültig mit vier wortgleichen
-  Satz-Propositionen. Feinere Granularität nicht erreicht, in 003 alle Kontext-IDs leer.
-  Letzter Lauf: c939bbd8-090a-4c51-b14d-998d1fc8653c. Formatgültigkeit ist kein Qualitätsurteil.
+## Tatsächlicher Implementierungsstand
 
-## Prüfungen und offene Punkte
+- Drei aktive Skripte: Fallvorbereitung, Reportgenerierung und Reportzerlegung.
+- Direkte OpenAI-Aufrufe über Standardbibliothek; Modell und Tokenlimit explizit,
+  keine Retries. Standalone-Aufrufe haben keinen monetären Schutz.
+- WCWV-Antwortvertrag bleibt schema_version=1. POS-Profil 0.1 wurde nicht importiert.
+- Vorhandenes JSPWiki-Finding: Run 0721c0a0-bba7-48c1-a63c-da196a69d97c.
+- 13 historische manuelle Claims: SG mit Codex-Unterstützung und Vorwissen über
+  Code/Fix/PoV; Reportzerlegung, keine unabhängige Wahrheitsreferenz.
+- Historische Decomposition 001 ungültig; 002/003 je vier wortgleiche, zu grobe
+  Satzpropositionen. In 003 leere Kontext-IDs. Originalantworten bleiben erhalten.
+- Historischer Java-PoV: zwei erwartete Assertion-Fehler verwundbar, zwei bestandene
+  Tests mit Fix. Nur Mock-Forwarding, kein allgemeiner Exploitnachweis.
 
-Für die WIP-Übergabe am 05.10.2026 erneut geprüft: 29 Offline-Tests, davon
-28 bestanden und ein bestehender Windows-
-Symlink-Skip. Beide CLI-Hilfen und git diff --check erfolgreich. Kein echter
-API-Aufruf oder Java-Neulauf. .env und gespeicherte Versuchsartefakte per Hash
-unverändert; Fallvorbereitung und PoV-Dokumentation unverändert.
-API-Vertrag anhand offizieller OpenAI-Dokumentation geprüft. Verfügbarkeit/Zugriff
-für den lokalen Key und Extraktionsqualität bleiben ungeprüft. Beispiele verwenden
-explizit gpt-6-luna; kein Modell im Code fest voreingestellt.
-Nächster Vorschlag: ein neuer OpenAI-Decomposer-Lauf mit vorhandenem Finding und
-frischem Ziel; anschließend Inhaltsvergleich, keine automatische Wiederholung.
+## Sicherung und Wiederherstellung
+
+Das private Repository https://github.com/sebi-gr/wcwv-handover-20261026 enthält:
+
+- unverändertes ASR-Transkript und Todos der Andreas-Besprechung;
+- WCWV-Daten einschließlich Annotationen/Reviews, Decomposition-Rohdaten und PoV-Logs;
+- POS-Quellstand und dessen vollständige lokale Forschungsdaten;
+- Git-Bundles beider Projekte einschließlich lokaler Branches/Tags;
+- Dateihashes, dokumentierte Ausschlüsse und einen geprüften Wiederherstellungshelfer.
+
+Nach `restore.py --wcwv ...` liegen ursprüngliche WCWV-Daten unter `data/` und
+POS unter `archive/prose-or-structure/`. Öffentliches WCWV allein enthält diese
+Daten nicht. Die Ablagen sind weiterhin ignoriert. Das private Archiv muss erhalten
+bleiben, auch wenn die alte POS-Arbeitskopie oder der POS-Remote gelöscht wird.
+Niemals das private Transkript öffentlich einchecken.
+
+POS brachte Profil-/Annotationsregeln, Literaturabgrenzung, weitere Beispiele und
+einen technischen Pilot mit 76/82 formal erfolgreichen Aufgaben hervor. Keine
+menschlichen Qualitätsurteile liegen vor. Siehe [POS_LESSONS.md](docs/POS_LESSONS.md).
+
+## Grenzen und Freigaben
+
+Kein neuer Java-PoV oder API-Lauf in dieser Übergabe. Alte Daten nicht überschreiben.
+Die 10-USD-Freigabe war nur für den POS-Pilot vom 06.10.2026. Für spätere Läufe
+Modell, Preise, Tokenlimit und neue Kostenfreigabe festlegen. Keine Zugangsdaten
+übertragen; `.env` am Ziel bei Bedarf neu anlegen.
+
+Übergabe-Teststand am 26.10.2026: alle 29 WCWV-Offline-Tests und alle 106 POS-Tests
+bestanden, ohne Skip. Der frühere WCWV-Stand hatte einen Windows-Symlink-Skip.
+Wiederherstellungsnachweise werden im privaten Archiv unter `validation/`
+festgehalten. Ein Skip auf einem anderen Rechner belegt keinen Symlink-Schutz.
+Ausführung vom Repo-Wurzelverzeichnis: `python -X utf8 -m unittest -v`,
+anschließend `git diff --check`.

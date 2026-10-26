@@ -1,5 +1,15 @@
 # What Can We Verify?
 
+**Aktives Projekt ab 26.10.2026.** Nach dem POS-Entwicklungsexperiment konzentrieren
+wir uns wieder auf begründete Zielclaims, Granularität und Claim-Erzeugung.
+Vorhandene Technik bleibt erhalten; keine vollständige Verifikationsplattform geplant.
+
+**Neuer Rechner / neue Codex-Session:** Zuerst [docs/RESTART.md](docs/RESTART.md)
+lesen und das private Datenarchiv wiederherstellen. Danach
+[HANDOFF.md](HANDOFF.md), [WORKPLAN.md](WORKPLAN.md) und
+[Forschungsrichtung](docs/RESEARCH_DIRECTION.md). Der
+[Startprompt](docs/NEXT_SESSION_PROMPT.md) enthält den konkreten nächsten Auftrag.
+
 Kleiner Forschungsprototyp: Security-Findings eines LLM in einzeln prüfbare
 Behauptungen zerlegen und später mit unabhängiger Evidenz prüfen.
 
@@ -13,7 +23,13 @@ Behauptungen zerlegen und später mit unabhängiger Evidenz prüfen.
   lieferten je vier identische, zu grobe Propositionen. Formatgültigkeit belegt keine
   gute Zerlegung und keine Wahrheit der Claims.
 - Generator und Decomposer verwenden jetzt direkt OpenAI. Ein echter OpenAI-Lauf
-  und dessen Qualitätsvergleich stehen noch aus.
+  mit dieser WCWV-Fassung und dessen Qualitätsvergleich stehen noch aus. Die
+  separaten OpenAI-Pilotläufe in POS sind archiviert, keine WCWV-Qualitätsresultate.
+
+Die folgenden Bedienhinweise beschreiben die unveränderten drei WCWV-Skripte.
+Sie sind keine Freigabe für einen neuen Modelllauf. Die nächste Arbeitsphase
+erstellt und prüft manuelle Zielbeispiele; die frühere 10-USD-Freigabe ist verbrauchs-
+und versuchsbezogen auf den abgeschlossenen POS-Pilot begrenzt.
 
 Arbeitsplan: [WORKPLAN.md](WORKPLAN.md). Übergabestand: [HANDOFF.md](HANDOFF.md).
 

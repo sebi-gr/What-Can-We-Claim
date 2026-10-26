@@ -1,77 +1,75 @@
-# WORKPLAN — Claim-Pipeline
+# Arbeitsplan: Sicherheitsclaims begründen und erzeugen
 
-Stand: 2026-09-29. Maßgeblicher Plan; nur aktuellen Status, Beschlüsse und offene
-Entscheidungen pflegen. Bedienung in README, überprüfter Übergabestand in HANDOFF.
+Stand: 26.10.2026. Maßgeblicher Plan nach der Besprechung mit Andreas und der
+Entscheidung, im ursprünglichen WCWV-Repository weiterzuarbeiten. Technischer
+Stand: [HANDOFF.md](HANDOFF.md). Gesprächseinordnung: [RESEARCH_DIRECTION.md](docs/RESEARCH_DIRECTION.md).
 
-## Ziel und Reihenfolge
+## Ziel
 
-Security-Findings in typisierte, einzeln prüfbare Behauptungen zerlegen und später
-mit unabhängiger Evidenz bewerten. Arbeitsfragen: RQ-A Claim-Typen, RQ-B geeignete
-Evidenz, RQ-C Korrektheit, Abdeckung, unentscheidbare Fälle und Prüfaufwand.
-Die endgültige RQ-Fassung und Evaluationsplanung bleiben offen.
+Sicherheitsbehauptungen aus Code beziehungsweise LLM-Reports in nachvollziehbare,
+eigenständig beurteilbare Claims überführen. Zunächst an begründeten Zielbeispielen
+untersuchen, welche Aussagen und Bedingungen ein geeignetes Format erhalten muss.
+Den Nutzen der Darstellung aus Anwendungen und Literatur motivieren; keine bereits
+nachgewiesene Verbesserung einer kompletten Security-Prüfung behaupten.
+
+## Reihenfolge und Abschlusskriterien
 
 | Schritt | Stand | Abschlusskriterium |
 |---|---|---|
-| 1a. Fall vorbereiten | Erledigt | VUL4J-18 fixiert, Modellkontext/Referenzen getrennt, Herkunft und Hashes gespeichert. |
-| 1b. Java-PoV reproduzieren | Erledigt | Verwundbar zwei erwartete Assertion-Fehler, gefixt zwei bestandene Tests; Befehle/Logs vorhanden. |
-| 2. Review erzeugen | Technisch erledigt | Ein unverändertes Finding mit Eingaben, Rohantwort und Manifest gespeichert; Inhalt ungeprüft. |
-| 3. Manuelle Zerlegung und Codebook | Erledigt als Entwicklungsbeispiel | 13 abgestimmte Claims; Regeln zu Propositionen, Familien und Bedingungen festgehalten. |
-| 4. Automatische Zerlegung | In Arbeit | Formal gültige Claims und inhaltlich nachvollziehbare Aufteilung; bisherige Läufe noch zu grob. |
-| 5. Entwicklungspilot erweitern | Vorschlag | Fallumfang, Einstellungen und Laufanzahl vorab festlegen. |
-| 6. Unabhängige Verifikation evaluieren | Offen | Verfahren, Referenzbewertung, Evaluationsmenge und Metriken festlegen. |
+| 0. Rechnerübergabe | In Abschlussprüfung | Beide Git-Verläufe, Rohdaten und Transkript entfernt gesichert; frischer Clone und Hash-Wiederherstellung geprüft. |
+| 1. Nutzen begründen | Argumente vorhanden, auszuarbeiten | Kurze Begründung mit konkreten Verwendungen, Literaturbelegen und klaren Aussagegrenzen. |
+| 2. Zielbeispiele manuell ausarbeiten | JSPWiki-Reportzerlegung und POS-Entwürfe vorhanden | Drei unterschiedliche Entwicklungsbeispiele mit Codeankern, Zielclaims, Bedingungen, offenen Fragen und alternativen Zerlegungen. |
+| 3. Abstraktionsniveau festlegen | Offen | An Beispielen begründete Granularitätsregeln; höhere Aussagen nur mit notwendigen Zusatzbedingungen. Hierarchie nur bei konkretem Bedarf. |
+| 4. Zielreferenz fachlich kontrollieren | Offen | Qualifizierte Person(en) prüfen Korrektheit/Sinnhaftigkeit; Originalurteile, Vorwissen und Abweichungen dokumentiert. |
+| 5. Modelloutputs zuordnen | Technik/Outputs vorhanden, Bewertung offen | Semantische Abdeckung, Bedeutungserhalt, Zusatzclaims und technische Fehler getrennt. Zulässige andere Formulierungen/Abstraktionen berücksichtigt. |
+| 6. Weitere Studie festlegen | Offen | Mit Andreas Fallauswahl, menschlichen Aufwand, Matching, Umfang und eingefrorenes Versuchsprotokoll abstimmen. |
 
-## Beschlüsse
+## Unmittelbarer nächster Arbeitsschritt
 
-- KISS: drei kleine Python-Skripte, Standardbibliothek, explizite Ein-/Ausgaben.
-  Keine Agenten-/Pipeline-Frameworks, Datenbank oder allgemeine Provider-Abstraktion.
-- Ein aktuelles Dokument/Prompt pro Zweck ohne Versionssuffix. Änderungen direkt
-  pflegen, Historie in Git. Laufartefakte mit Originalbytes/Hashes bleiben erhalten.
-- OpenAI ersetzt OpenRouter in Generator und Decomposer. Key aus OPENAI_API_KEY
-  in Umgebung oder .env; Modell und Tokenlimit explizit, kein Retry/Fallback.
-  Ein Key-/Modellzugriff wird erst durch einen echten Lauf bestätigt.
-- JSON-Format und lokale Validierung bleiben. Anbieterwechsel ist keine Zusage
-  besserer Claims. Keine neue Promptstrategie oder Verifikation in diesem Auftrag.
-- Ein Claim pro unabhängig prüfbarer Proposition, auch mehrere aus demselben Satz.
-  Erst zerlegen, dann typisieren. Zitate dürfen mehrere unterschiedliche Claims
-  belegen. Keine künstlichen Duplikate oder feste Claim-Anzahl.
-- Vier Hauptfamilien: location, data_flow, protection_precondition,
-  exploitability_impact (Untertypen exploitability/impact); other/unclear als Restfälle.
-- Vollständige Aussagen mit Gegenstand; Positionen zuordnen. Bedingungen, Modalität,
-  Negation, Alternativen und kausale Beziehungen erhalten. Redundanter Titel ohne
-  Zusatzclaim, eigenständige Titelinformationen erfassen. Reines Parser-Verhalten
-  ohne passende Hauptfamilie vorläufig other.
-- Finding-Generator sieht nur die ausgewählten Quelldateien. Decomposer sieht nur
-  Titel/Report, Prompt, Codebook und Schema. Referenzen und manuelle Annotationen
-  bleiben außerhalb des Modellkontexts.
-- Claim-Extraktion ist keine Wahrheitsprüfung. Modellübereinstimmung ist keine
-  unabhängige Evidenz; PoV-Mocks beweisen keinen beliebigen Dateizugriff.
+Zuerst das vorhandene JSPWiki-Beispiel als KI-unterstützten Arbeitsentwurf aufbereiten:
+Codekontext, historische Reportreferenz, davon getrennte codegestützte Zielclaims,
+offene Voraussetzungen und akzeptable alternative Zerlegungen. Nicht die alten
+13 Claims als Codewahrheit oder feste Zielanzahl behandeln. Danach das vorhandene
+XML-/YAML-Entwicklungsmaterial aus dem POS-Archiv ergänzen. Keine neue Pipeline nötig.
 
-## Befund und nächster Schritt
+Mit diesen drei Beispielen und einer kurzen Nutzenbegründung wieder zu Andreas
+gehen. Bis dahin keine große Annotation aller Pilotbedingungen organisieren und
+keine zusätzlichen Modellläufe starten.
 
-Vorhandener Review: data/runs/VUL4J-18-review-001, ein Nemotron-Finding.
-Decomposition 001: invalid_output wegen Zusatzfeldern. 002/003: completed,
-je vier wortgleiche, zu grobe Propositionen; geänderte Anweisung brachte in 003
-keinen Granularitätsgewinn. In 003 außerdem keine Kontext-IDs trotz This value.
-Das sind Entwicklungsbefunde, keine allgemeine Aussage über das Modell.
+## Bereits vorhandene Basis
 
-OpenAI-Umstellung und Dateibereinigung implementiert und offline geprüft:
-29 Tests, 28 bestanden/ein Windows-Symlink-Skip; CLI-Hilfen und git diff --check erfolgreich.
-Noch kein echter OpenAI-Aufruf und kein überprüfter Claim-Qualitätsgewinn.
+- WCWV: fixierter JSPWiki-Kontext, Report, assistierte 13-Claim-Annotation,
+  automatische Zerlegung und historische Java-PoV-Evidenz.
+- POS-Archiv: gemeinsames Profil 0.1 mit Kontextfeldern, getrennte Referenzregeln,
+  Entwicklungsbeispiele und Literaturabgrenzung, P/D-Pilot und Zusatzvergleiche.
+- Annotationsvorlagen/Zuordnungsregeln vorhanden; keine unabhängigen Pilotreferenzen,
+  keine fertige semantische Auswertung und keine bestätigten Qualitätsresultate.
 
-Nächster Vorschlag: einen bewusst geplanten OpenAI-Decomposer-Lauf mit dem
-vorhandenen Finding, aktuellem Prompt/Codebook, explizitem Modell/Budget/Reasoning
-und neuem Ausgabepfad ausführen. Aussagen, Bedingungen, Abdeckung und Kategorien
-mit der manuellen Annotation und Lauf 003 vergleichen, ohne Zielanzahl oder
-Wiederholung bis zum gewünschten Ergebnis. Ein neuer Generatorlauf ist dafür unnötig.
+## Regeln für die nächsten Referenzen und Vergleiche
 
-## Später offen
+- Code- und Reportreferenz getrennt halten. Reporttreue ist keine Wahrheitsprüfung.
+- Identischen erlaubten Codekontext verwenden; Fix/PoV/Advisory/Labels nicht in
+  Generierung oder als versteckte Codebelege übernehmen. Externes Vorwissen benennen.
+- Bedingungen, Modalität, Negation, Rechte, Quantoren und Scope im Satz erhalten.
+- Abdeckung nach Bedeutung, nicht Wortlaut oder Claimzahl; mehrere Claims dürfen
+  gemeinsam eine Einheit abdecken. Duplikate nicht mehrfach zählen.
+- Ein Zusatzclaim außerhalb der Referenz kann korrekt sein: gesondert überprüfen,
+  nicht automatisch als falsch werten oder die Referenz still nachträglich anpassen.
+- Neue Evaluationsreferenzen vor Einsicht in Modelloutputs erstellen. Bekannte
+  Entwicklungs-/Pilotprojekte samt Varianten nicht als frischen Holdout verwenden.
+- Fehlender Kontext, technischer Ausfall und inhaltlicher Widerspruch sind verschiedene
+  Zustände. Ein fehlgeschlagener PoV widerlegt keine Schwachstelle.
+- Aktives Schema nur ändern, wenn die Zielbeispiele es begründen. POS-Profil 0.1
+  nicht still mit WCWV-Schema 1 vermischen. Alte Laufressourcen unverändert erhalten.
 
-- Pilotumfang, Modelle, Reasoning-Einstellungen und Laufanzahl vorab bestimmen.
-  Technische Fehler und Null-Ergebnisse mit auswerten.
-- Je Claim-Familie passende Evidenz/Verifikatoren auswählen, etwa Quell-/AST-Prüfung,
-  Datenflussanalyse, Konfigurations-/Kontrollflussprüfung oder ausführbare Tests.
-  Die konkrete Toolwahl ist noch nicht beschlossen; OpenAnt ist nicht eingebunden.
-- Unabhängig kuratierte Referenz und eigene Evaluationsmenge; Entwicklungsfall und
-  assistierte Annotation nicht als unabhängigen Leistungsnachweis verwenden.
-- Mögliche spätere Verifikationszustände: Supported, Contradicted, Inconclusive,
-  Verification failure. Fehlgeschlagene Reproduktion widerlegt keine Schwachstelle.
+## Zurückgestellt und offene Entscheidungen
+
+P/D bleibt ein möglicher Vergleich, sobald Zielniveau und Referenzen belastbar sind.
+Kontextablation, VeriScore und D-Revision sind vorhandene Zusatzversuche, nicht alle
+automatisch Pflicht für das nächste Paper. Ein allgemeines Wichtigkeitsranking,
+CodeQL-/Solver-Integration, Agentenplattform, Nutzerstudie oder allgemeiner
+Nutzennachweis einer vollständigen Verifikationspipeline ist derzeit nicht beauftragt.
+
+Eine zweite Veröffentlichung und eine feste Hauptstudien-Fallzahl sind nicht beschlossen.
+Automatisches Matching oder LLM-Bewertung muss gegen menschlich geprüfte Beispiele
+validiert werden. Für neue Modellversuche fehlt eine neue Budgetfreigabe.
