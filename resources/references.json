@@ -1,0 +1,202 @@
+{
+  "checked_on": "2026-10-27",
+  "scope": "Gezielte Primärquellenprüfung für drei bekannte Entwicklungsfälle; keine systematische Literaturübersicht, Neuheits- oder Nutzenvalidierung.",
+  "motivation": [
+    {
+      "point": "Teilurteile statt pauschalem Gesamturteil",
+      "argument": "Durch einzelne, verständliche Propositionen lassen sich belegte Codeoperationen, offene Voraussetzungen und unbelegte Auswirkungen getrennt beurteilen.",
+      "references": [
+        "wanner2024",
+        "song2024"
+      ],
+      "status": "Literaturgestützte Motivation; ein Gewinn für Security-Reviews wird hier nicht gemessen."
+    },
+    {
+      "point": "Nachvollziehbare Aussage und Evidenz",
+      "argument": "Pro Claim werden Gegenstand, Bedingungen und Quellenanker sichtbar. Ein Quellenlink oder eine Verbindung zu Teilclaims bestätigt die Aussage noch nicht.",
+      "references": [
+        "cae",
+        "sacm22"
+      ],
+      "status": "Konzeptioneller Anschluss; kein SACM-konformes System und kein Verifier."
+    },
+    {
+      "point": "Vergleich über Ausgaben und Revisionen",
+      "argument": "Stabile IDs, gespeicherte Quellen und Git erlauben nachvollziehbare Änderungen und semantische Zuordnungen. Claims sind nicht von sich aus versioniert; gleiche Felder oder ähnliche Wörter garantieren keine gleiche Bedeutung.",
+      "references": [
+        "wanner2024",
+        "cae"
+      ],
+      "status": "Eigene Operationalisierung im MVP; weder automatisches Matching noch ein empirischer Effizienzgewinn folgt daraus."
+    },
+    {
+      "point": "Untersuchung der Darstellung und des Erzeugungswegs",
+      "argument": "Code → Claims und Code → Report → Claims werden bei gleichem Codekontext verglichen. Gültiges JSON allein ist keine gute oder wahre Zerlegung.",
+      "references": [
+        "wanner2024",
+        "tam2024"
+      ],
+      "status": "Explorativer Vergleich, keine Aussage über die generelle Überlegenheit eines Wegs."
+    }
+  ],
+  "literature": [
+    {
+      "id": "wanner2024",
+      "authors": [
+        "Miriam Wanner",
+        "Seth Ebner",
+        "Zhengping Jiang",
+        "Mark Dredze",
+        "Benjamin Van Durme"
+      ],
+      "year": 2024,
+      "title": "A Closer Look at Claim Decomposition",
+      "venue": "*SEM 2024",
+      "pages": "153–175",
+      "doi": "10.18653/v1/2024.starsem-1.13",
+      "url": "https://aclanthology.org/2024.starsem-1.13/",
+      "full_text": "https://aclanthology.org/2024.starsem-1.13.pdf",
+      "inspected": "Abstract; §§1, 3 und Diskussion zur Zerlegungsqualität.",
+      "supports": "Teilclaims erlauben lokale Teilunterstützung und Abweichungen; Coverage, Coherence und Atomicity charakterisieren Zerlegung. Die Zerlegungsmethode beeinflusst nachgelagerte Faktizitätswerte.",
+      "does_not_support": "Keine Security-Code-Evaluation, kein Nutzennachweis unseres Formats, keine feste Zielclaimzahl und keine Wahrheit allein durch Zerlegung."
+    },
+    {
+      "id": "song2024",
+      "authors": [
+        "Yixiao Song",
+        "Yekyung Kim",
+        "Mohit Iyyer"
+      ],
+      "year": 2024,
+      "title": "VeriScore: Evaluating the factuality of verifiable claims in long-form text generation",
+      "venue": "Findings of EMNLP 2024",
+      "pages": "9447–9474",
+      "doi": "10.18653/v1/2024.findings-emnlp.552",
+      "url": "https://aclanthology.org/2024.findings-emnlp.552/",
+      "full_text": "https://aclanthology.org/2024.findings-emnlp.552.pdf",
+      "inspected": "Abstract; §§1 und 2.1.2; Extraktionsregeln in Appendix C.",
+      "supports": "Eigenständig verständliche Claims benötigen relevante Modifikatoren und aufgelöste Bezüge; maximale Kürze kann notwendigen Kontext verlieren.",
+      "does_not_support": "Das Original schließt Hypothetika aus und prüft mit Webevidenz. Modale Security-Aussagen und Codebelege sind eine eigene Anpassung; keine Übertragung seiner Qualitätsresultate auf diesen MVP."
+    },
+    {
+      "id": "cae",
+      "authors": [
+        "Adelard"
+      ],
+      "year": null,
+      "title": "Claims, Arguments and Evidence (CAE)",
+      "url": "https://www.adelard.com/asce/cae/",
+      "inspected": "Definitionen von Claim, Argument und Evidence sowie Hinweise auf Scope und Änderungsverfolgung.",
+      "supports": "Eine Darstellung kann Aussagen, begründende Argumente, Kontext und Evidenz getrennt sichtbar machen; Claims dürfen Unterclaims und Scope besitzen.",
+      "does_not_support": "Anbieterbeschreibung einer Assurance-Notation, keine empirische Security-Claim-Studie und kein Beleg, dass Links allein die Behauptung beweisen."
+    },
+    {
+      "id": "sacm22",
+      "authors": [
+        "Object Management Group"
+      ],
+      "year": 2022,
+      "title": "Structured Assurance Case Metamodel (SACM), Version 2.2",
+      "document_id": "formal/21-11-01",
+      "url": "https://www.omg.org/spec/SACM/2.2",
+      "full_text": "https://www.omg.org/spec/SACM/2.2/PDF",
+      "inspected": "Normatives PDF: §§11.8–11.16, besonders Claim, AssertedInference, AssertedEvidence und AssertedContext. PDF nennt Release April 2022; Webseite nennt Adoption Juni 2021.",
+      "supports": "Aussage, Annahmen, Unterstützungsbedarf, Kontext und Evidenz sind unterscheidbar. Die behauptete Inferenz- oder Evidenzbeziehung ist selbst eine vom Autor erhobene Aussage.",
+      "does_not_support": "Kein empirischer Nutzenbeleg und keine automatische Verifikation. Ein einfacher Claim-JSON-Vertrag implementiert oder erfüllt nicht den gesamten SACM-Standard."
+    },
+    {
+      "id": "tam2024",
+      "authors": [
+        "Zhi Rui Tam",
+        "Cheng-Kuang Wu",
+        "Yi-Lin Tsai",
+        "Chieh-Yen Lin",
+        "Hung-yi Lee",
+        "Yun-Nung Chen"
+      ],
+      "year": 2024,
+      "title": "Let Me Speak Freely? A Study on the Impact of Format Restrictions on Performance of Large Language Models",
+      "venue": "EMNLP 2024 Industry Track",
+      "pages": "1218–1236",
+      "doi": "10.18653/v1/2024.emnlp-industry.91",
+      "url": "https://aclanthology.org/2024.emnlp-industry.91/",
+      "full_text": "https://aclanthology.org/2024.emnlp-industry.91.pdf",
+      "inspected": "Abstract; §§1 und 4.1 einschließlich NL-to-Format.",
+      "supports": "Formatvorgaben und nachgelagerte Formatumwandlung sind bereits untersucht. Der Inhalt muss unabhängig von der Formatgültigkeit bewertet werden.",
+      "does_not_support": "Keine Security-Zerlegung und kein Nachweis für aktuelle Modelle. Ein reiner Fließtext-gegen-JSON-Vergleich begründet hier weder Neuheit noch die Qualität des Code/Report-Claims-Vergleichs."
+    }
+  ],
+  "dataset": {
+    "name": "Vul4J",
+    "repository": "https://github.com/tuhh-softsec/Vul4J",
+    "revision": "376411da11fa705019f731404de1d0679fe73537",
+    "url": "https://raw.githubusercontent.com/tuhh-softsec/Vul4J/376411da11fa705019f731404de1d0679fe73537/dataset/vul4j_dataset.csv",
+    "sha256": "5c272508bfc6dccdc52569667457463dbe4e9d2d32bf4a7e821f4622054f51eb",
+    "license": "CC BY 4.0",
+    "license_url": "https://github.com/tuhh-softsec/Vul4J/blob/376411da11fa705019f731404de1d0679fe73537/DATA_LICENSE",
+    "verification": "Drei ausgewählte CSV-Zeilen gelesen; vorhandene Codebytes mit fixierten Primärquellen und PoV-Testnamen mit gepinnten Testquellen verglichen. Keine Builds oder PoV-Ausführung. Labels/Tests sind Auswahlmetadaten und gehören nicht in den Modellkontext."
+  },
+  "cases": [
+    {
+      "id": "jspwiki",
+      "vul4j_id": "VUL4J-18",
+      "repository": "apache/jspwiki",
+      "cve": "CVE-2019-0225",
+      "dataset_cwe": "CWE-22",
+      "topic": "Request-Pfad, Queryparameter und Weiterleitung",
+      "vul4j_revision": "07ad7850a041876befb99847053e4b5e181597a5",
+      "input_scope": "Fünf vollständige Code-/Konfigurationsdateien; WikiEngine, Filterimplementationen und Ziel-JSPs fehlen.",
+      "code_primary_sources_byte_equal": true,
+      "input_provenance": "examples/sources.json",
+      "pov_source": "https://raw.githubusercontent.com/tuhh-softsec/Vul4J/07ad7850a041876befb99847053e4b5e181597a5/jspwiki-main/src/test/java/org/apache/wiki/WikiServletTest.java",
+      "pov_sha256": "c4f006ec36b37674e68e35448816a92d2208e60244832d45f2dbae1a9cf7bd74",
+      "pov_tests": [
+        "org.apache.wiki.WikiServletTest#testNastyDoPost",
+        "org.apache.wiki.WikiServletTest#testDoGet"
+      ],
+      "pov_reading": "Testquellen verwenden Mock-Request/-Response und vergleichen Forward-URLs. Das ist kein End-to-End-Beleg für unautorisierten Dateizugriff.",
+      "pov_executed": false
+    },
+    {
+      "id": "jackson-xml",
+      "vul4j_id": "VUL4J-47",
+      "repository": "FasterXML/jackson-dataformat-xml",
+      "cve": "CVE-2016-7051",
+      "dataset_cwe": "CWE-611",
+      "topic": "XMLInputFactory-Konfiguration und externe DTDs",
+      "source_revision": "48759e9822db9d7cbdf69faf519836e4c92ab5b1",
+      "vul4j_revision": "e5d0a0e2054cb971e63edaaa6d63aad69dc9833f",
+      "input_scope": "XmlFactory.java, exakter Auszug Originalzeilen 84–144; lokale Textzeile 1 entspricht Originalzeile 84. Provider, weitere Klasse und Aufrufer fehlen.",
+      "code_primary_sources_byte_equal": true,
+      "input_provenance": "examples/sources.json",
+      "pov_source": "https://raw.githubusercontent.com/tuhh-softsec/Vul4J/e5d0a0e2054cb971e63edaaa6d63aad69dc9833f/src/test/java/com/fasterxml/jackson/dataformat/xml/SupportDTDDefaultsTest.java",
+      "pov_sha256": "e25831a47c6417620be8a26c735236c7573431b99f288d0ea8460e6ebc5c5577",
+      "pov_tests": [
+        "com.fasterxml.jackson.dataformat.xml.SupportDTDDefaultsTest#testDTDAttempt"
+      ],
+      "pov_reading": "Testquelle lädt XML mit externer DTD-URL localhost:8001 über XmlMapper. Ihre Existenz belegt keine Ausführung in der vorliegenden Umgebung.",
+      "pov_executed": false
+    },
+    {
+      "id": "commons-yaml",
+      "vul4j_id": "VUL4J-9",
+      "repository": "apache/commons-configuration",
+      "cve": "CVE-2020-1953",
+      "dataset_cwe": "Not Mapping",
+      "topic": "YAML-Ladepfade und Optionsvarianten",
+      "source_revision": "342f3b3be52bbbb188ad2fe81bb19ad688012123",
+      "vul4j_revision": "4ef82c4405fd14e6c636b9e9eeb5284276efbb06",
+      "input_scope": "YAMLConfiguration.java vollständig, Originalzeilen 1–145; SnakeYAML-Implementation/-Version, geerbte Methoden und Aufrufer fehlen.",
+      "code_primary_sources_byte_equal": true,
+      "input_provenance": "examples/sources.json",
+      "pov_source": "https://raw.githubusercontent.com/tuhh-softsec/Vul4J/4ef82c4405fd14e6c636b9e9eeb5284276efbb06/src/test/java/org/apache/commons/configuration2/TestYAMLConfiguration.java",
+      "pov_sha256": "57f48ae669494ce9e4188037f39ae33abaa934fee4cc4800e9573054a38f1a72",
+      "pov_tests": [
+        "org.apache.commons.configuration2.TestYAMLConfiguration#testObjectCreationFromStream",
+        "org.apache.commons.configuration2.TestYAMLConfiguration#testObjectCreationFromReader"
+      ],
+      "pov_reading": "Testquellen übergeben einen FileOutputStream-YAML-Tag und prüfen trotz erwarteter ConfigurationException, ob eine Datei angelegt wurde. Die konkrete Bibliotheksausführung wird damit hier nicht neu bestätigt.",
+      "pov_executed": false
+    }
+  ]
+}

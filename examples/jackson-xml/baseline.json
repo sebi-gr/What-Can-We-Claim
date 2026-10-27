@@ -1,0 +1,145 @@
+{
+  "authorship": "Codex-assisted draft, not independently human-validated; based on the SG annotation pattern and known development examples, not blinded.",
+  "prepared_on": "2026-10-27",
+  "status": "draft_awaiting_human_review",
+  "claims": [
+    {
+      "id": "B01",
+      "proposition": "Wenn xmlIn null ist, erzeugt der gezeigte XmlFactory-Hauptkonstruktor eine XMLInputFactory über newInstance() und ruft auf ihr setProperty(IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE) auf.",
+      "family": "protection_precondition",
+      "subtype": null,
+      "family_reason": "Bedingter Setter-Aufruf mit sicherheitsbezogener Property.",
+      "qualifiers": [
+        "Bedingung: xmlIn == null; die vorherigen Aufrufe müssen regulär zurückkehren.",
+        "Behauptet den Setter-Aufruf, keine Garantie über Providersemantik oder nachfolgende Konfiguration."
+      ],
+      "evidence": [
+        {
+          "file": "XmlFactory.java.txt",
+          "line_start": 104,
+          "line_end": 116,
+          "quote": "    protected XmlFactory(ObjectCodec oc, int xpFeatures, int xgFeatures,\n            XMLInputFactory xmlIn, XMLOutputFactory xmlOut,\n            String nameForTextElem)\n    {\n        super(oc);\n        _xmlParserFeatures = xpFeatures;\n        _xmlGeneratorFeatures = xgFeatures;\n        _cfgNameForTextElement = nameForTextElem;\n        if (xmlIn == null) {\n            xmlIn = XMLInputFactory.newInstance();\n            // as per [dataformat-xml#190], disable external entity expansion by default\n            xmlIn.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);\n        }"
+        }
+      ],
+      "context_claim_ids": []
+    },
+    {
+      "id": "B02",
+      "proposition": "Wenn xmlIn nicht null übergeben wird, überspringt der gezeigte Hauptkonstruktor den Setter für IS_SUPPORTING_EXTERNAL_ENTITIES und reicht diese Factory an _initFactories weiter, bevor er ihre Referenz _xmlInputFactory zuweist.",
+      "family": "data_flow",
+      "subtype": null,
+      "family_reason": "Erhält den von der Null-Bedingung abhängigen Pfad der übergebenen Factory.",
+      "qualifiers": [
+        "Bedingung: xmlIn != null.",
+        "Scope: sichtbarer Hauptkonstruktor; die externe Factory kann bereits sicher oder unsicher konfiguriert sein."
+      ],
+      "evidence": [
+        {
+          "file": "XmlFactory.java.txt",
+          "line_start": 104,
+          "line_end": 123,
+          "quote": "    protected XmlFactory(ObjectCodec oc, int xpFeatures, int xgFeatures,\n            XMLInputFactory xmlIn, XMLOutputFactory xmlOut,\n            String nameForTextElem)\n    {\n        super(oc);\n        _xmlParserFeatures = xpFeatures;\n        _xmlGeneratorFeatures = xgFeatures;\n        _cfgNameForTextElement = nameForTextElem;\n        if (xmlIn == null) {\n            xmlIn = XMLInputFactory.newInstance();\n            // as per [dataformat-xml#190], disable external entity expansion by default\n            xmlIn.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);\n        }\n        if (xmlOut == null) {\n            xmlOut = XMLOutputFactory.newInstance();\n        }\n        _initFactories(xmlIn, xmlOut);\n        _xmlInputFactory = xmlIn;\n        _xmlOutputFactory = xmlOut;\n    }"
+        }
+      ],
+      "context_claim_ids": []
+    },
+    {
+      "id": "B03",
+      "proposition": "Die gezeigte _initFactories-Implementation setzt an xmlIn die Property IS_COALESCING auf Boolean.TRUE.",
+      "family": "other",
+      "subtype": null,
+      "family_reason": "Benannte Parserkonfiguration ohne behauptete eigenständige Schutzwirkung.",
+      "qualifiers": [
+        "Scope: Körper der gezeigten _initFactories-Implementation, nicht eine mögliche überschreibende Implementation."
+      ],
+      "evidence": [
+        {
+          "file": "XmlFactory.java.txt",
+          "line_start": 138,
+          "line_end": 144,
+          "quote": "    protected void _initFactories(XMLInputFactory xmlIn, XMLOutputFactory xmlOut)\n    {\n        // Better ensure namespaces get built properly, so:\n        xmlOut.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.TRUE);\n        // and for parser, force coalescing as well (much simpler to use)\n        xmlIn.setProperty(XMLInputFactory.IS_COALESCING, Boolean.TRUE);\n    }"
+        }
+      ],
+      "context_claim_ids": []
+    },
+    {
+      "id": "B04",
+      "proposition": "Im gezeigten Hauptkonstruktor und im gezeigten Körper von _initFactories ist kein expliziter setProperty-Aufruf für SUPPORT_DTD enthalten.",
+      "family": "protection_precondition",
+      "subtype": null,
+      "family_reason": "Lokale negative Aussage über eine sicherheitsrelevante Parserproperty.",
+      "qualifiers": [
+        "Negation nur für XmlFactory.java Originalzeilen 104–123 und 138–144.",
+        "Nicht gesetzt bedeutet keinen bestimmten effektiven Wert und keine bestätigte XXE-Ausnutzbarkeit."
+      ],
+      "evidence": [
+        {
+          "file": "XmlFactory.java.txt",
+          "line_start": 104,
+          "line_end": 123,
+          "quote": "    protected XmlFactory(ObjectCodec oc, int xpFeatures, int xgFeatures,\n            XMLInputFactory xmlIn, XMLOutputFactory xmlOut,\n            String nameForTextElem)\n    {\n        super(oc);\n        _xmlParserFeatures = xpFeatures;\n        _xmlGeneratorFeatures = xgFeatures;\n        _cfgNameForTextElement = nameForTextElem;\n        if (xmlIn == null) {\n            xmlIn = XMLInputFactory.newInstance();\n            // as per [dataformat-xml#190], disable external entity expansion by default\n            xmlIn.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);\n        }\n        if (xmlOut == null) {\n            xmlOut = XMLOutputFactory.newInstance();\n        }\n        _initFactories(xmlIn, xmlOut);\n        _xmlInputFactory = xmlIn;\n        _xmlOutputFactory = xmlOut;\n    }"
+        },
+        {
+          "file": "XmlFactory.java.txt",
+          "line_start": 138,
+          "line_end": 144,
+          "quote": "    protected void _initFactories(XMLInputFactory xmlIn, XMLOutputFactory xmlOut)\n    {\n        // Better ensure namespaces get built properly, so:\n        xmlOut.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.TRUE);\n        // and for parser, force coalescing as well (much simpler to use)\n        xmlIn.setProperty(XMLInputFactory.IS_COALESCING, Boolean.TRUE);\n    }"
+        }
+      ],
+      "context_claim_ids": []
+    },
+    {
+      "id": "B05",
+      "proposition": "Die gezeigte _initFactories-Implementation enthält keinen expliziten setProperty-Aufruf für IS_SUPPORTING_EXTERNAL_ENTITIES; der sichtbare Methodenkörper belegt damit für eine übergebene Factory keine nachträgliche Zuweisung dieser Entity-Property.",
+      "family": "protection_precondition",
+      "subtype": null,
+      "family_reason": "Begrenzt die fehlende Zuweisung auf die sichtbare Hilfsmethode.",
+      "qualifiers": [
+        "Scope: gezeigter Methodenkörper; mögliche Overrides, Provider und Aufruferkonfiguration bleiben offen."
+      ],
+      "evidence": [
+        {
+          "file": "XmlFactory.java.txt",
+          "line_start": 138,
+          "line_end": 144,
+          "quote": "    protected void _initFactories(XMLInputFactory xmlIn, XMLOutputFactory xmlOut)\n    {\n        // Better ensure namespaces get built properly, so:\n        xmlOut.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.TRUE);\n        // and for parser, force coalescing as well (much simpler to use)\n        xmlIn.setProperty(XMLInputFactory.IS_COALESCING, Boolean.TRUE);\n    }"
+        }
+      ],
+      "context_claim_ids": [
+        "B02"
+      ]
+    },
+    {
+      "id": "B06",
+      "proposition": "Der gezeigte XmlFactory-Kopierkonstruktor übernimmt _xmlInputFactory von src und setzt in seinem sichtbaren Körper weder die Entity- noch die DTD-Property neu.",
+      "family": "data_flow",
+      "subtype": null,
+      "family_reason": "Unterscheidet Wiederverwendung einer vorhandenen Factory von der Konfigurationsroute des Hauptkonstruktors.",
+      "qualifiers": [
+        "Scope: gezeigter Kopierkonstruktor Originalzeilen 128–136.",
+        "Keine Aussage über frühere oder spätere Konfiguration der übernommenen Factory."
+      ],
+      "evidence": [
+        {
+          "file": "XmlFactory.java.txt",
+          "line_start": 128,
+          "line_end": 136,
+          "quote": "    protected XmlFactory(XmlFactory src, ObjectCodec oc)\n    {\n        super(src, oc);\n        _xmlParserFeatures = src._xmlParserFeatures;\n        _xmlGeneratorFeatures = src._xmlGeneratorFeatures;\n        _cfgNameForTextElement = src._cfgNameForTextElement;\n        _xmlInputFactory = src._xmlInputFactory;\n        _xmlOutputFactory = src._xmlOutputFactory;\n    }"
+        }
+      ],
+      "context_claim_ids": []
+    }
+  ],
+  "open_questions": [
+    "Welcher XMLInputFactory-Provider mit welcher Version wird tatsächlich verwendet, und welche Semantik beziehungsweise Unterstützung haben seine Properties und Resolver?",
+    "Ist _initFactories zur Laufzeit überschrieben, und welche frühere oder spätere Konfiguration gilt für übergebene oder kopierte Factories?",
+    "Welche effektive DTD-/Entity-Verarbeitung ergibt sich nach allen Konfigurationsschritten? Der fehlende SUPPORT_DTD-Setter bestimmt keinen Defaultwert.",
+    "Erreicht angreiferkontrolliertes XML tatsächlich einen Parser dieser Factory? Aufrufer, Eingabequelle, Authentisierung, zugängliche Ressourcen und Dienstprozessrechte fehlen; ein XXE-Effekt ist nicht nachgewiesen."
+  ],
+  "granularity_notes": [
+    "B01 kann Factory-Erzeugung und Setter trennen, wenn beide die Null-Bedingung und dieselbe Factory erhalten. „Externe Entities sind überall deaktiviert“ ist stärker als der belegte Setter-Aufruf.",
+    "B01/B02 können die Konfigurationsasymmetrie zusammenfassen. Eine solche Zusammenfassung deckt nicht automatisch B03–B06 ab.",
+    "B04 und B05 dürfen gemeinsam die im gezeigten Hilfsmethodenkörper fehlenden Sicherheitssetter benennen; die zusätzliche Negation für den Hauptkonstruktor und die Nicht-null-Bedingung müssen erhalten bleiben.",
+    "Eine höhere Behauptung zur XXE-Sicherheit oder zu Dateizugriff braucht Provider-, Aufrufer-, Eingabe- und Rechteevidenz. Links zwischen lokalen Konfigurationsclaims allein reichen nicht."
+  ]
+}
