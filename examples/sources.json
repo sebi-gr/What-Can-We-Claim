@@ -145,6 +145,48 @@
       "role": "license_or_notice",
       "path": "commons-yaml/NOTICE",
       "sha256": "352161ff2be0cda7c174cdcff5eb7057cf3967154bbaeddd1918303d9a546066"
+    },
+    {
+      "case": "jspwiki",
+      "role": "human_original_submission",
+      "path": "jspwiki/manual/manual_annotation_submitted_001.md",
+      "sha256": "893ee3ef9ea79fefb3d73cb9e856dc80822698534f6a6f4b3d75bcf57496113f",
+      "bytes": 8026,
+      "historical_source_path": "annotations/VUL4J-18-review-001/manual_annotation_submitted_001.md",
+      "restoration": "Unchanged original bytes, including historical paths and placeholders."
+    },
+    {
+      "case": "jspwiki",
+      "role": "human_accepted_codex_assisted_revision",
+      "path": "jspwiki/manual/manual_annotation_001.md",
+      "sha256": "674bb3feb1a070303841241e353a0b2556951711797dc80d5ea6fdb24fb4197f",
+      "bytes": 16868,
+      "historical_source_path": "annotations/VUL4J-18-review-001/manual_annotation_001.md",
+      "restoration": "Unchanged original bytes, including historical paths and placeholders."
+    },
+    {
+      "case": "jspwiki",
+      "role": "historical_codex_review",
+      "path": "jspwiki/manual/annotation_review_001.md",
+      "sha256": "401ff9d8f2528b48299235040556478b7e1bbff77c5155df9d76e000d8a1c559",
+      "bytes": 11943,
+      "historical_source_path": "annotations/VUL4J-18-review-001/annotation_review_001.md",
+      "restoration": "Unchanged original bytes, including historical paths and placeholders."
+    },
+    {
+      "case": "jspwiki",
+      "role": "historical_rules_used_by_revised_annotation",
+      "path": "jspwiki/manual/claim_codebook_v0_2.md",
+      "sha256": "e7549f8b357b25225e1eff5057b5e9c99a190234d5cd1bc58793f0506992250a",
+      "bytes": 7910,
+      "historical_source_path": "decompositions/VUL4J-18-001/claim_codebook_v0_2.md",
+      "restoration": "Unchanged original bytes, including historical paths and placeholders."
     }
-  ]
+  ],
+  "manual_reference_notes": {
+    "original_submission": "SG, 24.09.2026; 12 claims. Original placeholders and formulations preserved.",
+    "revised_annotation": "13 claims; revised with Codex and accepted by SG, not an independent human annotation or code-truth reference.",
+    "historical_paths": "Historical documents are preserved byte-for-byte. Their old paths describe the original layout; current report is jspwiki/report.jsonl, current rules/template are under ../resources/.",
+    "historical_codebook_v0_1": "Not recovered from available Git history or data archive; do not substitute a later codebook as the original version."
+  }
 }

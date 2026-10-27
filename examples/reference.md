@@ -36,8 +36,10 @@ sichtbare Aufrufe, solange deren Implementationen fehlen.
 
 Quelle: [Finding](jspwiki/report.jsonl), ID
 `0721c0a0-bba7-48c1-a63c-da196a69d97c:F001`.
-Die 13 historischen Claims sind eine assistierte Reportzerlegung, keine
-13 bestätigten Codewahrheiten.
+Die [Originalabgabe von SG mit zwölf Claims](jspwiki/manual/manual_annotation_submitted_001.md)
+und die [mit Codex überarbeitete Fassung mit 13 Claims](jspwiki/manual/manual_annotation_001.md)
+sind getrennt erhalten. Die 13 historischen Claims sind eine assistierte
+Reportzerlegung, keine 13 bestätigten Codewahrheiten.
 Die folgende Arbeitsfassung hält deren Inhaltszuordnung nachvollziehbar.
 
 ### Unveränderte Quellpassagen
