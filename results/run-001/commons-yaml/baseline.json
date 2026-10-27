@@ -1,0 +1,178 @@
+{
+  "authorship": "Codex-assisted draft, not independently human-validated; based on the SG annotation pattern and known development examples, not blinded.",
+  "prepared_on": "2026-10-27",
+  "status": "draft_awaiting_human_review",
+  "claims": [
+    {
+      "id": "B01",
+      "proposition": "Die gezeigten read(Reader)- und read(InputStream)-Overloads ohne LoaderOptions erzeugen jeweils new Yaml() und übergeben ihre Eingabe in an yaml.load(in).",
+      "family": "data_flow",
+      "subtype": null,
+      "family_reason": "Verfolgt die Eingabe in den beiden ausdrücklich benannten Standard-Ladepfaden.",
+      "qualifiers": [
+        "Scope: die beiden gezeigten Overloads ohne Optionsparameter.",
+        "Die tatsächliche Herkunft und Angreiferkontrolle von in ist unbekannt."
+      ],
+      "evidence": [
+        {
+          "file": "YAMLConfiguration.java",
+          "line_start": 63,
+          "line_end": 70,
+          "quote": "    @Override\n    public void read(final Reader in) throws ConfigurationException\n    {\n        try\n        {\n            final Yaml yaml = new Yaml();\n            final Map<String, Object> map = (Map) yaml.load(in);\n            load(map);"
+        },
+        {
+          "file": "YAMLConfiguration.java",
+          "line_start": 115,
+          "line_end": 122,
+          "quote": "    @Override\n    public void read(final InputStream in) throws ConfigurationException\n    {\n        try\n        {\n            final Yaml yaml = new Yaml();\n            final Map<String, Object> map = (Map) yaml.load(in);\n            load(map);"
+        }
+      ],
+      "context_claim_ids": []
+    },
+    {
+      "id": "B02",
+      "proposition": "Die gezeigten read(Reader, LoaderOptions)- und read(InputStream, LoaderOptions)-Overloads erzeugen jeweils new Yaml(options) und übergeben ihre Eingabe in an yaml.load(in).",
+      "family": "data_flow",
+      "subtype": null,
+      "family_reason": "Unterscheidet die zwei Options-Ladepfade von den Overloads ohne Optionsparameter.",
+      "qualifiers": [
+        "Scope: die beiden gezeigten Overloads mit Optionsparameter.",
+        "Welche Werte options enthält und welche Schutzwirkung sie haben, ist nicht gezeigt."
+      ],
+      "evidence": [
+        {
+          "file": "YAMLConfiguration.java",
+          "line_start": 78,
+          "line_end": 85,
+          "quote": "    public void read(final Reader in, final LoaderOptions options)\n            throws ConfigurationException\n    {\n        try\n        {\n            final Yaml yaml = new Yaml(options);\n            final Map<String, Object> map = (Map) yaml.load(in);\n            load(map);"
+        },
+        {
+          "file": "YAMLConfiguration.java",
+          "line_start": 130,
+          "line_end": 137,
+          "quote": "    public void read(final InputStream in, final LoaderOptions options)\n            throws ConfigurationException\n    {\n        try\n        {\n            final Yaml yaml = new Yaml(options);\n            final Map<String, Object> map = (Map) yaml.load(in);\n            load(map);"
+        }
+      ],
+      "context_claim_ids": []
+    },
+    {
+      "id": "B03",
+      "proposition": "In allen vier gezeigten read-Overloads erfolgt der Cast des Ergebnisses zu Map nach dem Aufruf yaml.load(in); nur wenn dieser regulär zurückkehrt und der Cast gelingt, wird map an load(map) weitergegeben.",
+      "family": "data_flow",
+      "subtype": null,
+      "family_reason": "Erhält die Reihenfolge und die Erfolgsbedingungen der nachgelagerten Verarbeitung.",
+      "qualifiers": [
+        "Scope: alle vier gezeigten read-Overloads.",
+        "Der nachgelagerte Cast ist kein Nachweis einer Typbeschränkung vor der Ausführung von yaml.load."
+      ],
+      "evidence": [
+        {
+          "file": "YAMLConfiguration.java",
+          "line_start": 68,
+          "line_end": 70,
+          "quote": "            final Yaml yaml = new Yaml();\n            final Map<String, Object> map = (Map) yaml.load(in);\n            load(map);"
+        },
+        {
+          "file": "YAMLConfiguration.java",
+          "line_start": 83,
+          "line_end": 85,
+          "quote": "            final Yaml yaml = new Yaml(options);\n            final Map<String, Object> map = (Map) yaml.load(in);\n            load(map);"
+        },
+        {
+          "file": "YAMLConfiguration.java",
+          "line_start": 120,
+          "line_end": 122,
+          "quote": "            final Yaml yaml = new Yaml();\n            final Map<String, Object> map = (Map) yaml.load(in);\n            load(map);"
+        },
+        {
+          "file": "YAMLConfiguration.java",
+          "line_start": 135,
+          "line_end": 137,
+          "quote": "            final Yaml yaml = new Yaml(options);\n            final Map<String, Object> map = (Map) yaml.load(in);\n            load(map);"
+        }
+      ],
+      "context_claim_ids": [
+        "B01",
+        "B02"
+      ]
+    },
+    {
+      "id": "B04",
+      "proposition": "In den vier gezeigten read-Methodenkörpern steht vor yaml.load(in) keine eigene explizite Prüfung der Eingabe auf erlaubte YAML-Tags oder Typen.",
+      "family": "protection_precondition",
+      "subtype": null,
+      "family_reason": "Begrenzt eine negative Validierungsaussage auf den tatsächlich bereitgestellten Code.",
+      "qualifiers": [
+        "Negation ausschließlich für die benannten Methodenkörper vor dem Ladeaufruf.",
+        "Prüfungen durch die Yaml-Konstruktoren, yaml.load oder Aufrufer sind damit nicht ausgeschlossen."
+      ],
+      "evidence": [
+        {
+          "file": "YAMLConfiguration.java",
+          "line_start": 63,
+          "line_end": 91,
+          "quote": "    @Override\n    public void read(final Reader in) throws ConfigurationException\n    {\n        try\n        {\n            final Yaml yaml = new Yaml();\n            final Map<String, Object> map = (Map) yaml.load(in);\n            load(map);\n        }\n        catch (final Exception e)\n        {\n            rethrowException(e);\n        }\n    }\n\n    public void read(final Reader in, final LoaderOptions options)\n            throws ConfigurationException\n    {\n        try\n        {\n            final Yaml yaml = new Yaml(options);\n            final Map<String, Object> map = (Map) yaml.load(in);\n            load(map);\n        }\n        catch (final Exception e)\n        {\n            rethrowException(e);\n        }\n    }"
+        },
+        {
+          "file": "YAMLConfiguration.java",
+          "line_start": 115,
+          "line_end": 143,
+          "quote": "    @Override\n    public void read(final InputStream in) throws ConfigurationException\n    {\n        try\n        {\n            final Yaml yaml = new Yaml();\n            final Map<String, Object> map = (Map) yaml.load(in);\n            load(map);\n        }\n        catch (final Exception e)\n        {\n            rethrowException(e);\n        }\n    }\n\n    public void read(final InputStream in, final LoaderOptions options)\n            throws ConfigurationException\n    {\n        try\n        {\n            final Yaml yaml = new Yaml(options);\n            final Map<String, Object> map = (Map) yaml.load(in);\n            load(map);\n        }\n        catch (final Exception e)\n        {\n            rethrowException(e);\n        }\n    }"
+        }
+      ],
+      "context_claim_ids": []
+    },
+    {
+      "id": "B05",
+      "proposition": "Jeder der vier gezeigten read-Overloads fängt Exception aus seinem try-Block und ruft mit dieser Ausnahme rethrowException(e) auf.",
+      "family": "other",
+      "subtype": null,
+      "family_reason": "Beschreibt die sichtbare Ausnahmebehandlung ohne unbekannte Semantik der geerbten Hilfsmethode zu ergänzen.",
+      "qualifiers": [
+        "Scope: die vier gezeigten read-Overloads; nicht jede Art von Fehler ist eine Exception.",
+        "Der Catch belegt weder Nebenwirkungsfreiheit von yaml.load noch die Rücknahme vorheriger Nebenwirkungen."
+      ],
+      "evidence": [
+        {
+          "file": "YAMLConfiguration.java",
+          "line_start": 72,
+          "line_end": 75,
+          "quote": "        catch (final Exception e)\n        {\n            rethrowException(e);\n        }"
+        },
+        {
+          "file": "YAMLConfiguration.java",
+          "line_start": 87,
+          "line_end": 90,
+          "quote": "        catch (final Exception e)\n        {\n            rethrowException(e);\n        }"
+        },
+        {
+          "file": "YAMLConfiguration.java",
+          "line_start": 124,
+          "line_end": 127,
+          "quote": "        catch (final Exception e)\n        {\n            rethrowException(e);\n        }"
+        },
+        {
+          "file": "YAMLConfiguration.java",
+          "line_start": 139,
+          "line_end": 142,
+          "quote": "        catch (final Exception e)\n        {\n            rethrowException(e);\n        }"
+        }
+      ],
+      "context_claim_ids": []
+    }
+  ],
+  "open_questions": [
+    "Welche SnakeYAML-Version und Implementation von Yaml, LoaderOptions und load wird tatsächlich verwendet? Erlaubte Tags, Typen und Nebenwirkungen sind aus der Wrapperklasse nicht bestimmbar.",
+    "Welche LoaderOptions-Werte gelten beim Aufruf, und wie wirken sie in genau dieser Bibliotheksversion?",
+    "Können Angreifer die Reader-/InputStream-Eingaben erreichen oder beeinflussen, und welche Anmeldung oder Schreibrechte benötigen sie? Aufrufer und Vertrauensgrenze fehlen.",
+    "Wie verhalten sich die geerbten Methoden load(map) und rethrowException(e), insbesondere nach einem Fehler? Die geerbte Implementation fehlt.",
+    "Für einen konkreten Ausführungseffekt wären ein belegter Bibliotheks-/Aufrufpfad, die erreichbaren Typen oder Nebenwirkungen und die Dienstprozessrechte nötig. new Yaml() und ein späterer Map-Cast allein belegen keinen Exploit."
+  ],
+  "granularity_notes": [
+    "B01 und B02 dürfen jeweils nach Reader und InputStream geteilt werden. Eine Aussage nur zu Reader deckt den ausdrücklich zusätzlich genannten InputStream-Pfad nicht automatisch ab.",
+    "B01–B03 können pro Overload zu einem vollständigen Datenfluss zusammengefasst werden, wenn Konstruktorwahl, Eingabeübergabe, Cast und reguläre Fortsetzung erkennbar bleiben. Mehr Claimblöcke erhöhen die inhaltliche Abdeckung nicht.",
+    "„Alle vier read-Overloads laden YAML“ ist eine mögliche höhere Zusammenfassung, verliert aber die Optionsunterscheidung und die Reihenfolge aus B03.",
+    "B04 darf nicht zu „SnakeYAML prüft keine Typen“ oder „im System gibt es keine Validierung“ verstärkt werden. B05 darf nicht zu „sämtliche Angriffe werden abgefangen“ verstärkt werden.",
+    "Eine höhere Aussage über gefährliche Objektkonstruktion oder Codeausführung erfordert zusätzliche Bibliotheks-, Aufrufer- und Rechteevidenz; Kontextverweise auf die Loader-Aufrufe beweisen sie nicht."
+  ]
+}

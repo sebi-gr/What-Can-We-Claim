@@ -1,0 +1,247 @@
+{
+  "claims": [
+    {
+      "id": "C1",
+      "proposition": "Der gezeigte Code initialisiert eine XML-Factory und verwendet dabei entweder optional bereitgestellte `XMLInputFactory`- und `XMLOutputFactory`-Instanzen oder erzeugt Standardinstanzen über `newInstance()`.",
+      "family": "location",
+      "subtype": null,
+      "family_reason": "Beschreibt eine benannte Fundstelle und deren Verhalten im Codeausschnitt.",
+      "qualifiers": [
+        "optional bereitgestellte Instanzen oder Standardinstanzen"
+      ],
+      "evidence": [
+        {
+          "file": "report.txt",
+          "line_start": 1,
+          "line_end": 1,
+          "quote": "Der gezeigte Code initialisiert eine XML-Factory und übergibt dabei optional bereitgestellte `XMLInputFactory`- und `XMLOutputFactory`-Instanzen oder erzeugt Standardinstanzen über `newInstance()`."
+        }
+      ],
+      "context_claim_ids": []
+    },
+    {
+      "id": "C2",
+      "proposition": "Die Parser- und Generator-Objekte werden direkt konfiguriert und anschließend als interne Felder gespeichert.",
+      "family": "data_flow",
+      "subtype": null,
+      "family_reason": "Beschreibt den Fluss von Objekten von der Konfiguration zur Speicherung in internen Feldern.",
+      "qualifiers": [],
+      "evidence": [
+        {
+          "file": "report.txt",
+          "line_start": 1,
+          "line_end": 1,
+          "quote": "Relevant ist der Datenfluss, dass die Parser- und Generator-Objekte direkt konfiguriert und anschließend als interne Felder gespeichert werden."
+        }
+      ],
+      "context_claim_ids": [
+        "C1"
+      ]
+    },
+    {
+      "id": "C3",
+      "proposition": "Wenn keine Input-Factory übergeben wird, wird `XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES` explizit auf `false` gesetzt.",
+      "family": "protection_precondition",
+      "subtype": null,
+      "family_reason": "Es geht um eine Schutzkonfiguration unter einer Bedingung.",
+      "qualifiers": [
+        "Bedingung: keine Input-Factory übergeben"
+      ],
+      "evidence": [
+        {
+          "file": "report.txt",
+          "line_start": 1,
+          "line_end": 1,
+          "quote": "Wenn keine Input-Factory übergeben wird, wird `XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES` explizit auf `false` gesetzt"
+        }
+      ],
+      "context_claim_ids": [
+        "C1"
+      ]
+    },
+    {
+      "id": "C4",
+      "proposition": "Durch diese Konfiguration werden externe Entitäten standardmäßig deaktiviert.",
+      "family": "protection_precondition",
+      "subtype": null,
+      "family_reason": "Beschreibt die behauptete Schutzwirkung der gesetzten Konfiguration.",
+      "qualifiers": [
+        "standardmäßig"
+      ],
+      "evidence": [
+        {
+          "file": "report.txt",
+          "line_start": 1,
+          "line_end": 1,
+          "quote": "womit externe Entitäten standardmäßig deaktiviert werden."
+        }
+      ],
+      "context_claim_ids": [
+        "C3"
+      ]
+    },
+    {
+      "id": "C5",
+      "proposition": "Die Initialisierung setzt `XMLOutputFactory.IS_REPAIRING_NAMESPACES` auf `true` und `XMLInputFactory.IS_COALESCING` auf `true`.",
+      "family": "location",
+      "subtype": null,
+      "family_reason": "Benannte Initialisierungseinstellungen an einer Fundstelle.",
+      "qualifiers": [],
+      "evidence": [
+        {
+          "file": "report.txt",
+          "line_start": 1,
+          "line_end": 1,
+          "quote": "Zusätzlich setzt die Initialisierung `XMLOutputFactory.IS_REPAIRING_NAMESPACES` auf `true` sowie `XMLInputFactory.IS_COALESCING` auf `true`"
+        }
+      ],
+      "context_claim_ids": [
+        "C1"
+      ]
+    },
+    {
+      "id": "C6",
+      "proposition": "Die gesetzten Optionen vereinheitlichen die Namespace-Behandlung und die Text-Koaleszierung.",
+      "family": "other",
+      "subtype": null,
+      "family_reason": "Begründete Restaussage über die Wirkung der Konfiguration, ohne direkte Schwachstelle oder reine Fundstelle.",
+      "qualifiers": [],
+      "evidence": [
+        {
+          "file": "report.txt",
+          "line_start": 1,
+          "line_end": 1,
+          "quote": "was die Namespace-Behandlung und Text-Koaleszierung vereinheitlicht."
+        }
+      ],
+      "context_claim_ids": [
+        "C5"
+      ]
+    },
+    {
+      "id": "C7",
+      "proposition": "Aus diesem Ausschnitt allein lässt sich keine belastbare Aussage über eine Schwachstelle ableiten.",
+      "family": "other",
+      "subtype": null,
+      "family_reason": "Meta-Aussage über die Beleglage und Nicht-Ableitbarkeit einer Schwachstelle.",
+      "qualifiers": [
+        "aus diesem Ausschnitt allein"
+      ],
+      "evidence": [
+        {
+          "file": "report.txt",
+          "line_start": 3,
+          "line_end": 3,
+          "quote": "Eine belastbare Aussage über eine Schwachstelle lässt sich aus diesem Ausschnitt allein nicht ableiten."
+        }
+      ],
+      "context_claim_ids": [
+        "C1",
+        "C3"
+      ]
+    },
+    {
+      "id": "C8",
+      "proposition": "Die Sicherheit hängt weiterhin vom Verhalten der konkreten XML-Implementierungen, von eventuell übergebenen Factory-Instanzen und vom restlichen Aufruferkontext ab.",
+      "family": "other",
+      "subtype": null,
+      "family_reason": "Beschreibt abhängige Faktoren, die laut Report die Sicherheit beeinflussen.",
+      "qualifiers": [],
+      "evidence": [
+        {
+          "file": "report.txt",
+          "line_start": 3,
+          "line_end": 3,
+          "quote": "Zwar hängt die Sicherheit weiterhin vom Verhalten der konkreten XML-Implementierungen, von eventuell übergebenen Factory-Instanzen und vom restlichen Aufruferkontext ab"
+        }
+      ],
+      "context_claim_ids": [
+        "C7"
+      ]
+    },
+    {
+      "id": "C9",
+      "proposition": "Im sichtbaren Code wird eine gängige Schutzmaßnahme gegen externe Entitäten bereits vorgesehen.",
+      "family": "protection_precondition",
+      "subtype": null,
+      "family_reason": "Behauptet eine Schutzmaßnahme im Codeausschnitt.",
+      "qualifiers": [
+        "laut Report gängig"
+      ],
+      "evidence": [
+        {
+          "file": "report.txt",
+          "line_start": 3,
+          "line_end": 3,
+          "quote": "aber im sichtbaren Code wird eine gängige Schutzmaßnahme gegen externe Entitäten bereits vorgesehen."
+        }
+      ],
+      "context_claim_ids": [
+        "C3",
+        "C4"
+      ]
+    },
+    {
+      "id": "C10",
+      "proposition": "Es ist unklar, ob andere sicherheitsrelevante Parser-Features später überschrieben werden, ob Deployment-Konfigurationen eigene XML-Factories injizieren oder ob weitere Stellen im Projekt XML-Inhalte unsicher verarbeiten.",
+      "family": "unclear",
+      "subtype": null,
+      "family_reason": "Der Report markiert mehrere offene Unsicherheiten als unklar.",
+      "qualifiers": [],
+      "evidence": [
+        {
+          "file": "report.txt",
+          "line_start": 3,
+          "line_end": 3,
+          "quote": "Offene Grenzen bleiben: Es ist unklar, ob andere sicherheitsrelevante Parser-Features später überschrieben werden, ob Deployment-Konfigurationen eigene XML-Factories injizieren oder ob weitere Stellen im Projekt XML-Inhalte unsicher verarbeiten."
+        }
+      ],
+      "context_claim_ids": [
+        "C7"
+      ]
+    },
+    {
+      "id": "C11",
+      "proposition": "Ein Angriff wäre nur unter Bedingungen denkbar, bei denen ein Akteur Einfluss auf XML-Eingaben oder auf die injizierten Factory-Objekte hat.",
+      "family": "exploitability_impact",
+      "subtype": "exploitability",
+      "family_reason": "Beschreibt eine bedingte Angriffsmöglichkeit.",
+      "qualifiers": [
+        "nur unter Bedingungen"
+      ],
+      "evidence": [
+        {
+          "file": "report.txt",
+          "line_start": 3,
+          "line_end": 3,
+          "quote": "Ein Angriff wäre nur unter Bedingungen denkbar, bei denen ein Akteur Einfluss auf XML-Eingaben oder auf die injizierten Factory-Objekte hat"
+        }
+      ],
+      "context_claim_ids": [
+        "C8",
+        "C10"
+      ]
+    },
+    {
+      "id": "C12",
+      "proposition": "Ein erfolgreicher Angriff ist hieraus jedoch nicht belegt.",
+      "family": "exploitability_impact",
+      "subtype": "impact",
+      "family_reason": "Verneint eine belegte erfolgreiche Ausnutzung oder Wirkung.",
+      "qualifiers": [
+        "hieraus"
+      ],
+      "evidence": [
+        {
+          "file": "report.txt",
+          "line_start": 3,
+          "line_end": 3,
+          "quote": "ein erfolgreicher Angriff ist hieraus jedoch nicht belegt."
+        }
+      ],
+      "context_claim_ids": [
+        "C11"
+      ]
+    }
+  ]
+}

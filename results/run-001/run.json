@@ -1,0 +1,217 @@
+{
+  "created_at": "2026-10-27T20:20:12.753583+00:00",
+  "status": "completed_with_invalid_outputs",
+  "model": "gpt-5.4-mini-2026-03-17",
+  "reasoning_effort": "none",
+  "budget_usd": 1.0,
+  "max_claim_tokens": 8192,
+  "max_report_tokens": 2048,
+  "pricing_usd_per_million": {
+    "input": 0.75,
+    "output": 4.5
+  },
+  "pricing_source": "https://developers.openai.com/api/docs/pricing",
+  "conservative_cost_bound_usd": 0.87019875,
+  "planned_requests": 9,
+  "spent_estimate_usd": 0.09058500000000001,
+  "reserved_usd": 0.0,
+  "unknown_spend": false,
+  "baseline_hashes": {
+    "jspwiki": "fc577ca1e2eecc658ad06a324071f0668958252800df18245684409e310b4ff4",
+    "jackson-xml": "d3c843472b43564840e043c07405dea065dc3a7f3b3205b9c360467bd0050262",
+    "commons-yaml": "6f52213477bc2ae536297a5439aad36e48f7ef85ecd5395ab45e62d5e0602b49"
+  },
+  "code_hashes": {
+    "jspwiki": {
+      "jspwiki/code/WikiServlet.java": "f01633722bc4d8cca0532525e0996995411fffebf902c4606b505427727fc105",
+      "jspwiki/code/DefaultURLConstructor.java": "ef247510c6105cdca6270c482c6fcd33ef10e0faf25fb379281f62a1f4bf6183",
+      "jspwiki/code/URLConstructor.java": "bacf496ca5016a32e0e02b976f863977221ea3f3852533506a648b10c25d6570",
+      "jspwiki/code/jspwiki.properties": "e332feee489117df276df56c78198a60c5afbd4bb88d6685534b7da55ce1e5cb",
+      "jspwiki/code/web.xml": "cded40ce6f38b1173d668d28ade46496ed574c7ce3ecfff43af4228a926f4a2e"
+    },
+    "jackson-xml": {
+      "jackson-xml/code/XmlFactory.java.txt": "57dd6e883b7e04df61fcaf68a03e111e0fb24b5a6352daadd4b12730fe366c8f"
+    },
+    "commons-yaml": {
+      "commons-yaml/code/YAMLConfiguration.java": "b4142311457fedf5bf39a39e4d84d29b80203a89e0f8539c5b928d9ace67a499"
+    }
+  },
+  "resource_hashes": {
+    "prompts.json": "5a3373d35fd0a3fbd11d4cb82d40b3b420147c9ed481991afbc3b4ad6689841e",
+    "claim_schema.json": "d738704c43a417a9ba5038851b338a848f5b65cc5ca43887dbdf442175280d49",
+    "run.py": "3116495811b47caa7a9580c7ec8704c77754c943e3bbe2ea9d9d7dd3f25892c2"
+  },
+  "tasks": [
+    {
+      "case": "jspwiki",
+      "task": "code_claims",
+      "status": "invalid_output",
+      "reserved_usd": 0.10484175,
+      "usage": {
+        "input_tokens": 21812,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 2387,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 24199
+      },
+      "cost_estimate_usd": 0.0271005
+    },
+    {
+      "case": "jackson-xml",
+      "task": "code_claims",
+      "status": "invalid_output",
+      "reserved_usd": 0.043101,
+      "usage": {
+        "input_tokens": 1356,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 1272,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 2628
+      },
+      "cost_estimate_usd": 0.006741
+    },
+    {
+      "case": "commons-yaml",
+      "task": "code_claims",
+      "status": "invalid_output",
+      "reserved_usd": 0.04496325,
+      "usage": {
+        "input_tokens": 1890,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 1912,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 3802
+      },
+      "cost_estimate_usd": 0.0100215
+    },
+    {
+      "case": "jspwiki",
+      "task": "code_report",
+      "status": "completed",
+      "reserved_usd": 0.0751755,
+      "usage": {
+        "input_tokens": 21305,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 387,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 21692
+      },
+      "cost_estimate_usd": 0.01772025
+    },
+    {
+      "case": "jspwiki",
+      "task": "report_claims",
+      "status": "completed",
+      "reserved_usd": 0.04231875,
+      "usage": {
+        "input_tokens": 1034,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 1668,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 2702
+      },
+      "cost_estimate_usd": 0.0082815
+    },
+    {
+      "case": "jackson-xml",
+      "task": "code_report",
+      "status": "completed",
+      "reserved_usd": 0.01343475,
+      "usage": {
+        "input_tokens": 849,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 357,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 1206
+      },
+      "cost_estimate_usd": 0.00224325
+    },
+    {
+      "case": "jackson-xml",
+      "task": "report_claims",
+      "status": "completed",
+      "reserved_usd": 0.04222575,
+      "usage": {
+        "input_tokens": 1004,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 1603,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 2607
+      },
+      "cost_estimate_usd": 0.0079665
+    },
+    {
+      "case": "commons-yaml",
+      "task": "code_report",
+      "status": "completed",
+      "reserved_usd": 0.015297,
+      "usage": {
+        "input_tokens": 1383,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 333,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 1716
+      },
+      "cost_estimate_usd": 0.00253575
+    },
+    {
+      "case": "commons-yaml",
+      "task": "report_claims",
+      "status": "completed",
+      "reserved_usd": 0.042132,
+      "usage": {
+        "input_tokens": 979,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 1609,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 2588
+      },
+      "cost_estimate_usd": 0.00797475
+    }
+  ]
+}

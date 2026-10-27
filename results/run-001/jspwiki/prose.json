@@ -1,0 +1,222 @@
+{
+  "claims": [
+    {
+      "id": "C1",
+      "proposition": "Die sichtbaren Quellen zeigen einen Wiki-Servletpfad, der eingehende Requests über `WikiServlet.doGet/doPost` annimmt, den Seitennamen aus der URL mittels `DefaultURLConstructor.parsePageFromURL()` ermittelt und anschließend per `RequestDispatcher.forward()` an eine JSP weiterleitet.",
+      "family": "location",
+      "subtype": null,
+      "family_reason": "Die Aussage benennt eine Fundstelle bzw. einen Verarbeitungsweg in den sichtbaren Quellen.",
+      "qualifiers": [
+        "sichtbare Quellen",
+        "eingehende Requests",
+        "anschließend",
+        "an eine JSP"
+      ],
+      "evidence": [
+        {
+          "file": "report.txt",
+          "line_start": 1,
+          "line_end": 1,
+          "quote": "Die sichtbaren Quellen zeigen einen Wiki-Servletpfad, der eingehende Requests über `WikiServlet.doGet/doPost` annimmt, den Seitennamen aus der URL mittels `DefaultURLConstructor.parsePageFromURL()` ermittelt und anschließend per `RequestDispatcher.forward()` an eine JSP weiterleitet."
+        }
+      ],
+      "context_claim_ids": []
+    },
+    {
+      "id": "C2",
+      "proposition": "`pageName` wird bei fehlendem Path-Info auf die Frontseite gesetzt und zusammen mit dem Query-String an die Ziel-JSP angehängt.",
+      "family": "data_flow",
+      "subtype": null,
+      "family_reason": "Die Aussage beschreibt einen Datenfluss bzw. die Weitergabe von Werten an die Ziel-JSP.",
+      "qualifiers": [
+        "bei fehlendem Path-Info",
+        "zusammen mit dem Query-String",
+        "an die Ziel-JSP"
+      ],
+      "evidence": [
+        {
+          "file": "report.txt",
+          "line_start": 1,
+          "line_end": 1,
+          "quote": "Dabei wird `pageName` bei fehlendem Path-Info auf die Frontseite gesetzt und zusammen mit dem Query-String an die Ziel-JSP angehängt."
+        }
+      ],
+      "context_claim_ids": [
+        "C1"
+      ]
+    },
+    {
+      "id": "C3",
+      "proposition": "Die Datenflüsse sind damit als Request-Pfad → Seitennamenextraktion → URL-Encoding → serverseitige Weiterleitung beschrieben.",
+      "family": "data_flow",
+      "subtype": null,
+      "family_reason": "Die Aussage fasst eine Flusskette von Daten durch mehrere Verarbeitungsschritte zusammen.",
+      "qualifiers": [
+        "damit",
+        "klar"
+      ],
+      "evidence": [
+        {
+          "file": "report.txt",
+          "line_start": 1,
+          "line_end": 1,
+          "quote": "Die Datenflüsse sind damit klar: Request-Pfad → Seitennamenextraktion → URL-Encoding → serverseitige Weiterleitung."
+        }
+      ],
+      "context_claim_ids": [
+        "C1",
+        "C2"
+      ]
+    },
+    {
+      "id": "C4",
+      "proposition": "In `jspwiki.properties` sind mehrere relevante Vorkehrungen sichtbar: `jspwiki.translatorReader.allowHTML=false`, `jspwiki.login.throttling=true`, `jspwiki.encoding=UTF-8` sowie standardmäßig deaktivierte Cookie-Authentisierung.",
+      "family": "protection_precondition",
+      "subtype": null,
+      "family_reason": "Die Aussage benennt Schutz- bzw. Konfigurationsvorkehrungen in einer Konfigurationsdatei.",
+      "qualifiers": [
+        "sichtbar",
+        "mehrere relevante Vorkehrungen"
+      ],
+      "evidence": [
+        {
+          "file": "report.txt",
+          "line_start": 1,
+          "line_end": 1,
+          "quote": "Schutzseitig sind in `jspwiki.properties` mehrere relevante Vorkehrungen sichtbar: `jspwiki.translatorReader.allowHTML=false`, `jspwiki.login.throttling=true`, `jspwiki.encoding=UTF-8` sowie standardmäßig deaktivierte Cookie-Authentisierung."
+        }
+      ],
+      "context_claim_ids": []
+    },
+    {
+      "id": "C5",
+      "proposition": "In `web.xml` sind Filter für Wiki- und JSP-Zugriffe eingebunden, außerdem sind Container-Authentifizierung und Rollenprüfungen als kommentierte Schutzoptionen dokumentiert; aktiv wirksam sind sie aus den gezeigten Snippets jedoch nicht belegbar.",
+      "family": "protection_precondition",
+      "subtype": null,
+      "family_reason": "Die Aussage beschreibt Schutzoptionen, deren aktive Wirksamkeit laut Report nicht belegt ist.",
+      "qualifiers": [
+        "als kommentierte Schutzoptionen dokumentiert",
+        "aktiv wirksam ... nicht belegbar"
+      ],
+      "evidence": [
+        {
+          "file": "report.txt",
+          "line_start": 1,
+          "line_end": 1,
+          "quote": "In `web.xml` sind Filter für Wiki- und JSP-Zugriffe eingebunden, außerdem sind Container-Authentifizierung und Rollenprüfungen als kommentierte Schutzoptionen dokumentiert; aktiv wirksam sind sie aus den gezeigten Snippets jedoch nicht belegbar."
+        }
+      ],
+      "context_claim_ids": []
+    },
+    {
+      "id": "C6",
+      "proposition": "Eine belastbare Schwachstellenaussage ist aus den vorliegenden Dateien allein nur eingeschränkt möglich.",
+      "family": "other",
+      "subtype": null,
+      "family_reason": "Die Aussage ist eine allgemeine Einschätzung zur Belegbarkeit und keine reine Fundstelle, kein Datenfluss und keine konkrete Ausnutzungsbehauptung.",
+      "qualifiers": [
+        "aus den vorliegenden Dateien allein",
+        "nur eingeschränkt möglich"
+      ],
+      "evidence": [
+        {
+          "file": "report.txt",
+          "line_start": 3,
+          "line_end": 3,
+          "quote": "Eine belastbare Schwachstellenaussage ist aus den vorliegenden Dateien allein nur eingeschränkt möglich."
+        }
+      ],
+      "context_claim_ids": []
+    },
+    {
+      "id": "C7",
+      "proposition": "`pageName` und `req.getQueryString()` werden unvalidiert in die Forward-URL eingebettet.",
+      "family": "data_flow",
+      "subtype": null,
+      "family_reason": "Die Aussage beschreibt die Verwendung zweier Werte in einer Forward-URL.",
+      "qualifiers": [
+        "unvalidiert",
+        "in die Forward-URL"
+      ],
+      "evidence": [
+        {
+          "file": "report.txt",
+          "line_start": 3,
+          "line_end": 3,
+          "quote": "Auffällig ist, dass `pageName` und `req.getQueryString()` unvalidiert in die Forward-URL eingebettet werden;"
+        }
+      ],
+      "context_claim_ids": [
+        "C1",
+        "C2"
+      ]
+    },
+    {
+      "id": "C8",
+      "proposition": "Ob aus der Einbettung von `pageName` und `req.getQueryString()` ein Angriff resultiert, hängt vom unbekannten Verhalten der Ziel-JSP, des `RequestDispatcher`-Kontexts und des nachgelagerten Renderings ab.",
+      "family": "other",
+      "subtype": null,
+      "family_reason": "Die Aussage stellt eine bedingte Abhängigkeit von unbekanntem Verhalten dar.",
+      "qualifiers": [
+        "unbekanntes Verhalten",
+        "hängt ab"
+      ],
+      "evidence": [
+        {
+          "file": "report.txt",
+          "line_start": 3,
+          "line_end": 3,
+          "quote": "ob daraus ein Angriff resultiert, hängt vom unbekannten Verhalten der Ziel-JSP, des `RequestDispatcher`-Kontexts und des nachgelagerten Renderings ab."
+        }
+      ],
+      "context_claim_ids": [
+        "C7"
+      ]
+    },
+    {
+      "id": "C9",
+      "proposition": "Authentifizierungs-, Autorisierungs- und Deploymentdetails bleiben außerhalb des sichtbaren Codes unklar.",
+      "family": "other",
+      "subtype": null,
+      "family_reason": "Die Aussage benennt Unklarheit über zusätzliche Kontextdetails.",
+      "qualifiers": [
+        "außerhalb des sichtbaren Codes"
+      ],
+      "evidence": [
+        {
+          "file": "report.txt",
+          "line_start": 3,
+          "line_end": 3,
+          "quote": "Ebenso bleiben Authentifizierungs-, Autorisierungs- und Deploymentdetails außerhalb des sichtbaren Codes unklar."
+        }
+      ],
+      "context_claim_ids": []
+    },
+    {
+      "id": "C10",
+      "proposition": "Ein erfolgreicher Angriff lässt sich daher nicht belegen; notwendig wären mindestens kontrollierte Request-Eingaben, passende Rechte auf den Web-Endpunkt und Kontext zu den tatsächlich aktivierten Filtern, Rollen und JSPs.",
+      "family": "exploitability_impact",
+      "subtype": "exploitability",
+      "family_reason": "Die Aussage bewertet die Belegbarkeit eines erfolgreichen Angriffs und nennt Voraussetzungen für mögliche Ausnutzung.",
+      "qualifiers": [
+        "daher",
+        "nicht belegen",
+        "mindestens"
+      ],
+      "evidence": [
+        {
+          "file": "report.txt",
+          "line_start": 3,
+          "line_end": 3,
+          "quote": "Ein erfolgreicher Angriff lässt sich daher nicht belegen; notwendig wären mindestens kontrollierte Request-Eingaben, passende Rechte auf den Web-Endpunkt und Kontext zu den tatsächlich aktivierten Filtern, Rollen und JSPs."
+        }
+      ],
+      "context_claim_ids": [
+        "C6",
+        "C7",
+        "C8",
+        "C9"
+      ]
+    }
+  ]
+}

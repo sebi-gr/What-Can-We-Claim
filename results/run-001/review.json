@@ -1,0 +1,770 @@
+{
+  "authorship": "Codex-assisted qualitative claim-by-claim inspection of code, frozen baselines, generated reports and unmodified raw outputs; no automated semantic matching or judge API.",
+  "prepared_on": "2026-10-27",
+  "human_validation": "pending",
+  "baseline_frozen_commit": "4d67d45",
+  "criteria": [
+    "Semantische Abdeckung: vollständig, teilweise oder fehlend, mit Begründung und Claim-IDs; keine Wortlaut- oder Claimzahlmetrik.",
+    "Codeunterstützung getrennt von Reporttreue und von formaler Zitat-/Referenzvalidierung.",
+    "Erhalt von Bedingungen, Modalität, Negation, Rechten und Scope; eigenständig beurteilbare Granularität.",
+    "Korrekte Zusatzclaims außerhalb der eingefrorenen Referenz anerkennen, Referenz nach Outputs nicht anpassen."
+  ],
+  "cases": [
+    {
+      "case": "jspwiki",
+      "formal_status": {
+        "direct": "invalid_output",
+        "prose": "completed"
+      },
+      "baseline_assessment": [
+        {
+          "baseline_id": "B01",
+          "direct": {
+            "ids": [
+              "C1",
+              "C3"
+            ],
+            "coverage": "full",
+            "reason": "C1 benennt den parsePageFromURL-Aufruf und C3 die Herkunft aus request.getPathInfo; gemeinsam decken sie diese Zielaussage ab."
+          },
+          "prose": {
+            "ids": [
+              "C1",
+              "C2"
+            ],
+            "coverage": "partial",
+            "reason": "Parser und URL-Herkunft sind genannt, PathInfo erscheint nur beim Fallback. Die genaue Herkunft über request.getPathInfo wird nicht als Datenquelle präzisiert."
+          }
+        },
+        {
+          "baseline_id": "B02",
+          "direct": {
+            "ids": [],
+            "coverage": "missing",
+            "reason": "Die Null-/Längenguards stehen im Beleg von C3, aber nicht in seiner Proposition. Ein Quellenzitat allein ist keine ausformulierte Behauptung dieser Zweige."
+          },
+          "prose": {
+            "ids": [],
+            "coverage": "missing",
+            "reason": "Der Report und seine Claims nennen die Grenze Länge <= 1 nicht."
+          }
+        },
+        {
+          "baseline_id": "B03",
+          "direct": {
+            "ids": [
+              "C3"
+            ],
+            "coverage": "partial",
+            "reason": "Slashentfernung wird genannt, aber weder die Null-/Längenvoraussetzung noch der unveränderte Nicht-Slash-Zweig; die pauschale Formulierung ist stärker als die Zielaussage."
+          },
+          "prose": {
+            "ids": [],
+            "coverage": "missing",
+            "reason": "Kein Claim beschreibt die bedingte Slashentfernung oder den alternativen Rückgabezweig."
+          }
+        },
+        {
+          "baseline_id": "B04",
+          "direct": {
+            "ids": [
+              "C3"
+            ],
+            "coverage": "full",
+            "reason": "Der auskommentierte Decode-Aufruf und der lokale Scope sind explizit genannt."
+          },
+          "prose": {
+            "ids": [],
+            "coverage": "missing",
+            "reason": "Der Report erwähnt den fehlenden aktiven Decode-Aufruf nicht; der Extraktor kann ihn deshalb nicht abdecken."
+          }
+        },
+        {
+          "baseline_id": "B05",
+          "direct": {
+            "ids": [
+              "C1"
+            ],
+            "coverage": "full",
+            "reason": "Der Ersatz durch getFrontPage bei null ist explizit enthalten."
+          },
+          "prose": {
+            "ids": [
+              "C2"
+            ],
+            "coverage": "partial",
+            "reason": "Der Fallback wird nur bei fehlendem PathInfo beschrieben, nicht allgemeiner bei null als Parserrückgabe einschließlich Länge <= 1."
+          }
+        },
+        {
+          "baseline_id": "B06",
+          "direct": {
+            "ids": [
+              "C2"
+            ],
+            "coverage": "partial",
+            "reason": "getURLConstructor().getForwardPage als Quelle ist genannt; ein eigener dispatcher.forward-Aufruf wird in der Proposition nicht benannt, und Zielpfad/URI werden vermischt."
+          },
+          "prose": {
+            "ids": [
+              "C1",
+              "C2"
+            ],
+            "coverage": "partial",
+            "reason": "Weiterleitung und angehängter Query sind genannt; die unabhängige Herkunft von jspPage aus dem aktiven URLConstructor fehlt. Eine echte Ziel-JSP ist nicht aus den Dateien garantiert."
+          }
+        },
+        {
+          "baseline_id": "B07",
+          "direct": {
+            "ids": [
+              "C2"
+            ],
+            "coverage": "partial",
+            "reason": "encodeName(pageName) und der angehängte Query-String sind genannt. Der Claim lokalisiert sie jedoch im Zielpfad statt ausdrücklich im Queryparameter page; die zentrale Trennung bleibt unscharf."
+          },
+          "prose": {
+            "ids": [
+              "C2",
+              "C3"
+            ],
+            "coverage": "partial",
+            "reason": "URL-Encoding und Query-String erscheinen; das Literal ?page=, die Rolle als separater Querywert und die Abgrenzung vom Dispatcherpfad fehlen."
+          }
+        },
+        {
+          "baseline_id": "B08",
+          "direct": {
+            "ids": [],
+            "coverage": "missing",
+            "reason": "Die konkrete DefaultURLConstructor.getForwardPage-Implementation und die Bedingung ihrer tatsächlichen Aktivierung werden nicht genannt."
+          },
+          "prose": {
+            "ids": [],
+            "coverage": "missing",
+            "reason": "Die aktive getForwardPage-Implementation und ihr unmittelbarer PathInfo-Rückgabewert fehlen schon im Report."
+          }
+        },
+        {
+          "baseline_id": "B09",
+          "direct": {
+            "ids": [
+              "C3"
+            ],
+            "coverage": "partial",
+            "reason": "Die behauptete auf Slashentfernung begrenzte Parserverarbeitung berührt nur den Parserteil. Eine lokale fehlende Traversalprüfung von jspPage im Servlet wird nicht beschrieben; Null-/Längenguards werden übergangen."
+          },
+          "prose": {
+            "ids": [],
+            "coverage": "missing",
+            "reason": "C7 behauptet unvalidiertes pageName und Query-String. Das ist nicht die eng begrenzte Zielaussage über explizite Traversalprüfungen von PathInfo bzw. jspPage."
+          }
+        }
+      ],
+      "generated_claim_assessment": {
+        "direct": [
+          {
+            "id": "C1",
+            "code_support": "supported",
+            "granularity": "acceptable",
+            "reason": "Parserzuweisung und bedingter Frontseitenfallback sind lokal sichtbar. Das zusammenhängende Ablaufbündel deckt mehrere Zielinhalte ab, ohne sichere Ausnutzung zu behaupten."
+          },
+          {
+            "id": "C2",
+            "code_support": "mixed",
+            "granularity": "too_broad",
+            "reason": "Beide Werte und der rohe Query-String fließen in das Dispatcherargument. Als Zielpfad formuliert bleibt aber unklar, dass jspPage den Pfad und encodeName(pageName) den Querywert bilden; ein wirksames Encoding wird nicht belegt."
+          },
+          {
+            "id": "C3",
+            "code_support": "mixed",
+            "granularity": "too_broad",
+            "reason": "Herkunft und fehlender aktiver Decode-Aufruf stimmen. Nur Slashentfernung unterschlägt Null-/Längenguards und die Bedingung des Entfernens; mehrere getrennt beurteilbare Parseraussagen werden gebündelt."
+          },
+          {
+            "id": "C4",
+            "code_support": "mixed",
+            "granularity": "too_broad",
+            "reason": "Die Kontextunterscheidung in makeURL ist sichtbar. Die notwendige Bedingung nichtleerer Parameter steht nur in qualifiers, nicht in der Proposition; für leere Parameter gilt eine andere Behandlung."
+          },
+          {
+            "id": "C5",
+            "code_support": "supported",
+            "granularity": "acceptable",
+            "reason": "Die vier Platzhalterersetzungen sind in doReplacement sichtbar. Korrekte zusätzliche URL-Erzeugungsaussage außerhalb der eingefrorenen Zielreferenz."
+          },
+          {
+            "id": "C6",
+            "code_support": "supported",
+            "granularity": "acceptable",
+            "reason": "encodeURI ruft encodeName und danach zwei StringUtils.replace-Operationen auf. Das ist eine zusätzliche lokale Transformation; kein Nachweis ihrer Security-Wirksamkeit."
+          },
+          {
+            "id": "C7",
+            "code_support": "supported",
+            "granularity": "acceptable",
+            "reason": "Die Shutdown-Aufrufreihenfolge ist sichtbar. Korrekte Zusatzoperation außerhalb der gewählten Referenz; daraus wird kein zusätzlicher Abdeckungspunkt für den betrachteten Pfad."
+          },
+          {
+            "id": "C8",
+            "code_support": "supported",
+            "granularity": "acceptable",
+            "reason": "Die Konfigurationskommentare beschreiben false als Default und die genannte Warnung. Der Claim markiert dies als Dokumentation. Sein Zitat ist jedoch gekürzt/zusammengesetzt und verletzt den exakten Zitiervertrag."
+          },
+          {
+            "id": "C9",
+            "code_support": "supported",
+            "granularity": "acceptable",
+            "reason": "Die deklarierten Filter-/Servletmappings stimmen. Die Quellenzitate verändern Einrückung bzw. enthalten eine nicht originale Auslassung; die Aussage selbst wird dadurch nicht falsch."
+          }
+        ],
+        "prose": [
+          {
+            "id": "C1",
+            "code_support": "mixed",
+            "granularity": "too_broad",
+            "report_faithful": "yes",
+            "reason": "Entry-Points, Parseraufruf und Forward-Aufruf sind sichtbar. Das tatsächliche Ziel als JSP ist ohne aktive Constructor-/Containerauflösung nicht belegt; mehrere unabhängige Operationen sind gebündelt."
+          },
+          {
+            "id": "C2",
+            "code_support": "supported",
+            "granularity": "acceptable",
+            "report_faithful": "yes",
+            "reason": "Bei fehlendem PathInfo greift der Frontseitenfallback und der spätere Query wird angehängt. Die Aussage ist enger als die vollständige Null-/Längenlogik und beschreibt die Pfad-/Querytrennung nicht."
+          },
+          {
+            "id": "C3",
+            "code_support": "mixed",
+            "granularity": "too_broad",
+            "report_faithful": "yes",
+            "reason": "Die zusammenfassende Kette ist für den page-Querywert plausibel, lässt aber die unabhängige Quelle des Dispatcherpfads aus. Ein Encode-Aufruf ist sichtbar, seine Implementierung fehlt."
+          },
+          {
+            "id": "C4",
+            "code_support": "supported",
+            "granularity": "too_broad",
+            "report_faithful": "yes",
+            "reason": "Die Konfigurationswerte stehen in der Vorlage; die Proposition umfasst vier unabhängig beurteilbare Eigenschaften. Das ist keine Bestätigung des effektiven Deployments oder gleicher Schutzwirkung aller Optionen."
+          },
+          {
+            "id": "C5",
+            "code_support": "supported",
+            "granularity": "too_broad",
+            "report_faithful": "yes",
+            "reason": "Filtermappings und auskommentierte Container-Sicherheitsoptionen sind sichtbar. Ihre Laufzeitwirksamkeit ist offen; Deklarationen und Kommentaroptionen sollten getrennt beurteilbar bleiben."
+          },
+          {
+            "id": "C6",
+            "code_support": "supported",
+            "granularity": "acceptable",
+            "report_faithful": "yes",
+            "reason": "Die Erkenntnisgrenze ist wegen fehlender Engine-, Filter-, Ziel- und Deploymentimplementationen begründet; sie ist kein Beweis für Sicherheit."
+          },
+          {
+            "id": "C7",
+            "code_support": "inconclusive",
+            "granularity": "acceptable",
+            "report_faithful": "yes",
+            "reason": "Unvalidiert ist weiter als lokal keine explizite Traversalprüfung. Parserguards und encodeName-Aufruf existieren; unbekannte Hilfs-/Filterimplementationen entscheiden die Schutzwirksamkeit nicht. Der stärkere Claim ist reporttreu, aber nicht codebelegt."
+          },
+          {
+            "id": "C8",
+            "code_support": "supported",
+            "granularity": "acceptable",
+            "report_faithful": "yes",
+            "reason": "Als offene Abhängigkeit von fehlender Ziel-/Containerverarbeitung sinnvoll; es wird weder Erfüllung der Voraussetzungen noch erfolgreicher Angriff behauptet."
+          },
+          {
+            "id": "C9",
+            "code_support": "supported",
+            "granularity": "acceptable",
+            "report_faithful": "yes",
+            "reason": "Das Paket enthält keine Filterimplementation und kein effektives Deployment; Rechte-/Authentisierungslage bleibt offen."
+          },
+          {
+            "id": "C10",
+            "code_support": "supported",
+            "granularity": "acceptable",
+            "report_faithful": "yes",
+            "reason": "Kein Erfolgsnachweis liegt im Codepaket. Kontrollierte Eingabe und Rechte sind explizit offene Bedingungen, keine erfundenen Tatsachen."
+          }
+        ]
+      },
+      "finding": "Direkt bleiben mehr Parserdetails erhalten, doch Pfad und Query werden vermischt. Im Report fehlen weitere Zielinhalte; die treue Extraktion übernimmt außerdem die unbelegte Aussage „unvalidiert“. Beide Wege bleiben fachlich unvollständig.",
+      "example": {
+        "baseline_id": "B07",
+        "direct_id": "C2",
+        "prose_id": "C3",
+        "comment": "Beide Ausgaben verwischen die zentrale Trennung von Dispatcherpfad und page-Querywert. Die direkte Antwort nennt mehr konkrete Aufrufe; die Prosa reduziert dies auf eine grobe Kette. Der Direktlauf ist zusätzlich wegen anderer Quellenzitate formal abgelehnt."
+      },
+      "verdict": "Inhaltlich deckt die direkte Rohantwort hier mehr Zielbedeutung ab. Formal ist nur die Prosaantwort akzeptiert. Keiner der beiden Wege erreicht die vollständige Zielreferenz oder beweist eine Schwachstelle.",
+      "finding_detail": "Direkte Rohclaims bewahren mehr konkrete Parserdetails und den Frontseitenfallback, vermischen aber Pfad und Query und verlieren Guards. Der Report lässt mehrere Referenzinhalte weg; seine Extraktion ist formal gültig und weitgehend treu, übernimmt aber auch die unbelegte stärkere Formulierung unvalidiert."
+    },
+    {
+      "case": "jackson-xml",
+      "review_authorship": "Codex-assisted qualitative review, not independently human-validated. Semantic judgments are explicit working judgments, not automatic matching.",
+      "formal_direct_status": "invalid_output; the five direct propositions are examined diagnostically from the unchanged raw response, not repaired or promoted to accepted claims.",
+      "baseline_assessment": [
+        {
+          "baseline_id": "B01",
+          "direct": {
+            "ids": [
+              "C1"
+            ],
+            "coverage": "full",
+            "reason": "C1 erhält xmlIn == null, newInstance und den expliziten Entity-Property-Setter. Der genannte öffentliche Dreiparameter-Konstruktor delegiert in 98–102 an den geschützten Hauptkonstruktor 104–123; die Setter stehen also im delegierten Körper, das beschriebene Verhalten beim Aufruf ist dennoch gestützt."
+          },
+          "prose": {
+            "ids": [
+              "C1",
+              "C3"
+            ],
+            "coverage": "full",
+            "reason": "C1 beschreibt bereitgestellte beziehungsweise über newInstance erzeugte Standardfactories; C3 ergänzt die Bedingung einer fehlenden Input-Factory und den expliziten false-Setter. Gemeinsam ist die Zielbedeutung erhalten. Der zusätzliche Wirkungsclaim C4 wird davon getrennt beurteilt."
+          }
+        },
+        {
+          "baseline_id": "B02",
+          "direct": {
+            "ids": [
+              "C3",
+              "C5"
+            ],
+            "coverage": "full",
+            "reason": "C5 nennt ausdrücklich den vom Aufrufer übergebenen Nicht-null-Fall ohne entsprechende sichtbare Entity-Deaktivierung; C3 beschreibt die Referenzübernahme nach _initFactories in die Factory-Felder. Gemeinsam erfassen sie die Konfigurationsasymmetrie und den anschließenden Referenzfluss. C5 überzieht dabei die Sicherheitswirkung im Null-Fall; diese Zusatzstärke macht die vorhandene Zielbedeutung nicht ungeschehen."
+          },
+          "prose": {
+            "ids": [
+              "C1",
+              "C2",
+              "C3"
+            ],
+            "coverage": "partial",
+            "reason": "Übergebene Factories und anschließende Feldspeicherung sind angesprochen. C3 nennt den Setter bei fehlender Input-Factory. Daraus darf jedoch nicht umgekehrt abgeleitet werden, dass bei vorhandener Factory kein solcher Setter erfolgt; genau diese explizite Nicht-null-Verzweigung fehlt."
+          }
+        },
+        {
+          "baseline_id": "B03",
+          "direct": {
+            "ids": [
+              "C2"
+            ],
+            "coverage": "full",
+            "reason": "C2 nennt den IS_COALESCING-Setter auf Boolean.TRUE in der gezeigten _initFactories-Implementation. Der gleichzeitig genannte Namespace-Setter ist ein korrekter Zusatz. C4 wiederholt diese Einstellungen, bringt aber keine weitere Abdeckung."
+          },
+          "prose": {
+            "ids": [
+              "C5"
+            ],
+            "coverage": "full",
+            "reason": "C5 erhält die positive IS_COALESCING-Konfiguration; das zusätzliche Namespace-Setting ist im Code ebenfalls sichtbar. Eine Beweisaussage über sämtliche Provider oder Overrides ist damit nicht gemeint."
+          }
+        },
+        {
+          "baseline_id": "B04",
+          "direct": {
+            "ids": [],
+            "coverage": "missing",
+            "reason": "Kein Direct-Claim benennt die lokale Abwesenheit eines SUPPORT_DTD-Setters im Hauptkonstruktor und in _initFactories. Entity-Konfiguration ersetzt diese eigenständige DTD-Aussage nicht."
+          },
+          "prose": {
+            "ids": [],
+            "coverage": "missing",
+            "reason": "Weder der Report noch die Prose-Claims nennen SUPPORT_DTD beziehungsweise dessen fehlenden sichtbaren Setter. Allgemeine offene Parser-Features in C10 decken diese konkrete negative Aussage nicht ab."
+          }
+        },
+        {
+          "baseline_id": "B05",
+          "direct": {
+            "ids": [
+              "C5"
+            ],
+            "coverage": "partial",
+            "reason": "C5 grenzt fehlende sichtbare Entity-Deaktivierung für übergebene Factories ab. Die enge Aussage über den fehlenden expliziten setProperty-Aufruf gerade im gezeigten _initFactories-Körper wird nicht ausdrücklich herausgearbeitet; Deaktivierungswirkung und Setter-Abwesenheit sind verschiedene Abstraktionsebenen."
+          },
+          "prose": {
+            "ids": [],
+            "coverage": "missing",
+            "reason": "Die positiven Setter in C5 und die Null-Bedingung in C3 belegen keine Negation weiterer Setter im Hilfsmethodenkörper. Der lokale B05-Scope fehlt."
+          }
+        },
+        {
+          "baseline_id": "B06",
+          "direct": {
+            "ids": [],
+            "coverage": "missing",
+            "reason": "C3 beschreibt die Feldspeicherung nach der Hauptinitialisierung, nicht den gesonderten Kopierkonstruktor 128–136. Dessen src-Referenzübernahme ohne neue Entity-/DTD-Setter wird nicht erwähnt."
+          },
+          "prose": {
+            "ids": [],
+            "coverage": "missing",
+            "reason": "Kein Claim benennt den Kopierkonstruktor oder src. Die allgemeine Feldspeicherung in C2 kann diese andere Konstruktorroute nicht ersetzen."
+          }
+        }
+      ],
+      "generated_claim_assessment": {
+        "direct": [
+          {
+            "id": "C1",
+            "code_support": "supported",
+            "granularity": "acceptable",
+            "reason": "Null-Bedingung, Factory-Erzeugung und expliziter Setter sind als zusammenhängende bedingte Konfigurationsoperation belegt. Der öffentliche Konstruktorname ist über die sichtbare Delegation erklärbar; der eigentliche Setter liegt im geschützten Hauptkonstruktor. Keine Garantie der effektiven Sicherheit wird behauptet."
+          },
+          {
+            "id": "C2",
+            "code_support": "supported",
+            "granularity": "acceptable",
+            "reason": "Beide Setter stehen im gezeigten _initFactories-Körper. Die zwei analog formulierten Einstellungen dürfen als lokale Konfigurationsgruppe stehen oder getrennt werden. Die Evidenz mit Zeilen 138–143 enthält allerdings zusätzlich die Schlussklammer aus 144: ein formaler Quellenbereichsfehler, kein Gegenbeweis gegen diese Proposition."
+          },
+          {
+            "id": "C3",
+            "code_support": "supported",
+            "granularity": "acceptable",
+            "reason": "Über die Delegation sind die Zuweisungen in 120–122 erreichbar. „Unverändert“ ist durch den Qualifier auf die übernommenen Objektreferenzen nach Initialisierung begrenzt; es bedeutet hier keine unveränderte Propertykonfiguration der Objekte. Der Kopierkonstruktor wird nicht abgedeckt."
+          },
+          {
+            "id": "C4",
+            "code_support": "mixed",
+            "granularity": "too_broad",
+            "reason": "Die beiden festen TRUE-Setter sind sichtbar, aber „stets“ ist stärker als deren Vorhandensein im Körper: Aufruf/Erreichen der Basisimplementation, reguläre Rückkehr des ersten Setters und mögliche Overrides sind nicht garantiert; der Kopierkonstruktor ruft diese Initialisierung nicht auf. Die Proposition wiederholt außerdem C2 und liefert keine neue Abdeckung."
+          },
+          {
+            "id": "C5",
+            "code_support": "mixed",
+            "granularity": "acceptable",
+            "reason": "Die Null-/Nicht-null-Asymmetrie des sichtbaren Setters ist richtig erhalten. „Daraus folgt, dass externe Entitäten deaktiviert werden“ macht aus dem Setter aber eine effektive Schutzgarantie; Providerverhalten, mögliche _initFactories-Overrides und weitere Konfiguration sind offen. Eine bedingte Kontrastproposition ist als Einheit akzeptabel, ihre Wirkungsstärke ist hier das Problem."
+          }
+        ],
+        "prose": [
+          {
+            "id": "C1",
+            "code_support": "supported",
+            "granularity": "acceptable",
+            "report_faithful": "yes",
+            "reason": "Treue Zusammenfassung der ersten Reportaussage; die sichtbare Hauptkonstruktorstrecke erlaubt übergebene oder neu erzeugte Factories. Die gesonderte Kopierroute wird nicht erwähnt und erhält deshalb keine Referenzabdeckung."
+          },
+          {
+            "id": "C2",
+            "code_support": "supported",
+            "granularity": "acceptable",
+            "report_faithful": "yes",
+            "reason": "Der Report behauptet Konfiguration und anschließende Feldspeicherung; beides ist in der sichtbaren Hauptinitialisierung angelegt. Als lokale Datenflusszusammenfassung ist dies akzeptabel, jedoch keine konkrete Aussage zur Nicht-null-Entity-Property oder zum Kopierkonstruktor."
+          },
+          {
+            "id": "C3",
+            "code_support": "supported",
+            "granularity": "acceptable",
+            "report_faithful": "yes",
+            "reason": "Die Bedingung „keine Input-Factory“ und der explizite Setter bleiben in der Proposition erhalten. Dies ist enger und besser belegt als die nachfolgende pauschale Wirkungsbehauptung."
+          },
+          {
+            "id": "C4",
+            "code_support": "inconclusive",
+            "granularity": "too_broad",
+            "report_faithful": "partial",
+            "reason": "Die Schutzwirkung wird bereits im Report behauptet. Der isolierte Claim verweist nur auf „diese Konfiguration“ und erhält die fehlende-Input-Factory-Bedingung nicht in seinem eigenen Propositionstext; C3 als Kontextlink ersetzt das nicht. Aus dem gegebenen Code ist die effektive Deaktivierung über Provider und mögliche nachfolgende Konfiguration hinweg nicht bestätigt."
+          },
+          {
+            "id": "C5",
+            "code_support": "supported",
+            "granularity": "acceptable",
+            "report_faithful": "yes",
+            "reason": "Beide TRUE-Setter sind im gezeigten Basismethodenkörper sichtbar und werden reporttreu benannt. Ihre gemeinsame Nennung ist als lokale Einstellungsgruppe akzeptabel; unbekannte Laufzeit-Overrides und erfolgreiche Ausführung dürfen daraus nicht ergänzt werden."
+          },
+          {
+            "id": "C6",
+            "code_support": "inconclusive",
+            "granularity": "acceptable",
+            "report_faithful": "yes",
+            "reason": "Die abstrakte Wirkung „vereinheitlichen“ steht im Report, wird aber durch Setter-Namen allein nicht für einen konkreten Provider belegt. Die Proposition ist verständlich, jedoch wenig konkret und keine zusätzliche Abdeckung eines Basisclaims."
+          },
+          {
+            "id": "C7",
+            "code_support": "supported",
+            "granularity": "acceptable",
+            "report_faithful": "yes",
+            "reason": "Begrenzt den Schluss auf die vorhandene Evidenz; Provider-, Parser-, Aufrufer- und Deploymentkontext fehlen. Das ist kein positiver Sicherheitsbeweis und kein Widerspruch zur Existenz eines bekannten Entwicklungsfalls."
+          },
+          {
+            "id": "C8",
+            "code_support": "supported",
+            "granularity": "acceptable",
+            "report_faithful": "yes",
+            "reason": "Treue Benennung der offenen Abhängigkeiten, die durch die sichtbaren Factory-Parameter und die fehlenden Implementationen/Aufrufer begründet sind. Sie behauptet keinen bestimmten unsicheren Wert."
+          },
+          {
+            "id": "C9",
+            "code_support": "mixed",
+            "granularity": "acceptable",
+            "report_faithful": "yes",
+            "reason": "Ein als Schutz intendierter Entity-Setter ist im Code samt Kommentar erkennbar. Die Qualifizierung als „gängige“ Maßnahme stammt jedoch aus dem Report und ist durch den Ausschnitt allein nicht belegt; eine effektive Laufzeitgarantie folgt ebenfalls nicht."
+          },
+          {
+            "id": "C10",
+            "code_support": "supported",
+            "granularity": "too_broad",
+            "report_faithful": "yes",
+            "reason": "Die drei Möglichkeiten sind tatsächlich mit dem Ausschnitt offen und im Report ausdrücklich unklar. Späteres Überschreiben, Deployment-Injektion und andere unsichere XML-Stellen sind jedoch unabhängig zu untersuchende Fragen; ihre Bündelung erschwert einzelne Urteile und deckt keinen konkreten fehlenden SUPPORT_DTD-Setter ab."
+          },
+          {
+            "id": "C11",
+            "code_support": "inconclusive",
+            "granularity": "acceptable",
+            "report_faithful": "yes",
+            "reason": "Die bedingte Akteursaussage einschließlich „nur“ und der Oder-Alternative ist reporttreu. Der Code zeigt aber weder konkrete Angreiferrechte noch einen Angriffspfad und belegt deshalb nicht, dass gerade diese Bedingungen allgemein notwendig oder hinreichend sind."
+          },
+          {
+            "id": "C12",
+            "code_support": "supported",
+            "granularity": "acceptable",
+            "report_faithful": "yes",
+            "reason": "Ein erfolgreicher Angriff wird durch die vorliegenden Dateien nicht belegt; der Claim erhält diese Erkenntnisgrenze aus dem Report. Die Typisierung als impact ist diskutierbar, weil ein Belegstatus und keine konkrete Wirkung beschrieben wird."
+          }
+        ]
+      },
+      "finding": "Direkt wird die Nicht-null-Asymmetrie genauer erfasst. Beide Wege überdehnen teils den Setter zur Schutzwirkung. DTD-Setter-Abwesenheit und Kopierkonstruktor fehlen beiden; zusätzliche Prosa-Claims ersetzen diese Inhalte nicht.",
+      "example": {
+        "baseline_id": "B01",
+        "direct_id": "C1",
+        "prose_id": "C4",
+        "comment": "Direct C1 beschreibt die bedingte Erzeugung und den false-Setter. Prose C4 macht daraus eine effektive Standard-Deaktivierung und trägt die Null-Bedingung nicht mehr selbst. Diese stärkere Wirkung stammt bereits aus dem Report; Prose C3 bleibt daneben ein korrekter bedingter Setter-Claim. Der Vergleich zeigt einen Abstraktionswechsel, nicht pauschal falsche Prosa-Extraktion."
+      },
+      "verdict": "Kein Generalsieger: Auf Ebene der Rohpropositionen ist Direct bei der Nicht-null-Asymmetrie konkreter, aber seine Ausgabe scheitert am formalen Quellenvertrag und enthält ebenfalls Überstärkungen. Prosa ist formal nutzbar und weitgehend reporttreu, liefert trotz mehr Claims weniger konkrete Basisabdeckung und übernimmt unbestätigte Wirkungssprache aus dem Report. Dies ist eine KI-unterstützte Fallbeobachtung ohne menschliche Validierung oder Aussage über andere Fälle/Modelle.",
+      "finding_detail": "Der direkte XML-Lauf ist formal ungültig, insbesondere weil C2s Zitat für 138–143 noch die Schlussklammer aus 144 enthält. Die unveränderten fünf Rohpropositionen sind deshalb nur diagnostisch bewertet. Inhaltlich erhalten sie die Nicht-null-Konfigurationsasymmetrie deutlicher als die zwölf Prose-Claims, enthalten aber die Duplikation C4 und überstarke Wirkungswörter in C4/C5. Beide Wege lassen die konkrete DTD-Setter-Abwesenheit und den Kopierkonstruktor aus. Der Prosaweg extrahiert überwiegend treu, übernimmt jedoch schon im Report vorhandene Sicherheitswirkungsbehauptungen; bei C4 wird zusätzlich die Null-Bedingung aus dem isolierten Satz verlagert."
+    },
+    {
+      "case": "commons-yaml",
+      "baseline_assessment": [
+        {
+          "baseline_id": "B01",
+          "direct": {
+            "ids": [
+              "C1",
+              "C2"
+            ],
+            "coverage": "full",
+            "reason": "C1 benennt Reader und InputStream unter den vier Ladewegen und deren Eingabeübergabe an yaml.load; C2 ergänzt für die Varianten ohne LoaderOptions ausdrücklich new Yaml(). „Parameterlos-Varianten“ ist dabei sprachlich ungenau: Gemeint sind Varianten ohne Optionsparameter, nicht ein nicht vorhandenes read()."
+          },
+          "prose": {
+            "ids": [
+              "C1"
+            ],
+            "coverage": "partial",
+            "reason": "Reader/InputStream und Laden sind genannt. Die eigenen new-Yaml()-Instanzen und der ausdrücklich optionslose Zweig fehlen; „per load(map) in das interne Modell überführt“ ergänzt zudem unbekannte geerbte Semantik."
+          }
+        },
+        {
+          "baseline_id": "B02",
+          "direct": {
+            "ids": [
+              "C1",
+              "C2"
+            ],
+            "coverage": "full",
+            "reason": "Die vier konkret benannten Overloads aus C1 und der Konstruktorvergleich new Yaml(options) gegenüber new Yaml() in C2 erhalten Eingabetypen, Aufruferoptionen und Laden. Eine Schutzwirkung der unbekannten Optionswerte wird nicht behauptet."
+          },
+          "prose": {
+            "ids": [
+              "C1",
+              "C5"
+            ],
+            "coverage": "partial",
+            "reason": "C1 nennt die Eingabetypen und yaml-Verarbeitung, C5 die Weitergabe von LoaderOptions in Varianten. Welche beiden Overloads new Yaml(options) erzeugen, bleibt unbenannt; C5 verbindet dies außerdem mit dem unabhängigen Schreibformat."
+          }
+        },
+        {
+          "baseline_id": "B03",
+          "direct": {
+            "ids": [
+              "C1",
+              "C6"
+            ],
+            "coverage": "partial",
+            "reason": "Die Reihenfolge yaml.load und anschließendes load(map) ist erfasst. Dass davor der Map-Cast erfolgt und load(map) nur nach regulärer Rückkehr und erfolgreichem Cast erreicht wird, steht nicht in den Propositionen. C6 benennt eine Map, aber nicht diese Erfolgsbedingungen."
+          },
+          "prose": {
+            "ids": [
+              "C1"
+            ],
+            "coverage": "partial",
+            "reason": "C1 erhält das Ergebnis als Map und die anschließende Weitergabe. Die konkrete Cast-Operation, ihre Erfolgsbedingung und die reguläre Rückkehr von yaml.load fehlen. Die geerbte Methode wird stärker als tatsächliche Modellüberführung beschrieben."
+          }
+        },
+        {
+          "baseline_id": "B04",
+          "direct": {
+            "ids": [],
+            "coverage": "missing",
+            "reason": "Kein Direktclaim sagt, dass in den vier sichtbaren Methodenkörpern vor yaml.load keine eigene explizite Tag-/Typprüfung steht. C6 betrifft das nachgelagerte load(map) und deckt diese lokale Negation nicht ab."
+          },
+          "prose": {
+            "ids": [],
+            "coverage": "missing",
+            "reason": "Optionsweitergabe und bedingtes Angriffsszenario sagen nichts darüber aus, ob die gezeigten Methodenkörper vor yaml.load selbst Tags oder Typen prüfen. Diese Basisaussage fehlt bereits im Report und folglich in der Extraktion."
+          }
+        },
+        {
+          "baseline_id": "B05",
+          "direct": {
+            "ids": [
+              "C5"
+            ],
+            "coverage": "full",
+            "reason": "C5 nennt alle vier read-Methoden, den Fang von Exception und rethrowException(e). „Jede Exception“ erweitert die Aussage nicht auf Error. Die tatsächliche Wirkung der geerbten Hilfsmethode bleibt im Zusatzfeld offen; ein Abfangen sämtlicher Angriffe wird nicht behauptet."
+          },
+          "prose": {
+            "ids": [],
+            "coverage": "missing",
+            "reason": "C4 erwähnt lediglich teilweise nicht einsehbare Fehleraufbereitung. Weder die vier catch(Exception)-Blöcke noch ihr Aufruf rethrowException(e) werden wiedergegeben; die konkrete Basisaussage fehlt."
+          }
+        }
+      ],
+      "generated_claim_assessment": {
+        "direct": [
+          {
+            "id": "C1",
+            "code_support": "supported",
+            "granularity": "acceptable",
+            "reason": "Die vier Overloads und die sichtbare Folge Yaml-Erzeugung, yaml.load und load(map) stimmen mit Zeilen 63–91/115–143 überein. Als Zusammenfassung analoger Abläufe vertretbar; sie deckt aber den Cast und seine Erfolgsbedingungen nicht ab. Die im Rohoutput entfernte Einrückung in mehrzeiligen Zitaten ist ein eigenständiger formaler Fehler, kein Beweis einer falschen Ablaufbehauptung."
+          },
+          {
+            "id": "C2",
+            "code_support": "supported",
+            "granularity": "acceptable",
+            "reason": "Zeilen 68/83/120/135 belegen den Konstruktorvergleich und die Aufruferoptionen. Die unbekannte Schutzwirkung ist korrekt offengelassen. „Parameterlos-Varianten“ sollte beim fachlichen Gegenlesen zu „Overloads ohne LoaderOptions“ präzisiert werden; ein read() ohne Parameter existiert nicht."
+          },
+          {
+            "id": "C3",
+            "code_support": "supported",
+            "granularity": "acceptable",
+            "reason": "write(Writer), Zeilen 93–99, erzeugt DumperOptions, setzt FlowStyle.BLOCK und ruft dump(out,options) auf. Dies ist ein korrekter Zusatz zur Lade-Referenz; eine Sicherheitswirkung des Ausgabeformats wird in der Proposition nicht behauptet."
+          },
+          {
+            "id": "C4",
+            "code_support": "supported",
+            "granularity": "acceptable",
+            "reason": "dump(Writer,DumperOptions), Zeilen 101–107, enthält genau new Yaml(options) und yaml.dump(constructMap(...),out). Die Qualifiers beschränken den Beleg auf die Aufrufe und lassen constructMap sowie Bibliothekssemantik offen. Dieser zusätzliche Schreibpfad ist nicht allein wegen fehlender Baseline-Zuordnung falsch."
+          },
+          {
+            "id": "C5",
+            "code_support": "supported",
+            "granularity": "acceptable",
+            "reason": "Alle vier try-Blöcke fangen Exception und delegieren an rethrowException(e), Zeilen 72–75/87–90/124–127/139–142. Die Aussage beschreibt keine Nebenwirkungsfreiheit und keine Garantie über Error oder die unbekannte Hilfsmethode. Als Kategorie wäre reine Fehlerbehandlung eher other als ein belegter Schutz."
+          },
+          {
+            "id": "C6",
+            "code_support": "supported",
+            "granularity": "acceptable",
+            "reason": "Die Implementation von load(map) fehlt; ein Sicherheitsurteil über diese geerbte Methode ist deshalb tatsächlich offen. Sichtbar ist die Übergabe derselben nach yaml.load zu Map gecasteten Referenz, keine nachgewiesene Vertrauensgrenzenprüfung. „Unverändert“ sollte nicht den vorgeschalteten Cast verschweigen. Zusätzlich zum Zitierproblem verletzt subtype=unclear bei family=unclear die vereinbarte Null-Konvention; beides bleibt als formaler Fehler erhalten."
+          }
+        ],
+        "prose": [
+          {
+            "id": "C1",
+            "code_support": "mixed",
+            "granularity": "acceptable",
+            "report_faithful": "yes",
+            "reason": "Die Proposition übernimmt den ersten Reportsatz treu. Einlesen, Map-Cast und load(map)-Aufruf sind sichtbar; dass die geerbte Methode das interne hierarchische Modell tatsächlich wie beschrieben überführt, ist mangels Implementation nicht belegt. Reguläre Rückkehr und Cast-Erfolg fehlen als Bedingungen. Der zusammengefasste Leseablauf ist als Abstraktion zulässig, aber unvollständig gegenüber B01–B03."
+          },
+          {
+            "id": "C2",
+            "code_support": "supported",
+            "granularity": "acceptable",
+            "report_faithful": "yes",
+            "reason": "Die Reportaussage über BLOCK und den serialisierenden Aufrufpfad entspricht write/dump, Zeilen 93–107. Sie ist ein korrekter Zusatzclaim außerhalb der Lade-Referenz; der Claim allein belegt keine Sicherheitswirkung des Formats."
+          },
+          {
+            "id": "C3",
+            "code_support": "mixed",
+            "granularity": "too_broad",
+            "report_faithful": "yes",
+            "reason": "Die Behauptung eines klaren Gesamtflusses wird reporttreu extrahiert. Der Code zeigt getrennte Lese- und Schreibaufrufe; dass derselbe geladene Inhalt über die unbekannte geerbte Modellverarbeitung tatsächlich wieder ausgegeben wird, ist nicht vollständig gezeigt. „Extern“ belegt keine Angreiferkontrolle. Die höhere, teilweise redundante Zusammenfassung benötigt eine Begründung über die fehlenden Methoden, keine bloßen Verweise auf C1/C2."
+          },
+          {
+            "id": "C4",
+            "code_support": "supported",
+            "granularity": "acceptable",
+            "report_faithful": "yes",
+            "reason": "Yaml-Parsing sowie geerbte load-/constructMap-/rethrowException-Verarbeitung sind im bereitgestellten Klassencode nicht implementiert. Die begrenzte Aussage über teilweise fehlenden Kontext ist gestützt und reporttreu. Sie ersetzt die konkrete Catch-Aussage B05 nicht."
+          },
+          {
+            "id": "C5",
+            "code_support": "supported",
+            "granularity": "too_broad",
+            "report_faithful": "yes",
+            "reason": "BLOCK-Auswahl und Weitergabe von LoaderOptions sind getrennt am Code belegbar und im Report genauso kombiniert. Es sind zwei unabhängig beurteilbare Inhalte aus Schreib- und Lesepfad. Die Familie protection_precondition und die Begründung legen eine Schutzrolle nahe, obwohl BLOCK nur eine Ausgabeformatkonfiguration ist; eine Schutzwirkung ist nicht belegt."
+          },
+          {
+            "id": "C6",
+            "code_support": "supported",
+            "granularity": "acceptable",
+            "report_faithful": "yes",
+            "reason": "Die tatsächlichen LoaderOptions-Werte und ihre Bibliothekssemantik fehlen, daher bleibt eine Schutzwirkung offen. Dies entspricht dem Report. Für eine eigenständig klarere Aussage wäre „diese Optionen“ ausdrücklich als LoaderOptions zu benennen, weil C5 zugleich das Schreibformat anspricht."
+          },
+          {
+            "id": "C7",
+            "code_support": "mixed",
+            "granularity": "too_broad",
+            "report_faithful": "yes",
+            "reason": "Die Extraktion bewahrt den Reportsatz einschließlich „nur“, Angreiferkontrolle und Optionsbedingung. Der Ausschnitt allein bestätigt keinen konkreten Exploit. Er belegt aber auch nicht, dass das Fehlen restriktiver Einschränkungen die notwendige Konfigurationsbedingung jedes denkbaren Angriffs wäre; Einschränkungen könnten unvollständig oder umgehbar sein. Die epistemische Aussage und die weitergehende Angriffshypothese sind getrennt zu beurteilen. Weder Rechte noch gefährlicher Typ/Ausführungspfad sind nachgewiesen."
+          },
+          {
+            "id": "C8",
+            "code_support": "supported",
+            "granularity": "acceptable",
+            "report_faithful": "yes",
+            "reason": "Umgebung, SnakeYAML-Version und Akteurrechte sind in der einzelnen bereitgestellten Wrapperklasse tatsächlich nicht bestimmt. Der Reportinhalt wird treu übernommen, ohne daraus anonyme Erreichbarkeit oder einen erfolgreichen Angriff abzuleiten."
+          }
+        ]
+      },
+      "finding": "Direkt bleiben Optionsvarianten und Catch/rethrow konkreter. Die Prosa verliert diese Details und die lokale Tag-/Typprüfungsnegation. Korrekte zusätzliche Schreibpfadclaims sind kein Ersatz für die fehlenden Ladeinhalte.",
+      "example": {
+        "baseline_id": "B02",
+        "direct_id": "C2",
+        "prose_id": "C5",
+        "comment": "Direkt C2 unterscheidet new Yaml(options) von new Yaml() und damit die entscheidende Optionsvariante. Prosa C5 sagt nur, dass read-Varianten LoaderOptions weiterreichen, und bündelt dies mit dem unabhängigen BLOCK-Schreibformat. Das ist reporttreu, aber gegenüber der konkreten Basis weniger präzise. Die formale Ungültigkeit der gesamten Direktantwort wird durch diese Inhaltsbeobachtung nicht repariert."
+      },
+      "verdict": "Für diesen einzelnen bekannten Entwicklungsfall ist die Direktantwort in den codebezogenen Ladeinhalten präziser, technisch jedoch nicht als gültige Claimdatei akzeptiert. Die Prosa-Route liefert ein formal gültiges, weitgehend reporttreues Ergebnis, dessen Referenzlücken und teilweise zu starke Deutungen schon im Report entstehen. Daraus folgt kein allgemeiner Sieger und kein unabhängiges menschliches Qualitätsurteil; die Beurteilung ist ein KI-unterstützter Einzelreview.",
+      "finding_detail": "Inhaltlich trifft die Direktantwort mehr der fünf Lade-Basisinhalte: drei vollständig, einen teilweise und einen nicht. Sie bleibt als gesamte Ausgabe formal ungültig, insbesondere wegen nicht exakter Zitate; die Rohclaims werden nur ergänzend inhaltlich beurteilt. Die gültige Prosaextraktion enthält acht Claims, deckt die fünf Basisinhalte aber nur dreimal teilweise ab und lässt zwei aus. Der Report verliert vor allem die eigene lokale Negation zur Tag-/Typprüfung und die konkrete Catch-/rethrow-Behandlung; die Extraktion kann diese Auslassungen ohne Codezugriff nicht nachholen. Beide Routen liefern zusätzlich überwiegend korrekte Aussagen zum Schreibpfad. Mehr Claims bedeutet hier keine größere Referenzabdeckung."
+    }
+  ],
+  "research_questions": [
+    {
+      "id": "RQ0",
+      "question": "Warum Claims?",
+      "answer": "Reports können korrekte Codebeobachtungen und unbelegte Wirkungen vermischen. Explizite Claims machen Teilurteile, Voraussetzungen und Quellen adressierbar [1-3]. IDs und Git schaffen Nachvollziehbarkeit. Das ist eine literaturgestützte Motivation; ein Zeit- oder Sicherheitsgewinn wird hier nicht gemessen."
+    },
+    {
+      "id": "RQ1",
+      "question": "Wie werden Claims erzeugt?",
+      "answer": "Ein LLM-Durchgang erzeugt Claims im gemeinsamen JSON-Schema. Der Prompt verlangt beurteilbare Propositionen, erhaltene Bedingungen und exakte Quellen. Direkt wird nur Code gelesen; die Prosa-Extraktion liest ausschließlich den neuen Report. Danach prüft lokaler Code Form und Zitate, keine Wahrheit."
+    },
+    {
+      "id": "RQ2",
+      "question": "Wie brauchbar sind sie gegenüber den Zielclaims?",
+      "answer": "Die einzeln begründete KI-Zuordnung zeigt in beiden Wegen Auslassungen, Bündelungen und zu starke Schutz-/Wirkungsaussagen. Manche Zusatzclaims sind korrekt. Gegenüber einer unabhängig menschlich bestätigten Referenz ist die Qualität noch nicht beantwortet: Auch die neuen Basisclaims sind KI-unterstützte Entwürfe."
+    },
+    {
+      "id": "RQ3",
+      "question": "Direkt oder über Prosa: was ist besser?",
+      "answer": "Hier erhalten direkte Rohclaims mehr konkrete Zielinhalte; alle drei Direktantworten verletzen aber den exakten Zitiervertrag. Alle drei Prosaextraktionen sind formal gültig, übernehmen jedoch Reportauslassungen und Überstärkungen. Ein pauschaler Sieger folgt daraus nicht; Formatzuverlässigkeit und Inhaltsabdeckung zeigen unterschiedliche Stärken."
+    }
+  ],
+  "conclusion": "Der MVP macht den Unterschied zwischen Quellenfehler, Reportverlust und unvollständiger Zerlegung konkret sichtbar. Die Prosa ist in diesem Lauf formal zuverlässiger, die direkte Rohantwort inhaltlich näher an den gewählten Zielinhalten. Keiner der Wege liefert durchgehend vollständige, unverändert nutzbare Claims.",
+  "limitations": [
+    "Drei bekannte Entwicklungsfälle, ein Lauf je Weg; keine unabhängige Stichprobe oder statistische Überlegenheit.",
+    "Zielreferenz und Vergleich sind KI-unterstützt, menschliche Kontrolle steht aus; keine Humanstudie oder Nutzenmessung.",
+    "Begrenzte Codepakete, keine neuen Builds oder PoV-Läufe; Datasetlabel und Claimlinks beweisen keinen Exploit."
+  ],
+  "next_steps": [
+    "Zielclaims und Zuordnungen mit SG fachlich gegenlesen. Danach Zitierprompt und Granularität gezielt überarbeiten und einen neuen Versuch gesondert festlegen."
+  ],
+  "formal_validation": {
+    "direct_valid": 0,
+    "direct_total": 3,
+    "prose_valid": 3,
+    "prose_total": 3,
+    "policy": "Keine Rohantwort wurde repariert oder erneut angefordert. Inhaltliche Direct-Bewertung ist nur Diagnose formal abgelehnter Rohclaims."
+  }
+}

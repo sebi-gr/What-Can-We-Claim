@@ -1,0 +1,225 @@
+{
+  "authorship": "Codex-assisted draft, not independently human-validated; based on the SG annotation pattern and known development examples, not blinded.",
+  "prepared_on": "2026-10-27",
+  "status": "draft_awaiting_human_review",
+  "claims": [
+    {
+      "id": "B01",
+      "proposition": "WikiServlet.doGet weist die Rückgabe von DefaultURLConstructor.parsePageFromURL dem Seitennamen pageName zu; die aufgerufene Methode liest dafür request.getPathInfo().",
+      "family": "data_flow",
+      "subtype": null,
+      "family_reason": "Verbindet die sichtbare Eingabequelle mit dem im Servlet verwendeten Wert.",
+      "qualifiers": [
+        "Scope: WikiServlet.doGet und die gezeigte statische parsePageFromURL-Methode; keine Aussage über den Request vor diesem Aufruf."
+      ],
+      "evidence": [
+        {
+          "file": "WikiServlet.java",
+          "line_start": 88,
+          "line_end": 89,
+          "quote": "    public void doGet( HttpServletRequest req, HttpServletResponse res ) throws IOException, ServletException {\n        String pageName = DefaultURLConstructor.parsePageFromURL( req, m_engine.getContentEncoding() );"
+        },
+        {
+          "file": "DefaultURLConstructor.java",
+          "line_start": 245,
+          "line_end": 249,
+          "quote": "    public static String parsePageFromURL( HttpServletRequest request,\n                                           String encoding )\n        throws UnsupportedEncodingException\n    {\n        String name = request.getPathInfo();"
+        }
+      ],
+      "context_claim_ids": []
+    },
+    {
+      "id": "B02",
+      "proposition": "DefaultURLConstructor.parsePageFromURL liefert null zurück, wenn request.getPathInfo() null ist oder seine Länge höchstens ein Zeichen beträgt.",
+      "family": "protection_precondition",
+      "subtype": null,
+      "family_reason": "Benannte Eingangsbedingungen begrenzen den Pfad der weiteren Verarbeitung.",
+      "qualifiers": [
+        "Bedingung: PathInfo ist null oder hat Länge ≤ 1; keine Aussage über Schutz gegen Traversal."
+      ],
+      "evidence": [
+        {
+          "file": "DefaultURLConstructor.java",
+          "line_start": 249,
+          "line_end": 254,
+          "quote": "        String name = request.getPathInfo();\n\n        if( name == null || name.length() <= 1 )\n        {\n            return null;\n        }"
+        }
+      ],
+      "context_claim_ids": []
+    },
+    {
+      "id": "B03",
+      "proposition": "Bei nicht-null PathInfo mit mehr als einem Zeichen entfernt DefaultURLConstructor.parsePageFromURL einen vorhandenen führenden Slash; beginnt dieser Wert nicht mit einem Slash, gibt die Methode ihn unverändert zurück.",
+      "family": "other",
+      "subtype": null,
+      "family_reason": "Beschreibt eine bedingte Stringtransformation; keine eigenständige Schutzwirkung behauptet.",
+      "qualifiers": [
+        "Bedingung: nicht-null PathInfo mit Länge > 1.",
+        "Scope: gezeigte Methode, nicht vorausgehende Containerverarbeitung."
+      ],
+      "evidence": [
+        {
+          "file": "DefaultURLConstructor.java",
+          "line_start": 249,
+          "line_end": 267,
+          "quote": "        String name = request.getPathInfo();\n\n        if( name == null || name.length() <= 1 )\n        {\n            return null;\n        }\n        else if( name.charAt(0) == '/' )\n        {\n            name = name.substring(1);\n        }\n\n        //\n        //  This is required, because by default all URLs are handled\n        //  as Latin1, even if they are really UTF-8.\n        //\n\n        // name = TextUtil.urlDecode( name, encoding );\n\n        return name;"
+        }
+      ],
+      "context_claim_ids": []
+    },
+    {
+      "id": "B04",
+      "proposition": "DefaultURLConstructor.parsePageFromURL führt im gezeigten Methodenkörper keinen aktiven URL-Decode-Aufruf aus; die Zeile mit TextUtil.urlDecode ist auskommentiert.",
+      "family": "other",
+      "subtype": null,
+      "family_reason": "Lokale Aussage über ausgeführte beziehungsweise kommentierte Transformation.",
+      "qualifiers": [
+        "Negation: kein aktiver Decode-Aufruf in dieser Methode.",
+        "Keine Aussage darüber, ob der Container vorher dekodiert hat oder Dekodieren einen Schutz darstellen würde."
+      ],
+      "evidence": [
+        {
+          "file": "DefaultURLConstructor.java",
+          "line_start": 245,
+          "line_end": 268,
+          "quote": "    public static String parsePageFromURL( HttpServletRequest request,\n                                           String encoding )\n        throws UnsupportedEncodingException\n    {\n        String name = request.getPathInfo();\n\n        if( name == null || name.length() <= 1 )\n        {\n            return null;\n        }\n        else if( name.charAt(0) == '/' )\n        {\n            name = name.substring(1);\n        }\n\n        //\n        //  This is required, because by default all URLs are handled\n        //  as Latin1, even if they are really UTF-8.\n        //\n\n        // name = TextUtil.urlDecode( name, encoding );\n\n        return name;\n    }"
+        }
+      ],
+      "context_claim_ids": []
+    },
+    {
+      "id": "B05",
+      "proposition": "Wenn parsePageFromURL null liefert, ersetzt WikiServlet.doGet pageName durch m_engine.getFrontPage(), bevor pageName für die Dispatcherkonstruktion verwendet wird.",
+      "family": "data_flow",
+      "subtype": null,
+      "family_reason": "Erhält die alternative Herkunft des später verwendeten Seitennamens.",
+      "qualifiers": [
+        "Bedingung: pageName ist nach dem Parseraufruf null.",
+        "Scope: sichtbarer Ablauf bei regulärer Rückkehr der aufgerufenen Methoden."
+      ],
+      "evidence": [
+        {
+          "file": "WikiServlet.java",
+          "line_start": 89,
+          "line_end": 98,
+          "quote": "        String pageName = DefaultURLConstructor.parsePageFromURL( req, m_engine.getContentEncoding() );\n\n        log.info( \"Request for page: \" + pageName );\n        if( pageName == null ) {\n            pageName = m_engine.getFrontPage(); // FIXME: Add special pages as well\n        }\n\n        String jspPage = m_engine.getURLConstructor().getForwardPage( req );\n        RequestDispatcher dispatcher = req.getRequestDispatcher( \"/\" + jspPage + \"?page=\" +\n                                                                 m_engine.encodeName( pageName ) + \"&\" + req.getQueryString() );"
+        }
+      ],
+      "context_claim_ids": [
+        "B01",
+        "B02"
+      ]
+    },
+    {
+      "id": "B06",
+      "proposition": "WikiServlet.doGet verwendet die Rückgabe von m_engine.getURLConstructor().getForwardPage(req) als jspPage im Pfadanteil des Arguments für req.getRequestDispatcher und ruft anschließend dispatcher.forward(req,res) auf.",
+      "family": "data_flow",
+      "subtype": null,
+      "family_reason": "Beschreibt Herkunft und Verwendung des Dispatcherpfads bis zum sichtbaren Forward-Aufruf.",
+      "qualifiers": [
+        "Scope: WikiServlet.doGet, Zeilen 96–100; keine Garantie eines erfolgreichen Forward oder erlaubter Ziele.",
+        "Welche URLConstructor-Implementation aktiv ist, wird mit diesem Aufruf nicht entschieden."
+      ],
+      "evidence": [
+        {
+          "file": "WikiServlet.java",
+          "line_start": 96,
+          "line_end": 100,
+          "quote": "        String jspPage = m_engine.getURLConstructor().getForwardPage( req );\n        RequestDispatcher dispatcher = req.getRequestDispatcher( \"/\" + jspPage + \"?page=\" +\n                                                                 m_engine.encodeName( pageName ) + \"&\" + req.getQueryString() );\n\n        dispatcher.forward( req, res );"
+        }
+      ],
+      "context_claim_ids": []
+    },
+    {
+      "id": "B07",
+      "proposition": "WikiServlet.doGet setzt m_engine.encodeName(pageName) nach dem Literal ?page= in das Dispatcherargument ein und hängt anschließend & sowie req.getQueryString() an; pageName bildet damit den behandelten Querywert und nicht die Variable jspPage des Pfadanteils.",
+      "family": "data_flow",
+      "subtype": null,
+      "family_reason": "Unterscheidet den Seitennamen im Queryparameter vom gesondert bestimmten Dispatcherpfad.",
+      "qualifiers": [
+        "Scope: sichtbarer Argumentausdruck in WikiServlet.doGet.",
+        "Der Encode-Aufruf belegt keine hinreichende Sanitization; die Implementation von encodeName fehlt."
+      ],
+      "evidence": [
+        {
+          "file": "WikiServlet.java",
+          "line_start": 96,
+          "line_end": 98,
+          "quote": "        String jspPage = m_engine.getURLConstructor().getForwardPage( req );\n        RequestDispatcher dispatcher = req.getRequestDispatcher( \"/\" + jspPage + \"?page=\" +\n                                                                 m_engine.encodeName( pageName ) + \"&\" + req.getQueryString() );"
+        }
+      ],
+      "context_claim_ids": [
+        "B05",
+        "B06"
+      ]
+    },
+    {
+      "id": "B08",
+      "proposition": "DefaultURLConstructor.getForwardPage gibt request.getPathInfo() unmittelbar zurück; falls die Engine genau diese gezeigte Implementation für getForwardPage verwendet, gelangt diese Rückgabe als jspPage in den Dispatcherpfad von WikiServlet.doGet.",
+      "family": "data_flow",
+      "subtype": null,
+      "family_reason": "Bedingter Zusammenhang zwischen konkreter Implementation und ihrem Aufrufer.",
+      "qualifiers": [
+        "Bedingung: die Engine verwendet die gezeigte DefaultURLConstructor.getForwardPage-Implementation.",
+        "Keine Behauptung über die tatsächlich aktive Laufzeitkonfiguration oder erfolgreiche Zielauflösung."
+      ],
+      "evidence": [
+        {
+          "file": "DefaultURLConstructor.java",
+          "line_start": 278,
+          "line_end": 281,
+          "quote": "    public String getForwardPage( HttpServletRequest request )\n    {\n        return request.getPathInfo();\n    }"
+        },
+        {
+          "file": "WikiServlet.java",
+          "line_start": 96,
+          "line_end": 98,
+          "quote": "        String jspPage = m_engine.getURLConstructor().getForwardPage( req );\n        RequestDispatcher dispatcher = req.getRequestDispatcher( \"/\" + jspPage + \"?page=\" +\n                                                                 m_engine.encodeName( pageName ) + \"&\" + req.getQueryString() );"
+        }
+      ],
+      "context_claim_ids": [
+        "B06"
+      ]
+    },
+    {
+      "id": "B09",
+      "proposition": "Im gezeigten Körper von parsePageFromURL ist neben Null-/Längenprüfung und Entfernung eines führenden Slash keine eigene explizite Zurückweisung von Traversalsequenzen enthalten; auch WikiServlet.doGet enthält vor der Dispatcherkonstruktion keine eigene explizite Traversalprüfung von jspPage.",
+      "family": "protection_precondition",
+      "subtype": null,
+      "family_reason": "Begrenzt eine negative Prüfungsaussage auf die sichtbaren Methodenkörper.",
+      "qualifiers": [
+        "Negation ausschließlich lokal: keine eigene explizite Traversalprüfung in den benannten Methodenkörpern.",
+        "Prüfungen in aufgerufenen Methoden, Filtern oder Container sind damit nicht ausgeschlossen; insgesamt unzureichender Schutz ist nicht belegt."
+      ],
+      "evidence": [
+        {
+          "file": "DefaultURLConstructor.java",
+          "line_start": 245,
+          "line_end": 268,
+          "quote": "    public static String parsePageFromURL( HttpServletRequest request,\n                                           String encoding )\n        throws UnsupportedEncodingException\n    {\n        String name = request.getPathInfo();\n\n        if( name == null || name.length() <= 1 )\n        {\n            return null;\n        }\n        else if( name.charAt(0) == '/' )\n        {\n            name = name.substring(1);\n        }\n\n        //\n        //  This is required, because by default all URLs are handled\n        //  as Latin1, even if they are really UTF-8.\n        //\n\n        // name = TextUtil.urlDecode( name, encoding );\n\n        return name;\n    }"
+        },
+        {
+          "file": "WikiServlet.java",
+          "line_start": 88,
+          "line_end": 100,
+          "quote": "    public void doGet( HttpServletRequest req, HttpServletResponse res ) throws IOException, ServletException {\n        String pageName = DefaultURLConstructor.parsePageFromURL( req, m_engine.getContentEncoding() );\n\n        log.info( \"Request for page: \" + pageName );\n        if( pageName == null ) {\n            pageName = m_engine.getFrontPage(); // FIXME: Add special pages as well\n        }\n\n        String jspPage = m_engine.getURLConstructor().getForwardPage( req );\n        RequestDispatcher dispatcher = req.getRequestDispatcher( \"/\" + jspPage + \"?page=\" +\n                                                                 m_engine.encodeName( pageName ) + \"&\" + req.getQueryString() );\n\n        dispatcher.forward( req, res );"
+        }
+      ],
+      "context_claim_ids": []
+    }
+  ],
+  "open_questions": [
+    "Welche URLConstructor-Implementation liefert die Engine im Deployment tatsächlich? WikiEngine fehlt; die Auswahlbeispiele in jspwiki.properties 438–439 sind auskommentiert.",
+    "Welche Transformationen und Schutzwirkung hat m_engine.encodeName? Die Implementation ist im Codepaket nicht enthalten.",
+    "Welche angreiferkontrollierten Requests erreichen den Servletpfad und mit welchen Anmelde-/Zugriffsrechten? Filterimplementationen und effektive Containerkonfiguration fehlen.",
+    "Wie löst der Container den Dispatcherpfad auf, welche Ziel-JSPs sind erreichbar und was tun sie mit page und der übrigen Query? Ein unautorisierter Ressourcen- oder Dateizugriff ist mit diesen Dateien nicht nachgewiesen.",
+    "Falls ein konkreter Lese-/Ausführungseffekt untersucht wird: Welche Dienstprozessrechte und Zielressourcen liegen vor? Das sind offene Voraussetzungen, keine erfüllten Teilclaims."
+  ],
+  "granularity_notes": [
+    "Die historischen zwölf menschlichen und dreizehn assistiert überarbeiteten Claims zerlegen einen Report. Diese Baseline beschreibt stattdessen den erlaubten Code; insbesondere übernimmt sie nicht dessen kategorisches Traversallabel oder seine unbewiesenen Wirkungen.",
+    "B01 darf in Aufruf und Herkunft geteilt werden; B02/B03 dürfen als vollständige Fallunterscheidung zusammengefasst werden. Keine zusätzliche Abdeckung allein durch Aufteilung zählen.",
+    "B06 darf Pfadkonstruktion und Forward-Aufruf getrennt ausweisen; B07 darf Encode-Aufruf und angehängte Query getrennt ausweisen. Ein Claim nur über einen Anteil deckt die übrigen Anteile nicht automatisch ab.",
+    "B09 darf in zwei lokal begrenzte Negationen geteilt werden. Das Zusammenfassen zu „keine Validierung im System“ ist unzulässig.",
+    "Eine höhere Aussage über PathInfo im Dispatcherpfad muss die aktive-Implementation-Bedingung aus B08 erhalten. Ein höherer Claim über unautorisierten Zugriff braucht zusätzlich Deployment-, Zielverarbeitungs- und Rechteevidenz; Kontextlinks sind keine Beweise."
+  ]
+}

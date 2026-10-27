@@ -1,0 +1,183 @@
+{
+  "claims": [
+    {
+      "id": "C1",
+      "proposition": "Die Klasse verarbeitet YAML-Konfigurationen, indem sie Eingaben aus `Reader` oder `InputStream` mit SnakeYAML einliest, das Ergebnis als `Map<String, Object>` übernimmt und anschließend per `load(map)` in das interne hierarchische Konfigurationsmodell überführt.",
+      "family": "data_flow",
+      "subtype": null,
+      "family_reason": "Beschreibt einen Herkunfts- und Verarbeitungsfluss von externer YAML-Eingabe in die interne Konfiguration.",
+      "qualifiers": [
+        "Die Beschreibung bezieht sich auf das Einlesen aus `Reader` oder `InputStream`.",
+        "Das Ergebnis wird als `Map<String, Object>` übernommen.",
+        "Die Überführung erfolgt anschließend per `load(map)` in das interne hierarchische Konfigurationsmodell."
+      ],
+      "evidence": [
+        {
+          "file": "report.txt",
+          "line_start": 1,
+          "line_end": 1,
+          "quote": "Die Klasse verarbeitet YAML-Konfigurationen, indem sie Eingaben aus `Reader` oder `InputStream` mit SnakeYAML einliest, das Ergebnis als `Map<String, Object>` übernimmt und anschließend per `load(map)` in das interne hierarchische Konfigurationsmodell überführt."
+        }
+      ],
+      "context_claim_ids": []
+    },
+    {
+      "id": "C2",
+      "proposition": "Beim Schreiben wird über `DumperOptions` ein Block-Flow-Format gesetzt und der aktuelle Knotenbaum mittels `constructMap(getNodeModel().getNodeHandler().getRootNode())` durch SnakeYAML serialisiert.",
+      "family": "location",
+      "subtype": null,
+      "family_reason": "Benennt eine konkrete beschriebene Fundstelle bzw. Operation des Schreibpfads.",
+      "qualifiers": [
+        "Der Beschreibung zufolge erfolgt dies beim Schreiben.",
+        "Das Block-Flow-Format wird über `DumperOptions` gesetzt.",
+        "Die Serialisierung geschieht mittels `constructMap(getNodeModel().getNodeHandler().getRootNode())` durch SnakeYAML."
+      ],
+      "evidence": [
+        {
+          "file": "report.txt",
+          "line_start": 1,
+          "line_end": 1,
+          "quote": "Beim Schreiben wird über `DumperOptions` ein Block-Flow-Format gesetzt und der aktuelle Knotenbaum mittels `constructMap(getNodeModel().getNodeHandler().getRootNode())` durch SnakeYAML serialisiert."
+        }
+      ],
+      "context_claim_ids": []
+    },
+    {
+      "id": "C3",
+      "proposition": "Der Report behauptet einen klaren Datenfluss von externer YAML-Eingabe in die Konfigurationsstruktur sowie zurück in eine Ausgabe.",
+      "family": "data_flow",
+      "subtype": null,
+      "family_reason": "Die Aussage beschreibt ausdrücklich einen bidirektionalen Datenfluss zwischen externer Eingabe, Konfigurationsstruktur und Ausgabe.",
+      "qualifiers": [
+        "Die Aussage ist als Sichtbarkeitsbefund formuliert.",
+        "Sie bezieht sich auf den im Report beschriebenen Gesamtdatenfluss."
+      ],
+      "evidence": [
+        {
+          "file": "report.txt",
+          "line_start": 1,
+          "line_end": 1,
+          "quote": "Sichtbar ist damit ein klarer Datenfluss von externer YAML-Eingabe in die Konfigurationsstruktur sowie zurück in eine Ausgabe;"
+        }
+      ],
+      "context_claim_ids": [
+        "C1",
+        "C2"
+      ]
+    },
+    {
+      "id": "C4",
+      "proposition": "Das eigentliche Parsing, die Baumkonstruktion und Fehleraufbereitung liegen teilweise in aufgerufenen Basisklassen und Bibliotheken und sind hier nicht einsehbar.",
+      "family": "other",
+      "subtype": null,
+      "family_reason": "Die Aussage betrifft die Sichtbarkeit und Verortung von Verarbeitungsschritten, ohne eine konkrete Schwachstelle oder Datenflussoperation selbst zu benennen.",
+      "qualifiers": [
+        "Die Aussage ist teilweise eingeschränkt durch den Zusatz `teilweise`.",
+        "Die betroffenen Teile sind laut Report nicht einsehbar.",
+        "Genannt werden Parsing, Baumkonstruktion und Fehleraufbereitung."
+      ],
+      "evidence": [
+        {
+          "file": "report.txt",
+          "line_start": 1,
+          "line_end": 1,
+          "quote": "das eigentliche Parsing, die Baumkonstruktion und Fehleraufbereitung liegen teilweise in aufgerufenen Basisklassen und Bibliotheken und sind hier nicht einsehbar."
+        }
+      ],
+      "context_claim_ids": [
+        "C1",
+        "C2"
+      ]
+    },
+    {
+      "id": "C5",
+      "proposition": "Für das Schreiben wird explizit ein Block-Format gewählt, und es existieren Varianten der `read`-Methoden, die `LoaderOptions` an SnakeYAML weiterreichen.",
+      "family": "protection_precondition",
+      "subtype": null,
+      "family_reason": "Die Aussage beschreibt Schutz- bzw. Konfigurationsbedingungen, die den Umgang mit YAML beeinflussen sollen.",
+      "qualifiers": [
+        "Die Formulierung ist eingeschränkt auf das Schreiben und auf Varianten der `read`-Methoden.",
+        "`LoaderOptions` werden an SnakeYAML weitergereicht."
+      ],
+      "evidence": [
+        {
+          "file": "report.txt",
+          "line_start": 3,
+          "line_end": 3,
+          "quote": "Für das Schreiben wird explizit ein Block-Format gewählt, und es existieren Varianten der `read`-Methoden, die `LoaderOptions` an SnakeYAML weiterreichen."
+        }
+      ],
+      "context_claim_ids": []
+    },
+    {
+      "id": "C6",
+      "proposition": "Welche Sicherheitswirkungen diese Optionen tatsächlich entfalten, bleibt ohne konkreten Aufruferkontext offen.",
+      "family": "protection_precondition",
+      "subtype": null,
+      "family_reason": "Die Aussage betrifft die Unbestimmtheit der Schutzwirkung unter fehlendem Kontext.",
+      "qualifiers": [
+        "Die Aussage ist ausdrücklich offen formuliert.",
+        "Der konkrete Aufruferkontext fehlt laut Report."
+      ],
+      "evidence": [
+        {
+          "file": "report.txt",
+          "line_start": 3,
+          "line_end": 3,
+          "quote": "Welche Sicherheitswirkungen diese Optionen tatsächlich entfalten, bleibt ohne konkreten Aufruferkontext offen."
+        }
+      ],
+      "context_claim_ids": [
+        "C5"
+      ]
+    },
+    {
+      "id": "C7",
+      "proposition": "Aus dem Code allein lässt sich keine Schwachstelle belegen; ein Angriffsszenario wäre nur unter der Bedingung denkbar, dass untrusted YAML aus einer für den Angreifer kontrollierbaren Quelle verarbeitet wird und die verwendeten Bibliotheks- oder Loader-Optionen keine restriktiven Einschränkungen setzen.",
+      "family": "exploitability_impact",
+      "subtype": "exploitability",
+      "family_reason": "Die Aussage beschreibt eine mögliche Angriffsbarkeit unter Bedingungen und verneint zugleich einen Beleg allein aus dem Code.",
+      "qualifiers": [
+        "Die Aussage ist konditional formuliert.",
+        "Sie nennt untrusted YAML als Bedingung.",
+        "Sie verlangt eine für den Angreifer kontrollierbare Quelle.",
+        "Sie setzt voraus, dass die Bibliotheks- oder Loader-Optionen keine restriktiven Einschränkungen setzen.",
+        "Der Report behauptet zugleich, dass sich aus dem Code allein keine Schwachstelle belegen lässt."
+      ],
+      "evidence": [
+        {
+          "file": "report.txt",
+          "line_start": 3,
+          "line_end": 3,
+          "quote": "Aus dem Code allein lässt sich keine Schwachstelle belegen; ein Angriffsszenario wäre nur unter der Bedingung denkbar, dass untrusted YAML aus einer für den Angreifer kontrollierbaren Quelle verarbeitet wird und die verwendeten Bibliotheks- oder Loader-Optionen keine restriktiven Einschränkungen setzen."
+        }
+      ],
+      "context_claim_ids": [
+        "C5",
+        "C6"
+      ]
+    },
+    {
+      "id": "C8",
+      "proposition": "Ebenso fehlen Angaben zu Umgebung, verwendeter SnakeYAML-Version und den konkreten Aufrufrechten des Akteurs.",
+      "family": "other",
+      "subtype": null,
+      "family_reason": "Die Aussage benennt fehlende Kontextinformationen, ohne selbst einen Schutz- oder Angriffstatbestand zu behaupten.",
+      "qualifiers": [
+        "Die Aussage listet mehrere fehlende Angaben auf.",
+        "Genannt werden Umgebung, SnakeYAML-Version und Aufrufrechte des Akteurs."
+      ],
+      "evidence": [
+        {
+          "file": "report.txt",
+          "line_start": 3,
+          "line_end": 3,
+          "quote": "Ebenso fehlen Angaben zu Umgebung, verwendeter SnakeYAML-Version und den konkreten Aufrufrechten des Akteurs."
+        }
+      ],
+      "context_claim_ids": [
+        "C7"
+      ]
+    }
+  ]
+}
