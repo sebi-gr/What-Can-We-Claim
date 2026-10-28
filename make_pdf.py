@@ -127,15 +127,15 @@ def configure_styles():
     regular, bold = fonts / "Arial.ttf", fonts / "Arial Bold.ttf"
     family = "Helvetica"
     if regular.is_file() and bold.is_file():
-        pdfmetrics.registerFont(TTFont("WCWV", str(regular)))
-        pdfmetrics.registerFont(TTFont("WCWV-Bold", str(bold)))
-        pdfmetrics.registerFontFamily("WCWV", normal="WCWV", bold="WCWV-Bold", italic="WCWV", boldItalic="WCWV-Bold")
-        family = "WCWV"
+        pdfmetrics.registerFont(TTFont("WCWC", str(regular)))
+        pdfmetrics.registerFont(TTFont("WCWC-Bold", str(bold)))
+        pdfmetrics.registerFontFamily("WCWC", normal="WCWC", bold="WCWC-Bold", italic="WCWC", boldItalic="WCWC-Bold")
+        family = "WCWC"
     styles = {}
     for name in ("Normal", "BodyText"):
         styles[name] = ParagraphStyle(name, fontName=family, fontSize=10, leading=12.6, textColor=NAVY, spaceAfter=6)
     styles["Title"] = ParagraphStyle("Title", parent=styles["Normal"], fontSize=21, leading=24, spaceAfter=8)
-    styles["Heading2"] = ParagraphStyle("Heading2", parent=styles["Normal"], fontName=family + "-Bold" if family == "WCWV" else "Helvetica-Bold", fontSize=12, leading=14.5, spaceBefore=10, spaceAfter=5)
+    styles["Heading2"] = ParagraphStyle("Heading2", parent=styles["Normal"], fontName=family + "-Bold" if family == "WCWC" else "Helvetica-Bold", fontSize=12, leading=14.5, spaceBefore=10, spaceAfter=5)
     styles["Small"] = ParagraphStyle("Small", parent=styles["Normal"], fontSize=8.8, leading=11, textColor=GRAY, spaceAfter=4)
     styles["Cell"] = ParagraphStyle("Cell", parent=styles["Normal"], fontSize=9, leading=11, spaceAfter=0)
     return styles, family
@@ -184,7 +184,7 @@ def table(rows, widths, styles):
 # Compose three explicit pages; full example propositions retain their conditions.
 def build_story(run, review, references, data, styles, font):
     p = lambda text, style="Normal": paragraph(text, styles, style)
-    story = [p("Sicherheitsclaims aus Code", "Title"), p("Drei Entwicklungsfälle - direkter Weg und Prosa-Zwischenschritt", "Small")]
+    story = [p("What Can We Claim?", "Title"), p("Generating Security Claims from Code and Prose with LLMs", "Small"), p("Drei Entwicklungsfälle - direkter Weg und Prosa-Zwischenschritt", "Small")]
     story += [p("Warum einzelne Claims?", "Heading2"), p("Ein ganzer Report kann richtige Codebeobachtungen und unbelegte Angriffswirkungen vermischen. Einzelne, eigenständig verständliche Aussagen erlauben gezielte Teilurteile: Was ist belegt, was fehlt und welche Bedingung wurde verändert? Kontext und Evidenz bleiben sichtbar [1-3]. IDs und Git machen Änderungen nachvollziehbar; Claims sind nicht von sich aus versioniert.")]
     story += [architecture(font), p("Beide Wege verwenden dieselben Codebytes. Der Vergleich greift auf vorher fixierte Zielclaims zu; die Generierung erhält diese Referenz nicht. Untersucht werden Inhalte und Erzeugungswege, nicht nur eine Formatumwandlung [4].", "Small")]
     cases = {c["id"]: c for c in references["cases"]}
@@ -235,7 +235,7 @@ def footer(canvas, doc):
     canvas.line(15 * mm, 14 * mm, A4[0] - 15 * mm, 14 * mm)
     canvas.setFont("Helvetica", 8)
     canvas.setFillColor(GRAY)
-    canvas.drawString(15 * mm, 9 * mm, "WCWV | KI-unterstützter Entwicklungsvergleich | Menschliche Kontrolle ausstehend")
+    canvas.drawString(15 * mm, 9 * mm, "WCWC | KI-unterstützter Entwicklungsvergleich | Menschliche Kontrolle ausstehend")
     canvas.drawRightString(A4[0] - 15 * mm, 9 * mm, str(doc.page) + " / 3")
 
 
@@ -243,13 +243,13 @@ def footer(canvas, doc):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run", type=Path, default=ROOT / "results/run-001")
-    parser.add_argument("--output", type=Path, default=ROOT / "output/pdf/wcwv-ergebnisse.pdf")
+    parser.add_argument("--output", type=Path, default=ROOT / "output/pdf/wcwc-ergebnisse.pdf")
     args = parser.parse_args()
     run, review, references, data = load_data(args.run)
     styles, font = configure_styles()
     args.output.parent.mkdir(parents=True, exist_ok=True)
     temporary = args.output.with_suffix(".tmp.pdf")
-    document = SimpleDocTemplate(str(temporary), pagesize=A4, rightMargin=15 * mm, leftMargin=15 * mm, topMargin=13 * mm, bottomMargin=20 * mm, title="Sicherheitsclaims aus Code - drei Entwicklungsfälle", author="WCWV / Codex, KI-unterstützt")
+    document = SimpleDocTemplate(str(temporary), pagesize=A4, rightMargin=15 * mm, leftMargin=15 * mm, topMargin=13 * mm, bottomMargin=20 * mm, title="What Can We Claim? - Generating Security Claims from Code and Prose with LLMs", author="WCWC / Codex, KI-unterstützt")
     try:
         document.build(build_story(run, review, references, data, styles, font), onFirstPage=footer, onLaterPages=footer)
         pages = PdfReader(str(temporary)).pages

@@ -1,4 +1,6 @@
-# What Can We Verify?
+# What Can We Claim?
+
+*Generating Security Claims from Code and Prose with LLMs*
 
 Minimaler Entwicklungsvergleich mit drei Vul4J-Fällen:
 
@@ -27,7 +29,7 @@ Der Lauf nutzt `gpt-5.4-mini-2026-03-17`, neun zustandslose Aufrufe, maximal 8.1
 
 ```bash
 python3 -m pip install -r requirements.txt
-python3 make_pdf.py --run results/run-001 --output output/pdf/wcwv-ergebnisse.pdf
+python3 make_pdf.py --run results/run-001 --output output/pdf/wcwc-ergebnisse.pdf
 ```
 
-Die [dreiseitige Zusammenfassung](output/pdf/wcwv-ergebnisse.pdf) beschreibt Motivation, Architektur, Zielclaims und tatsächliche Ergebnisse. [Quellen/Herkunft](examples/sources.json), [Literatur und Fallauswahl](resources/references.json) sowie die [frühere Entwicklungsnotiz](examples/reference.md) bleiben nachvollziehbar. Für die Fremdquellen gelten die jeweiligen LICENSE-/NOTICE-Dateien.
+Die [dreiseitige Zusammenfassung](output/pdf/wcwc-ergebnisse.pdf) beschreibt Motivation, Architektur, Zielclaims und tatsächliche Ergebnisse. [Quellen/Herkunft](examples/sources.json), [Literatur und Fallauswahl](resources/references.json) sowie die [frühere Entwicklungsnotiz](examples/reference.md) bleiben nachvollziehbar. Für die Fremdquellen gelten die jeweiligen LICENSE-/NOTICE-Dateien.

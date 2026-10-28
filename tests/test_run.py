@@ -36,7 +36,7 @@ def provider_response(text, status="completed"):
 
 class ExperimentTests(unittest.TestCase):
     def setUp(self):
-        self.temporary = tempfile.TemporaryDirectory(prefix="wcwv-offline-")
+        self.temporary = tempfile.TemporaryDirectory(prefix="wcwc-offline-")
         self.addCleanup(self.temporary.cleanup)
         self.root = Path(self.temporary.name).resolve()
         self.output = self.root / "result"
