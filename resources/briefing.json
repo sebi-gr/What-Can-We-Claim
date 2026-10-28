@@ -1,0 +1,319 @@
+{
+  "title": "What Can We Claim?",
+  "subtitle": "Persönliches Briefing: Idee, Umsetzung, Ergebnisse und offene Fragen",
+  "prepared_on": "2026-10-28",
+  "purpose": "Dieses Briefing soll dir ermöglichen, das Vorhaben ohne Vorwissen zu erklären. Es ist eine ausführliche Lesehilfe zum vorhandenen Entwicklungsversuch vom 27.10.2026. Die kurze Fassung wird durch dieses Dokument ersetzt; es wurden dafür keine neuen Modellläufe oder Exploitversuche ausgeführt.",
+  "method_note": "Methodenstand: SG hat den früheren JSPWiki-Report zunächst in zwölf Claims zerlegt; daneben existiert die mit Codex überarbeitete Fassung mit 13 Claims. Die neuen 20 codegestützten Zielclaims und die Einzelzuordnungen dieses Versuchs wurden von Codex ausgearbeitet. Eine unabhängige menschliche Bestätigung dieser neuen Referenz und Auswertung ist nicht erfolgt. Die im Dokument beschriebenen Ergebnisse sind in diesem Rahmen zu lesen.",
+  "sections": [
+    {
+      "id": "overview",
+      "title": "Das Vorhaben in einfachen Worten",
+      "paragraphs": [
+        "Stell dir einen Security-Report wie eine Erklärung vor, in der mehrere Dinge gleichzeitig behauptet werden: Ein Wert kommt aus einer Anfrage. Er wird verarbeitet. Eine Schutzmaßnahme fehlt angeblich. Deshalb könnte ein Angriff gelingen. Diese Aussagen haben unterschiedliche Voraussetzungen und können unterschiedlich gut belegt sein.",
+        "Ein Claim ist eine herausgelöste, für sich verständliche Aussage. Er nennt, worum es geht und was darüber behauptet wird. Ein Claim ist nicht automatisch wahr. Er kann eine beobachtbare Codeoperation beschreiben, eine Einschränkung enthalten oder eine mögliche Wirkung nur unter ausdrücklich genannten Bedingungen behaupten.",
+        "Unser unmittelbares Ziel ist eine brauchbare Darstellung solcher Aussagen. Wir untersuchen, ob ein Modell die gewünschten Inhalte aus einem begrenzten Codepaket gewinnt und dabei die Bedeutung erhält. Dazu vergleichen wir zwei Wege: direkt Code zu Claims und zuerst Code zu Report, danach Report zu Claims.",
+        "Im Versuch wurden drei bekannte Fälle betrachtet: JSPWiki, Jackson XML und Commons YAML. Vor den neuen Modellantworten standen 20 Zielinhalte fest. Danach entstanden 20 direkte Rohclaims und 30 Claims über den Reportweg. Alle diese Aussagen wurden einzeln mit den Zielinhalten und dem erlaubten Kontext abgeglichen.",
+        "Das Ergebnis hat zwei Seiten. Die direkten Rohantworten erhalten mehr der gewählten Codeinhalte, verletzen aber in allen drei Fällen den strengen Zitiervertrag. Der Prosaweg erzeugt formal gültige Listen, verliert jedoch wichtige Details und übernimmt teilweise zu starke Deutungen aus dem Report. Es gibt deshalb in diesem Versuch keinen Gewinner in jeder Qualitätsdimension."
+      ],
+      "bullets": [
+        "Zuerst lesen: Begriffe, Motivation, Ablauf und Erklärung der Ergebnistabellen.",
+        "Danach lesen: die drei Fallkapitel mit vollständigen Basisclaim-Zuordnungen.",
+        "Zum Nachschlagen: Forschungsfragen, Glossar und Anhang mit allen erzeugten Aussagen und ihren Einzelbegründungen."
+      ]
+    },
+    {
+      "id": "motivation",
+      "title": "Warum überhaupt einzelne Claims statt nur Reports?",
+      "paragraphs": [
+        "Die erste Frage lautet nicht: Ist ein LLM besser als jedes statische oder dynamische Werkzeug? Das betrifft die Wahl eines Analyseverfahrens. Unsere Frage beginnt beim Inhalt einer erzeugten Analyse: In welcher Einheit können wir ihre Aussagen gezielt vergleichen und später gegebenenfalls prüfen?",
+        "Die vorher zitierte Motivation zu Fehlalarmen statischer Analyse und Aufwand dynamischer Tests stammt aus OpenAnt, arXiv:2606.19149v1, von Nahum Korda und Gadi Evron aus Knostic. OpenAI/Aardvark wird dort als verwandte Arbeit genannt. OpenAnt kombiniert mehrere Analysestufen und dynamische Exploitversuche; es erzeugt bereits strukturierte Befunde. Unser Beitrag kann daher nicht einfach heißen: Vorher gab es nur Prosa, jetzt gibt es erstmals Struktur.",
+        "Das konkrete Problem ist eine gemischte Bewertungs- und Vergleichseinheit. In einem Absatz kann eine Codebeobachtung zutreffen, während eine Schutzbewertung offenbleibt und eine Angriffswirkung nicht belegt ist. Ein pauschales Urteil über den ganzen Absatz erklärt dann zu wenig. Wir möchten benennen können, welche einzelne Bedeutung erhalten ist, fehlt oder übertrieben wurde.",
+        "Ein Beispiel aus unserem tatsächlichen JSPWiki-Report: Er beschreibt eine Weiterleitung, spricht von unvalidiert eingebetteten Werten und nennt mögliche Angriffsbedingungen. Das sind verschiedene Arten von Aussagen. Die Existenz eines Forward-Aufrufs beweist weder das Fehlen jeder Prüfung noch unautorisierten Dateizugriff. Explizite Claims machen diese Unterschiede adressierbar.",
+        "Ein sorgfältiger Leser könnte auch direkt im Fließtext einzelne Aussagen markieren. Claims sind daher kein zwingend notwendiger magischer Zwischenschritt. Die Idee ist, diese Einheiten ausdrücklich festzuhalten: mit einem benannten Gegenstand, erhaltenen Bedingungen, einer ID und einer zugeordneten Quelle. Diese Organisation könnte wiederholte Vergleiche und spätere gezielte Prüfaufgaben unterstützen.",
+        "Die Idee hat Anschluss an vorhandene Literatur. Wanner et al. (2024) untersuchen, wie Zerlegung die Bewertung textueller Unterstützung beeinflusst und selbst Fehler verursachen kann. VeriScore von Song et al. (2024) motiviert verständliche Aussagen mit notwendigem Kontext. CAE und SACM unterscheiden Aussagen, Annahmen, Argumente und Evidenz. Das ist eine Begründung der Darstellung; keiner dieser Verweise beweist den Nutzen unseres Security-MVP.",
+        "Der entscheidende nächste Gedanke ist: Wenn wir eine solche Darstellung verwenden wollen, muss ihre Erzeugung zuverlässig sein. Die Umformung kann Bedingungen entfernen, mehrere Aussagen ungünstig bündeln, eine Möglichkeit zur Tatsache verstärken oder Inhalte auslassen. Genau solche Darstellungs- und Generierungsfehler können wir schon untersuchen, ohne einen vollständigen Security-Verifier zu bauen.",
+        "Unser aktueller Vergleich hat keinen zusätzlichen Versuchsarm, in dem Personen oder Werkzeuge einen ganzen Report ohne Claimdarstellung bearbeiten. Er kann deshalb keinen allgemeinen Vorteil von Claims gegenüber Report-Review nachweisen. Er vergleicht zwei Wege innerhalb der Claimdarstellung. Ein späterer Nutzenvergleich bräuchte eigene Aufgaben, Vergleichsbedingungen und Erfolgsmaße.",
+        "Eine präzise Problemformulierung wäre: LLM-Security-Analysen enthalten unterschiedlich genaue und unterschiedlich belastbare Aussagen. Für gezielte Vergleiche brauchen wir explizite, verständliche Einheiten mit erhaltenen Bedingungen und Quellen. Offen ist, wie zuverlässig solche Einheiten direkt aus Code beziehungsweise über einen Prosa-Zwischenschritt erzeugt werden."
+      ],
+      "bullets": [
+        "Eigenschaft der Darstellung: Eine einzelne Aussage hat eine eigene ID und kann gezielt kommentiert werden.",
+        "Im Versuch untersuchte Qualität: Erhalten die erzeugten Aussagen die vorab gewählten Sollinhalte und ihre Bedingungen?",
+        "Weiterhin offene Nutzenaussage: Treffen Personen oder Systeme mit Claims tatsächlich schnellere oder bessere Security-Entscheidungen?",
+        "Versionierung kommt durch gespeicherte Dateien, IDs und Git. Claims sind nicht von sich aus versioniert; gleiche IDs oder gleiche JSON-Felder beweisen keine gleiche Bedeutung."
+      ]
+    },
+    {
+      "id": "setup",
+      "title": "Welche Grundlage hatte der Versuch?",
+      "paragraphs": [
+        "Ein Fall ist hier ein begrenztes Quellcodepaket zu einer bekannten Vul4J-Schwachstelle. Wir analysieren keine vollständigen Deployments. Das ist wichtig: Fehlende Dateien und Umgebungsangaben dürfen nicht still durch Vermutungen ersetzt werden.",
+        "JSPWiki umfasst fünf vollständige Code- und Konfigurationsdateien. Jackson umfasst einen unveränderten Ausschnitt von XmlFactory.java, Originalzeilen 84 bis 144. Commons YAML umfasst YAMLConfiguration.java vollständig mit 145 Zeilen. Die jeweiligen Laufzeitbibliotheken, Aufrufer und Teile der Anwendung fehlen.",
+        "Die Fallauswahl ist über fixierte Revisionen und Dateihashes nachvollziehbar. Die zugehörigen Vul4J-PoV-Testquellen existieren. Diese Tests wurden für diesen Vergleich nicht neu gebaut oder ausgeführt. Ein Datasetlabel ist Auswahlmetadatum und kein Beweis für eine einzelne Aussage im bereitgestellten Ausschnitt.",
+        "Schritt null war die Zielreferenz: Welche konkreten Aussagen sollte eine Ausgabe aus genau diesem Codepaket enthalten? Dafür wurde das Formulierungs- und Genauigkeitsmuster der früheren SG-Annotation verwendet. Die historischen 13 Reportclaims wurden nicht einfach als bestätigte Codewahrheiten übernommen. So entstand für JSPWiki eine eigene Codereferenz mit neun Einheiten, für Jackson eine mit sechs und für YAML eine mit fünf.",
+        "Die Baselines wurden vor den neuen Modelloutputs gespeichert und in Commit 4d67d45 fixiert. Der Lauf kopierte die Dateien und ihre SHA-256-Hashes. Keine der Generierungsrouten erhielt die Baseline, die alte Annotation, den früheren JSPWiki-Report, Fixes, PoVs oder Datasetlabels. Vorwissen über diese bekannten Entwicklungsfälle lässt sich damit allerdings nicht vollständig wegdefinieren.",
+        "Die Zielreferenz ist absichtlich begrenzt. Besonders bei JSPWiki beschreibt der Prompt das ganze Codepaket allgemein als Quelle sicherheitsrelevanter Aussagen, während die gewählten Zielinhalte enger auf Pfad und Query zielen. Eine zusätzliche korrekte Aussage über einen anderen Teil des Pakets ist deshalb nicht automatisch ein Fehler. Die Abdeckung misst die gewählten Sollinhalte, nicht sämtliche denkbaren richtigen Aussagen.",
+        "Es gab pro Fall einen direkten Claim-Aufruf und zwei Prosa-Aufrufe: Reporterzeugung und Reportzerlegung. Drei Fälle mal drei Aufrufe ergeben neun. Modell und Einstellungen waren fest; der Codeinput für direkte Claims und Reporterzeugung war pro Fall identisch. Es gab keine Wiederholungen oder Auswahl des schönsten Ergebnisses."
+      ],
+      "bullets": [
+        "Modell: gpt-5.4-mini-2026-03-17; reasoning_effort=none.",
+        "Ausgabelimit: 8.192 Tokens für einen Claim-Aufruf, 2.048 für einen Report. Tokens sind Textstücke, keine Claims.",
+        "Der Reportprompt verlangte einen kurzen deutschen Fließtext von 150 bis 250 Wörtern.",
+        "Genehmigter Kostenrahmen: 1 USD; geschätzte Kosten aus der gespeicherten Nutzung: 0,090585 USD.",
+        "Ein Lauf je Weg und Fall zeigt konkrete Fehler, aber noch keine stabile Verteilung über wiederholte Läufe."
+      ]
+    },
+    {
+      "id": "format",
+      "title": "Was ist ein Claim und wie liest man sein JSON?",
+      "paragraphs": [
+        "JSON ist ein Textformat mit festen Feldnamen. Geschweifte Klammern beschreiben ein Objekt, eckige Klammern eine Liste. In unserem Format enthält das äußere Objekt eine Liste namens claims. Jeder Eintrag dieser Liste beschreibt eine Aussage. Die Reihenfolge und Anzahl der Claims werden nicht als Qualitätsscore benutzt.",
+        "Das folgende Beispiel stammt aus der tatsächlich fixierten JSPWiki-Baseline. Es beschreibt den Guard der Parsermethode: Bei fehlendem PathInfo oder Länge höchstens eins wird null zurückgegeben. Der Quellenanker zeigt auf den dazugehörigen Code. Im PDF werden lange Zeilen nur aus Layoutgründen umgebrochen.",
+        "Das Format ist ein kleiner projektspezifischer Vertrag nach dem Codebook. Es ist kein allgemein anerkannter Standard für Security-Claims und keine vollständige SACM-Implementierung. Standardisiert heißt hier: Basisreferenz und beide Erzeugungswege benutzen dieselben Felder und Kategorien.",
+        "Entscheidend ist die Proposition, also der Aussage-Satz. Eine Bedingung wie wenn xmlIn null ist muss dort stehen. Eine Kopie in qualifiers hilft beim Lesen, repariert aber keinen zu starken Satz. Kontext-IDs verknüpfen Aussagen zum Verständnis; sie beweisen weder einen Datenfluss noch eine höhere Angriffswirkung.",
+        "IDs sind lokal zu verstehen. B01 bezeichnet einen Basisclaim, C1 einen erzeugten Claim. Jackson C1 und JSPWiki C1 sind nicht dieselbe Aussage. Auch direkt C1 und Prosa C1 gehören zu verschiedenen Ausgaben. Für einen eindeutigen Verweis braucht man Fall, Erzeugungsweg und ID."
+      ],
+      "bullets": [
+        "Zu klein: Ohne Validierung ist ohne benannten Wert und Operation keine verständliche Aussage.",
+        "Geeignet: Wenn xmlIn null ist, ruft der gezeigte Konstruktor auf der neu erzeugten Factory den Entity-Setter mit false auf.",
+        "Zu weit: Deshalb sind alle XML-Zugriffe sicher. Dafür fehlen Providerverhalten, weitere Konfiguration, Aufrufer und Angriffsbedingungen.",
+        "Ein höherer Claim kann mehrere lokale Aussagen zusammenfassen. Er braucht trotzdem eine eigene Begründung und gegebenenfalls zusätzliche Evidenz."
+      ]
+    },
+    {
+      "id": "method",
+      "title": "Wie wurde erzeugt und wie wurde verglichen?",
+      "paragraphs": [
+        "Zuerst wurden ausschließlich die freigegebenen Codedateien eingelesen. Die Dateinamen und Originalzeilen wurden an den Text geschrieben. Bei Jackson entspricht lokale Zeile 1 der Originalzeile 84. Die Originaldateien bleiben dabei unverändert. An das Modell wird eine Darstellung mit ergänzten Dateinamen und Zeilennummern gesendet; diese annotierte Darstellung ist für Direktclaims und Reporterzeugung identisch.",
+        "Im direkten Weg bekommt ein neuer, zustandsloser API-Aufruf den Code und die Claim-Anweisung. Das Modell soll relevante Aussagen finden, sinnvoll trennen, Bedingungen erhalten und Quellen zitieren. Es erhält keine gewünschte Liste zum Abschreiben. Das Ergebnis ist eine JSON-Liste mit Claims.",
+        "Im Prosaweg bekommt zunächst ein separater Aufruf denselben Code und schreibt einen kurzen Report. Ein weiterer neuer Aufruf erhält ausschließlich diesen Report und die Extraktionsanweisung. Er darf den Report weder mit Codewissen verbessern noch dort fehlende Inhalte ergänzen. Seine Quellenanker zeigen deshalb auf report.txt.",
+        "Gemeinsame Regeln verlangen vollständige Propositionen, erhaltene Bedingungen, Modalität und Negation sowie exakte Quellen. Die Routen unterscheiden sich in der erlaubten Wissensbasis: Codeclaims sollen vom Code getragen sein; Reportclaims sollen treu wiedergeben, was der konkrete Report sagt. Ein treu extrahierter Claim kann fachlich falsch sein, wenn schon der Report übertreibt.",
+        "Der Zerlegungsalgorithmus ist hier im Wesentlichen der festgelegte LLM-Aufruf mit Prompt und Schema. Es gibt keinen neu entwickelten Parser, der Security-Semantik mathematisch zerlegt, keine Suche nach dem besten Wiederholungslauf und keinen allgemeinen Verifier. Die kleinen lokalen Funktionen bereiten Kontext vor, prüfen das Ausgabeformat und speichern die Versuchsevidenz.",
+        "Die automatische Prüfung kontrolliert Felder, Typen, zulässige Kategorien, IDs, Kontextverweise, Dateinamen, Zeilenbereiche und exakte Zitate. Structured Outputs schränkt die JSON-Form ein; die zusätzliche lokale Prüfung untersucht Referenzen und Zitatkonsistenz. Beide Prüfungen beurteilen nicht, ob eine zitierte Stelle die behauptete Sicherheitswirkung logisch oder empirisch trägt.",
+        "Für den inhaltlichen Vergleich wurde jede Zieleinheit betrachtet: Welche direkte und welche Prosa-Aussage enthält diesen Sollinhalt? Die Zuordnung hält IDs und eine Begründung fest. Andere Wörter sind erlaubt; mehrere Claims dürfen gemeinsam einen Zielinhalt abdecken. Ein gemeinsames Zitat allein zählt nicht als ausformulierter Claim über jeden Inhalt dieser Codestelle.",
+        "Zusätzlich wurde jede erzeugte Aussage einzeln betrachtet: Ist sie am gegebenen Code gestützt, gemischt, offen oder widersprüchlich? Ist sie sinnvoll abgegrenzt? Bei der Prosa kommt Reporttreue als eigene Dimension dazu. Es wurde dafür kein weiteres Bewertungsmodell über die API aufgerufen und keine Ähnlichkeitsformel als Qualitätsrichter verwendet.",
+        "Codeunterstützung in dieser Auswertung meint eine begründete Lektüre des bereitgestellten Ausschnitts. Das ist eine fachliche Plausibilitäts-/Belegbeurteilung im begrenzten Kontext. Es ist kein ausgeführter Exploit, kein formaler Beweis und keine vollständige Verifikation der Schwachstelle im Deployment.",
+        "Die Rohantworten blieben unverändert erhalten. Bei einem ungültigen Claim-Output wurde keine reparierte gültige Datei erzeugt. Unabhängige Aufgaben liefen weiter. Deshalb existieren zu den drei direkten Antworten nur abgelehnte Rohclaims; diese lassen sich dennoch diagnostisch lesen und mit den Zielinhalten vergleichen."
+      ],
+      "bullets": [
+        "Vollständig abgedeckt: Die relevante Zielbedeutung einschließlich ihrer nötigen Einschränkungen ist vorhanden.",
+        "Teilweise abgedeckt: Ein passender Kern ist vorhanden, aber ein Teil, eine notwendige Bedingung oder ein wichtiger Scope fehlt beziehungsweise wird verändert.",
+        "Fehlend: Kein erzeugter Claim formuliert den betreffenden Zielinhalt ausreichend; eine bloße Fundstelle oder ein Nachbarbegriff ersetzt ihn nicht.",
+        "Zusatzclaim: Nicht in der gewählten Baseline, aber möglicherweise trotzdem korrekt. Er wird gesondert geprüft, nicht automatisch als falsch gezählt."
+      ]
+    },
+    {
+      "id": "interpretation",
+      "title": "Die Ergebnistabellen Schritt für Schritt lesen",
+      "paragraphs": [
+        "Zuerst muss man Ausgaben und Aussagen auseinanderhalten. Ein Direct-Output ist eine ganze JSON-Liste. In den drei Direct-Listen stehen insgesamt 20 Rohclaims. Sobald ein nötiges Feld oder ein Quellenanker ungültig ist, wird die komplette Liste abgelehnt. Das bedeutet nicht, dass sämtliche enthaltenen Aussagen falsch sind.",
+        "Alle drei direkten Antworten verletzen den exakten Quellenvertrag. Unter anderem fehlt bei einem Jackson-Zitat die korrekte letzte Zeilennummer, ein YAML-Zitat verändert Einrückungen, und ein JSPWiki-Zitat fügt eine Auslassungszeile ein. Ein Teil sind reine Zitierformfehler, andere Fehler verändern den Quelleninhalt oder den behaupteten Bereich. Sie sollten nicht mit fachlichen Fehlern in einen einzigen Wert geworfen werden.",
+        "Die drei Prosa-Extraktionen bestehen die Formprüfung. Das heißt: Ihre Reportzitate stimmen und ihre Struktur passt. Es heißt nicht: Der Code beweist diese Aussagen. Der Report kann vorher eine Bedingung verloren oder eine stärkere Schutzwirkung behauptet haben. Ein Extraktor kann so einen Fehler sehr korrekt weitergeben.",
+        "Die Abdeckungstabelle zählt die vorher festgelegten Zielinhalte. Bei JSPWiki stehen neun Ziele. Direkt sind davon drei vollständig, vier teilweise und zwei nicht abgedeckt. Diese Zahlen ergeben neun, obwohl ebenfalls neun Rohclaims erzeugt wurden. Die Gleichheit dieser beiden Neunerzahlen ist zufällig; die Zuordnung ist nicht eins zu eins.",
+        "Über alle Fälle ergeben die eingetragenen Zuordnungen direkt neun vollständig, sechs teilweise und fünf fehlend abgedeckte Ziele. Über Prosa sind es zwei vollständig, acht teilweise und zehn fehlend abgedeckte Ziele. Für Direct sind dies nur Diagnosen der formal abgelehnten Rohantworten. Daraus darf man keinen Satz ableiten wie Direct ist in 45 Prozent aller Security-Fälle korrekt.",
+        "Ein einfaches Beispiel für teilweise: Die JSPWiki-Basis B05 verlangt den Frontseitenfallback, wenn der Parser null liefert. Direkt C1 nennt diesen Fallback. Prosa C2 nennt nur fehlendes PathInfo. Aber auch ein vorhandenes PathInfo mit Länge höchstens eins führt im Code zu null. Damit ist die Prosa-Aussage enger und die Zielbedeutung nur teilweise enthalten.",
+        "Wie streng eine Abstraktion als ausreichend zählt, ist eine begründete Bewertungsentscheidung. Bei JSPWiki B01 etwa nennt die Prosa URL-Herkunft, aber nicht die genaue getPathInfo-Quelle. Eine gröbere Referenz könnte das anders behandeln. Deshalb stehen die Einzelbegründungen im Anhang, und aus den Zahlen wird kein objektiver Universalscore gemacht.",
+        "Die beiden Wege haben unterschiedlichen Aufwand und unterschiedliche Informationsverdichtung. Direkt benötigt einen Aufruf pro Fall; Prosa benötigt zwei und begrenzt den Zwischenreport auf einen kurzen Text. Der Vergleich zeigt diesen gesamten Weg. Er isoliert nicht unabhängig, ob ein Effekt nur vom zusätzlichen Aufruf, vom Prompt, von der Textlänge oder von der Darstellung stammt."
+      ],
+      "bullets": [
+        "Formatgültigkeit: Passt die gespeicherte Ausgabe zum vereinbarten Vertrag?",
+        "Abdeckung: Sind die gewählten Sollinhalte erhalten?",
+        "Codeunterstützung: Trägt der gegebene Code diese konkrete Aussage?",
+        "Reporttreue: Gibt ein Prosa-Claim den Report unverändert in seiner Bedeutung wieder?",
+        "Granularität: Ist die Einheit sinnvoll getrennt, ohne notwendige Zusammenhänge zu verlieren?",
+        "Nutzennachweis: Würde diese Darstellung bei einer späteren Security-Aufgabe messbar helfen? Diese letzte Frage wurde hier nicht getestet."
+      ]
+    }
+  ],
+  "research_questions": [
+    {
+      "id": "RQ0",
+      "title": "Warum brauchen wir Claims?",
+      "question": "Welches Problem soll die Darstellung lösen, und wie weit reicht die Begründung?",
+      "answer": [
+        "Das adressierte Problem ist die uneinheitliche Bewertungs- und Vergleichseinheit einer Analyse. Ein Report kann mehrere unterschiedlich belastbare Aussagen zusammenfassen. Claims machen einzelne Bedeutungen mit ihren Bedingungen und Quellen ausdrücklich zugänglich.",
+        "Daraus ergeben sich konkrete mögliche Arbeitsweisen: einen Teilfehler lokalisieren, eine offene Wirkung von einer sichtbaren Codeoperation trennen, gezielt nach einer verlorenen Bedingung suchen oder dieselbe Bedeutung über zwei Ausgaben hinweg zuordnen. IDs und Git unterstützen die Nachverfolgung; sie lösen keine semantische Gleichheit automatisch.",
+        "Die Literatur macht diese Idee plausibel und benennt zugleich Risiken der Zerlegung. Sie beweist nicht den Nutzen unseres Security-Formats. Der aktuelle Versuch prüft deshalb zunächst, ob die beabsichtigte Darstellung mit relevanten Inhalten zuverlässig erzeugt wird.",
+        "Ein eigener Vergleich Claims gegen normales Report-Review wäre nötig, um Zeitgewinn, weniger Fehlentscheidungen oder bessere Security-Entscheidungen zu messen. So einen Vergleich enthält dieser Versuch nicht."
+      ],
+      "evidence": [
+        "Gemischte Aussagen und verlorene Bedingungen sind in den tatsächlichen JSPWiki- und Jackson-Ausgaben sichtbar.",
+        "Wanner et al. (2024), VeriScore und SACM/CAE liefern den beschriebenen konzeptionellen Anschluss."
+      ],
+      "not_established": "Nicht beantwortet ist, ob Claims mehr echte Schwachstellen finden, mehr Exploits bestätigen oder menschliche Reviews schneller machen."
+    },
+    {
+      "id": "RQ1",
+      "title": "Wie erzeugen wir Claims?",
+      "question": "Welche Schritte, Prompts und technischen Regeln stehen hinter der Pipeline?",
+      "answer": [
+        "Die Pipeline liest nur vorher erlaubte Quellen, ergänzt Originalzeilen und baut daraus einen zustandslosen API-Aufruf. Die Route bestimmt, ob Code oder ein neuer Report die Eingabe ist. Für Claims wird dasselbe kleine JSON-Schema verwendet.",
+        "Der Prompt beschreibt die Zieloperation: eigenständig verständliche Aussagen erzeugen oder extrahieren, unabhängig beurteilbare Inhalte trennen und Einschränkungen erhalten. Das Modell übernimmt die semantische Zerlegung. Die lokale Implementierung ist kein neuer allgemeiner Zerlegungsalgorithmus.",
+        "Im Prosaweg soll der erste Aufruf einen kurzen Report schreiben. Der zweite darf nur diesen Text zerlegen. Diese Trennung erlaubt, einen Inhalt zu identifizieren, der schon im Report fehlt, statt jeden später fehlenden Claim pauschal dem Extraktor anzulasten.",
+        "Anschließend prüft lokaler Code die Struktur und Quellenkonsistenz. Baselinehashes und Originalantworten binden die Auswertung an den tatsächlichen Versuch. Fehler werden erhalten, nicht durch wiederholtes Anfragen verborgen."
+      ],
+      "evidence": [
+        "run.py implementiert die beiden Wege; resources/prompts.json enthält die tatsächlich verwendeten Anweisungen.",
+        "results/run-001 hält die neun Requests und Rohantworten sowie die vorher fixierten Baselines."
+      ],
+      "not_established": "Die erfolgreiche API-Ausführung und gültiges JSON belegen weder die richtige Granularität noch die Wahrheit einer Security-Aussage."
+    },
+    {
+      "id": "RQ2",
+      "title": "Wie gut passen die Ergebnisse zu den Basisclaims?",
+      "question": "Was bedeutet Qualität hier konkret, und was ist im Vergleich herausgekommen?",
+      "answer": [
+        "Qualität ist hier mehrdimensional: Zielabdeckung, Bedeutungserhalt, Codeunterstützung, Reporttreue und Granularität. Es gibt keinen einzelnen errechneten Gütescore. Jede Zieleinheit und jeder erzeugte Claim hat eine eigene Begründung.",
+        "Die Direct-Rohantworten decken insgesamt mehr der gewählten Zielinhalte vollständig ab. Trotzdem fehlen Guards, lokale Negationen oder ganze Zweige. Auch Direct erzeugt überstarke Aussagen, unpassend gebündelte Inhalte und einen Duplikatfall. Die formale Ablehnung bleibt zusätzlich bestehen.",
+        "Die Prosaextraktionen sind formal gültig und meist reporttreu. Das schützt sie nicht vor Reportfehlern. Insbesondere gehen konkrete Codeoperationen im kurzen Report verloren, während zusätzliche Aussagen über fehlenden Kontext oder mögliche Sicherheitseffekte hinzukommen.",
+        "Ein korrekter Zusatz außerhalb der Baseline ist kein Fehler. Umgekehrt macht ein belegtes Zitat nicht jede darin enthaltene Information zu einem explizit erzeugten Claim. Genau diese Unterscheidungen erklären die teilweise und fehlend vergebenen Abdeckungen."
+      ],
+      "evidence": [
+        "Die vollständigen und teilweise vergebenen Zuordnungen sind in den Fallkapiteln 8 bis 10 mit IDs und Gründen nachlesbar.",
+        "Alle 50 erzeugten Propositionen haben eine Einzelbeurteilung; die drei Basislisten wurden nach Einsicht in die Outputs nicht angepasst."
+      ],
+      "not_established": "Diese Referenz ist kein vollständiger Security-Wahrheitskatalog und keine unabhängig menschlich bestätigte Ground Truth. Eine allgemeine Aussage besser oder schlechter als Menschen folgt daraus nicht."
+    },
+    {
+      "id": "RQ3",
+      "title": "Direkt aus Code oder über Prosa?",
+      "question": "Welcher Weg ist hier besser, und warum gibt es keinen pauschalen Sieger?",
+      "answer": [
+        "Für die gewählten codebezogenen Sollinhalte ist die Direct-Rohantwort in diesem Lauf näher an der Referenz. Sie nennt häufiger konkrete Aufrufe und Varianten. Beim Prosaweg verschwinden manche dieser Informationen bereits aus dem Zwischenreport.",
+        "Für die strenge technische Verwendbarkeit der unveränderten Ausgaben ist das Bild umgekehrt: Keine der drei Direct-Listen wird akzeptiert, alle drei Prosa-Listen werden akzeptiert. Dabei werden Code- und Reportbelege gegen verschiedene Arten von Quelltext geprüft. Der Formvorteil ist deshalb keine Bestätigung höherer Codewahrheit.",
+        "Der Prosaweg kann Zusammenhänge lesbar zusammenfassen und Ungewissheit benennen. Er hat aber eine zusätzliche Gelegenheit für Informationsverlust und Überstärkung. Der direkte Weg vermeidet diesen Zwischenbericht, garantiert damit aber noch keine gute Zerlegung.",
+        "Die belastbare Antwort für diesen Arbeitsstand lautet daher: unterschiedliche Stärken in verschiedenen Dimensionen, mit konkret sichtbaren Fehlern. Um einen allgemeinen Sieger zu behaupten, wären mehr Fälle, Wiederholungen, eine belastbare Referenz und ein vorher festgelegter Auswertungsmaßstab nötig."
+      ],
+      "evidence": [
+        "JSPWiki zeigt die verwischte Pfad-/Querytrennung, Jackson die Übertragung eines Setter-Aufrufs zur effektiven Schutzwirkung und YAML den Verlust der genauen Options-/Catch-Varianten.",
+        "Der beobachtete Unterschied stammt aus drei bekannten Entwicklungsfällen mit einem Lauf je Weg."
+      ],
+      "not_established": "Nicht isoliert ist, wie stark Prompt, Zwischenreportlänge, zusätzlicher Aufruf und Zufall des einzelnen Modelllaufs zu den Unterschieden beitragen."
+    }
+  ],
+  "case_explanations": {
+    "jspwiki": {
+      "context": [
+        "JSPWiki ist eine Wiki-Webanwendung. Der Servletcode nimmt eine Anfrage entgegen, ermittelt einen Seitennamen und baut ein Argument für eine serverseitige Weiterleitung. Hier sind zwei Werte auseinanderzuhalten: jspPage bestimmt den Zielpfad; pageName wird über encodeName in den Queryparameter page eingesetzt.",
+        "Der Parser liest PathInfo, liefert für null oder Länge höchstens eins null und entfernt sonst gegebenenfalls einen führenden Slash. Liefert er null, setzt das Servlet die Frontseite ein. Welcher URLConstructor aktiv ist und was die Ziel-JSP mit den Werten tut, zeigen die Dateien nicht vollständig."
+      ],
+      "baseline_scope": [
+        "Die neun Ziele betreffen diese Herkunft, Guards, Transformationen, den Frontseitenfallback, die getrennte Pfad-/Queryverwendung und lokal sichtbare fehlende Traversalprüfungen.",
+        "Ein möglicher unautorisierter Dateizugriff braucht zusätzliche Aussagen zu Erreichbarkeit, Filtern, Zielauflösung und Rechten. Diese Voraussetzungen stehen als offene Fragen neben der Referenz."
+      ],
+      "takeaway": [
+        "Direct bewahrt mehr Parserdetails, verwischt aber selbst Pfad und Query. Im Reportweg werden die Abläufe stärker zu einer einzigen Kette zusammengezogen; Guards und die aktive getForwardPage-Variante fehlen.",
+        "Der Claim unvalidiert aus dem Report ist stärker als die engere Beobachtung, dass im gezeigten Körper keine eigene explizite Traversalprüfung steht. Ein Encode-Aufruf ist sichtbar, seine vollständige Schutzwirkung aber nicht."
+      ]
+    },
+    "jackson-xml": {
+      "context": [
+        "Eine XMLInputFactory stellt Parser für XML bereit. Der Ausschnitt unterscheidet: Es wird keine eigene Input-Factory übergeben, oder der Aufrufer übergibt schon eine. Nur im ersten Zweig erzeugt der Hauptkonstruktor eine neue Factory und ruft den Entity-Setter mit false auf.",
+        "Das ist eine Codeoperation. Welche DTDs oder externen Ressourcen die konkrete Bibliotheksimplementation letztlich verarbeitet, ist eine weitergehende Frage. Auch spätere Konfiguration und eine überschreibbare Initialisierungsmethode können eine Rolle spielen."
+      ],
+      "baseline_scope": [
+        "Die sechs Ziele betreffen Null-/Nicht-null-Zweig, sichtbare Coalescing-Konfiguration, lokale Abwesenheit bestimmter Setter und den Kopierkonstruktor.",
+        "Der Ausschnitt belegt weder alle Provider-Defaults noch einen konkreten XXE-Angriff. Nicht gesetzt bedeutet nicht automatisch eingeschaltet; explizit false gesetzt bedeutet noch keinen vollständigen Security-Nachweis."
+      ],
+      "takeaway": [
+        "Direct erhält die Konfigurationsasymmetrie genauer, formuliert stellenweise aber zu pauschal stets oder leitet aus dem Setter direkt die effektive Deaktivierung ab.",
+        "Der Reportweg übernimmt die Formulierung externe Entitäten standardmäßig deaktiviert. Ein Prosa-Claim zum Setter bleibt korrekt bedingt; ein anderer Wirkungsclaim trägt diese Null-Bedingung nicht mehr in seinem eigenen Satz. Beide Wege lassen DTD-Setter-Abwesenheit und Kopierkonstruktor aus."
+      ]
+    },
+    "commons-yaml": {
+      "context": [
+        "Die Klasse liest YAML aus Reader oder InputStream. Es gibt vier Varianten: je Eingabetyp mit und ohne LoaderOptions. Ohne Optionen entsteht new Yaml(); mit Optionen new Yaml(options). Danach wird yaml.load aufgerufen.",
+        "Erst nach diesem Laden wird das Ergebnis zu Map gecastet und an load(map) weitergegeben. Geht im try-Block etwas schief, fängt der Code Exception und ruft rethrowException auf. Ein späterer Cast oder Catch beweist nicht, dass während des vorherigen Ladens keine Nebenwirkung möglich war."
+      ],
+      "baseline_scope": [
+        "Die fünf Ziele beschreiben die Konstruktor-/Optionsunterscheidung, die Reihenfolge samt Rückkehr-/Cast-Bedingung, lokale Tag-/Typprüfungsabwesenheit und Catch/rethrow.",
+        "Welche SnakeYAML-Version und welche Optionswerte gelten, bleibt offen. Reader oder InputStream allein belegen keine Angreiferkontrolle, keine anonymen Rechte und keine Codeausführung."
+      ],
+      "takeaway": [
+        "Direct benennt die Optionsvarianten und die Fehlerbehandlung genauer. Der Reportweg sagt allgemeiner, dass Optionen weitergereicht werden, und verbindet das mit einem separaten Schreibformat.",
+        "Beide Wege liefern korrekte zusätzliche Schreibpfadclaims. Diese sind nicht falsch, ersetzen aber die fehlenden Lade-Zielinhalte nicht. Der globale Direct-Formfehler bleibt trotz brauchbarer Teile bestehen."
+      ]
+    }
+  },
+  "glossary": [
+    {
+      "term": "Report",
+      "meaning": "Ein zusammenhängender erklärender Text. Er verbindet typischerweise Beobachtungen, Schlussfolgerungen, Bedingungen und mögliche Folgen."
+    },
+    {
+      "term": "Claim",
+      "meaning": "Eine konkrete Behauptung mit einem benannten Gegenstand. Sie soll eigenständig verständlich sein. Sie darf falsch sein oder nur unter einer Bedingung gelten; der Begriff bedeutet nicht, dass die Aussage bewiesen ist."
+    },
+    {
+      "term": "Basis- oder Zielclaim",
+      "meaning": "Ein vor den neuen Modelloutputs festgelegter Sollinhalt: Diese Aussage sollte aus genau dem bereitgestellten Code hervorgehen. Die Referenz ist selbst zu prüfen; sie ist nicht allein durch ihren Namen richtig."
+    },
+    {
+      "term": "Zerlegung",
+      "meaning": "Aus einem größeren Inhalt werden unterscheidbare Aussagen gemacht. Sinnvolle Zerlegung bewahrt Bedingungen und Zusammenhänge; sie erzeugt nicht einfach möglichst viele kurze Sätze."
+    },
+    {
+      "term": "Quellenanker",
+      "meaning": "Eine genaue Stelle im Code oder Report, die zu einer Aussage gehört. Dass die Stelle existiert und das Zitat stimmt, zeigt noch nicht, dass die Aussage aus ihr folgt."
+    },
+    {
+      "term": "Abdeckung",
+      "meaning": "Ob die erzeugten Claims die Bedeutung eines Zielclaims ganz, teilweise oder gar nicht enthalten. Andere Wörter können dieselbe Bedeutung haben; mehrere Claims können zusammen einen Zielinhalt abdecken."
+    },
+    {
+      "term": "Reporttreue",
+      "meaning": "Ob ein extrahierter Claim wiedergibt, was der Report behauptet. Auch ein falscher Report kann treu zerlegt werden."
+    },
+    {
+      "term": "Codeunterstützung",
+      "meaning": "Ob der bereitgestellte Code die konkrete Aussage trägt. Ein Reportzitat kann diese Frage nicht allein beantworten."
+    },
+    {
+      "term": "Exploitnachweis",
+      "meaning": "Zusätzliche Evidenz, dass ein konkreter Angriff unter festgelegten Bedingungen tatsächlich gelingt. Ein korrekter Setter-Aufruf oder Datenflussclaim reicht dafür nicht."
+    },
+    {
+      "term": "Proposition",
+      "meaning": "Der eigentliche Aussage-Satz eines Claims: Gegenstand plus Behauptung, einschließlich notwendiger Bedingungen."
+    },
+    {
+      "term": "Granularität / atomar",
+      "meaning": "Wie groß eine Aussageeinheit ist. Eigenständig beurteilbar ist das Ziel; möglichst kurz oder möglichst viele Einheiten ist es nicht."
+    },
+    {
+      "term": "Modalität",
+      "meaning": "Wie sicher oder bedingt eine Aussage klingt: könnte ist schwächer als kann oder tritt ein. Solche Wörter dürfen beim Zerlegen nicht verlorengehen."
+    },
+    {
+      "term": "Scope",
+      "meaning": "Der ausdrücklich betrachtete Geltungsbereich: zum Beispiel nur dieser Methodenkörper statt die ganze Anwendung."
+    },
+    {
+      "term": "Guard",
+      "meaning": "Eine frühe Bedingungsprüfung, die einen Codepfad begrenzt, etwa null oder zu kurze Eingaben abzuweisen."
+    },
+    {
+      "term": "Factory",
+      "meaning": "Ein Objekt beziehungsweise API-Einstieg, mit dem andere Objekte wie Parser erzeugt werden. Die konkrete Implementation und Konfiguration beeinflussen das spätere Verhalten."
+    },
+    {
+      "term": "Setter",
+      "meaning": "Ein Aufruf, der eine Einstellung setzt. Der sichtbare Aufruf und die vollständige Wirkung des gesamten Systems sind verschiedene Behauptungen."
+    },
+    {
+      "term": "SAST / SCA / dynamischer Test",
+      "meaning": "SAST analysiert Programmcode ohne den betreffenden Programmlauf; SCA betrachtet unter anderem verwendete Komponenten und bekannte Abhängigkeitsschwachstellen. Dynamische Tests beobachten ausgeführtes Verhalten. Die Kategorien beantworten unterschiedliche Fragen."
+    },
+    {
+      "term": "Fuzzing / DAST",
+      "meaning": "Fuzzing testet mit unerwarteten oder fehlerhaften Eingaben. Es ist eine dynamische Testtechnik. DAST meint dynamische Anwendungssicherheitsprüfung; der Begriff wird je nach Kontext enger oder weiter verwendet."
+    },
+    {
+      "term": "Token",
+      "meaning": "Ein Textstück, mit dem das Sprachmodell rechnet. Ein Token ist weder ein Wort noch ein Claim; das Limit begrenzt die Antwortlänge und Kosten."
+    },
+    {
+      "term": "Hash / SHA-256",
+      "meaning": "Ein Fingerabdruck von Dateibytes. Ändert sich die Datei, ändert sich normalerweise ihr Hash. Ein passender Hash beweist unveränderte Bytes, keine inhaltliche Wahrheit."
+    }
+  ]
+}

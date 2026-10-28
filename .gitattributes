@@ -4,3 +4,4 @@ examples/*/LICENSE* -text -whitespace
 examples/*/NOTICE -text -whitespace
 examples/jspwiki/manual/** -text -whitespace
 results/**/report.txt -text -whitespace
+output/pdf/*.pdf -text -whitespace

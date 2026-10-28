@@ -124,6 +124,48 @@
       "inspected": "Abstract; §§1 und 4.1 einschließlich NL-to-Format.",
       "supports": "Formatvorgaben und nachgelagerte Formatumwandlung sind bereits untersucht. Der Inhalt muss unabhängig von der Formatgültigkeit bewertet werden.",
       "does_not_support": "Keine Security-Zerlegung und kein Nachweis für aktuelle Modelle. Ein reiner Fließtext-gegen-JSON-Vergleich begründet hier weder Neuheit noch die Qualität des Code/Report-Claims-Vergleichs."
+    },
+    {
+      "id": "openant2026",
+      "title": "OpenAnt: LLM-Powered Vulnerability Discovery Through Code Decomposition, Adversarial Verification, and Dynamic Testing",
+      "authors": [
+        "Nahum Korda",
+        "Gadi Evron"
+      ],
+      "year": 2026,
+      "version": "arXiv:2606.19149v1, 17 June 2026",
+      "url": "https://arxiv.org/abs/2606.19149",
+      "full_text": "https://arxiv.org/html/2606.19149v1",
+      "inspected": "Abstract; §2.5; §2.6; §6; authors and project link.",
+      "supports": "OpenAnt kombiniert statische Programmanalyse, LLM-Befunde, eingeschränkte Angreifersimulation und erzeugte dynamische Exploitversuche. Empirische Exploitevidenz wird von formalen Garantien unterschieden.",
+      "does_not_support": "Die Arbeit bewertet weder unser Claimformat noch den aktuellen Direkt-gegen-Report-Versuch. Ihre Ergebniszahlen sind nicht auf unseren MVP übertragbar.",
+      "checked_on": "2026-10-28"
+    },
+    {
+      "id": "owasp_fuzzing",
+      "title": "Fuzzing",
+      "authors": [
+        "OWASP Foundation"
+      ],
+      "year": null,
+      "url": "https://community.owasp.org/Fuzzing",
+      "inspected": "Opening definition only.",
+      "supports": "Fuzzing führt automatisiert unerwartete oder fehlerhafte Eingaben zu, um Fehler oder unerwartetes Verhalten aufzudecken.",
+      "does_not_support": "Hier nur zur Begriffserklärung verwendet; kein Vergleich von Kosten oder Wirksamkeit.",
+      "checked_on": "2026-10-28"
+    },
+    {
+      "id": "openssf_dast",
+      "title": "DAST",
+      "authors": [
+        "OpenSSF Glossary"
+      ],
+      "year": null,
+      "url": "https://glossary.openssf.org/dast/",
+      "inspected": "Glossary definition and industry variation.",
+      "supports": "DAST umfasst Ausführung; der Begriff wird teils auf Webscanner, teils breiter auf dynamische Tests bezogen.",
+      "does_not_support": "Begriffsquelle, keine vergleichende Untersuchung.",
+      "checked_on": "2026-10-28"
     }
   ],
   "dataset": {
